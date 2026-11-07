@@ -1,0 +1,164 @@
+---
+import type { Project } from '../lib/sources/projects.ts';
+import { formatAgo } from '../lib/time.ts';
+
+interface Props {
+  project: Project;
+  now: Date;
+}
+
+const { project, now } = Astro.props;
+
+// Tape-transport vocabulary: the glyph is flavour, the word is the meaning.
+const transport = {
+  building: { glyph: '●', label: 'Building' },
+  live: { glyph: '▶', label: 'Live' },
+  paused: { glyph: '❚❚', label: 'Paused' },
+  archived: { glyph: '■', label: 'Archived' },
+} as const;
+
+const { glyph, label } = transport[project.status];
+---
+
+<li class="spine" data-status={project.status}>
+  <div class="body">
+    <span class="band" aria-hidden="true"></span>
+    <span class="transport">
+      <span class="glyph" aria-hidden="true">
+        {glyph}
+      </span>
+      {label}
+    </span>
+    <span class="label">
+      {project.repo ? (
+        <a class="title" href={project.repo}>
+          {project.title}
+        </a>
+      ) : (
+        <span class="title">{project.title}</span>
+      )}
+      {project.summary && <span class="summary">{project.summary}</span>}
+    </span>
+    <span class="meta">
+      {project.stack.length > 0 && <span class="stack">{project.stack.join(', ')}</span>}
+      <time datetime={project.lastActivity.toISOString()}>
+        <span class="visually-hidden">Last activity </span>
+        {formatAgo(project.lastActivity, now)}
+      </time>
+    </span>
+  </div>
+</li>
+
+<style>
+  /* Each spine is its own container, so it lays out by its own width (1 or 2 per row). */
+  .spine {
+    container-type: inline-size;
+    background: var(--paper);
+  }
+
+  .body {
+    display: grid;
+    grid-template-columns: 6px 6.25rem minmax(0, 1fr) auto;
+    grid-template-areas: 'band transport label meta';
+    align-items: center;
+    column-gap: var(--space-3);
+    min-height: 3.5rem;
+    padding-inline-end: var(--space-4);
+  }
+
+  .band {
+    grid-area: band;
+    align-self: stretch;
+  }
+
+  .transport {
+    grid-area: transport;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: var(--size-12);
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+
+  .glyph {
+    min-width: 1.2em;
+    font-size: var(--size-14);
+    letter-spacing: -0.1em;
+  }
+
+  .label {
+    grid-area: label;
+    min-width: 0;
+    padding-block: var(--space-2);
+  }
+
+  .title {
+    font-family: var(--font-display);
+    font-size: var(--size-14);
+    letter-spacing: 0.02em;
+    text-decoration: none;
+  }
+
+  a.title:hover {
+    text-decoration: underline;
+  }
+
+  .summary {
+    display: block;
+    font-size: var(--size-14);
+    color: var(--ink-muted);
+  }
+
+  .meta {
+    grid-area: meta;
+    display: grid;
+    justify-items: end;
+    text-align: end;
+    font-size: var(--size-12);
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+
+  [data-status='building'] .band {
+    background: var(--signal);
+  }
+
+  [data-status='building'] .glyph {
+    color: var(--signal);
+  }
+
+  [data-status='live'] .band {
+    background: var(--live);
+  }
+
+  [data-status='live'] .glyph {
+    color: var(--live);
+  }
+
+  [data-status='paused'] .band {
+    background: var(--ink-muted);
+  }
+
+  [data-status='archived'] .band {
+    background: var(--rule);
+  }
+
+  @container (max-width: 26rem) {
+    .body {
+      grid-template-columns: 6px minmax(0, 1fr) auto;
+      grid-template-areas:
+        'band label     label'
+        'band transport meta';
+      padding-block-end: var(--space-2);
+    }
+
+    .label {
+      padding-block-end: var(--space-1);
+    }
+
+    .stack {
+      display: none;
+    }
+  }
+</style>

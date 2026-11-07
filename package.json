@@ -1,33 +1,41 @@
 {
-  "name": "my-portal",
+  "name": "personal-console",
+  "description": "Norbert's private command console: agenda, tasks, projects, code activity and devices on one screen.",
+  "version": "0.1.0",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=22.23.4"
+  },
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test:unit": "node --test \"src/**/*.test.ts\"",
+    "test:e2e": "playwright test",
+    "verify": "npm run format:check && npm run check && npm run test:unit && npm run build && npm run test:e2e"
   },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^6.4.2",
-    "@mui/material": "^6.4.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "@astrojs/node": "^11.1.11",
+    "@fontsource/b612": "^5.3.0",
+    "@fontsource/b612-mono": "^5.3.0",
+    "@fontsource/dseg7-classic": "^5.3.0",
+    "@fontsource/michroma": "^5.3.0",
+    "astro": "^7.4.7"
   },
   "devDependencies": {
-    "@eslint/js": "^9.17.0",
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.5",
-    "@vitejs/plugin-react-swc": "^3.5.0",
-    "eslint": "^9.17.0",
-    "eslint-plugin-react-hooks": "^5.0.0",
-    "eslint-plugin-react-refresh": "^0.4.16",
-    "globals": "^15.14.0",
-    "typescript": "~5.6.2",
-    "typescript-eslint": "^8.18.2",
-    "vite": "^6.0.5"
+    "@astrojs/check": "^0.9.12",
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "1.63.0",
+    "@types/node": "^22.20.5",
+    "prettier": "^3.9.10",
+    "prettier-plugin-astro": "^1.1.2",
+    "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "playwright-core": "1.63.0"
   }
 }

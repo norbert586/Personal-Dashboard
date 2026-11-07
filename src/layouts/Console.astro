@@ -1,0 +1,46 @@
+---
+import { Font } from 'astro:assets';
+import '../styles/tokens.css';
+import '../styles/global.css';
+import Rail from '../components/Rail.astro';
+import RatingPlate from '../components/RatingPlate.astro';
+
+interface Props {
+  title: string;
+  now: Date;
+}
+
+const { title, now } = Astro.props;
+
+// The Day/Night choice lives in a cookie, so the server renders the right theme on the
+// first byte: no flash, and no inline script for the CSP to allow. Auto = no attribute.
+const saved = Astro.cookies.get('console-theme')?.value;
+const theme = saved === 'light' || saved === 'dark' ? saved : undefined;
+---
+
+<!doctype html>
+<html lang="en" data-theme={theme}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title}</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <Font cssVariable="--font-display" preload />
+    <Font cssVariable="--font-body" preload />
+    <Font cssVariable="--font-mono" preload />
+    <Font cssVariable="--font-segment" preload />
+  </head>
+  <body>
+    <a class="skip-link" href="#console">
+      Skip to the console
+    </a>
+    <div class="chassis">
+      <Rail now={now} theme={theme ?? 'auto'} />
+      <main id="console" class="deck">
+        <slot />
+      </main>
+      <RatingPlate now={now} />
+    </div>
+  </body>
+</html>

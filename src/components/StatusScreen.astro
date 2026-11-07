@@ -1,0 +1,189 @@
+---
+/**
+ * The one loud thing (DESIGN.md, principle 2): a CRT that answers "where do things stand?"
+ * It's the only element with scanlines, vignette, glow and motion.
+ */
+interface Props {
+  greeting: string;
+  owner: string;
+  date: string;
+  week: number;
+  next?: { label: 'Now' | 'Next'; time: string; title: string; note: string } | undefined;
+  tasks: { open: number; dueToday: number };
+  sources: { live: number; local: number; sample: number; offline: number };
+}
+
+const { greeting, owner, date, week, next, tasks, sources } = Astro.props;
+
+const sourceSummary = [
+  `${sources.live} live`,
+  `${sources.local} local`,
+  `${sources.sample} sample`,
+  ...(sources.offline > 0 ? [`${sources.offline} offline`] : []),
+].join(', ');
+---
+
+<section class="status area-status" aria-labelledby="status-title">
+  <div class="bezel">
+    <div class="glass">
+      <h1 id="status-title" class="greeting">
+        {greeting}, {owner}.
+      </h1>
+      <p class="date">
+        {date}, week {week}
+      </p>
+      <dl class="readout">
+        <div class="row">
+          <dt>{next?.label ?? 'Next'}</dt>
+          <dd>
+            {next ? (
+              <>
+                {next.label === 'Next' && <span class="time">{next.time}</span>} {next.title}{' '}
+                <span class="dim">{next.note}</span>
+              </>
+            ) : (
+              'Nothing else today'
+            )}
+          </dd>
+        </div>
+        <div class="row">
+          <dt>Tasks</dt>
+          <dd>
+            {tasks.open} open, {tasks.dueToday} due today
+          </dd>
+        </div>
+        <div class="row">
+          <dt>Data</dt>
+          <dd>{sourceSummary}</dd>
+        </div>
+      </dl>
+      <p class="prompt" aria-hidden="true">
+        &gt; <span class="cursor"></span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .status {
+    display: flex;
+    padding: var(--space-5);
+    background: var(--panel);
+    box-shadow:
+      inset 0 1px 0 var(--edge-light),
+      inset 0 -1px 0 var(--edge-dark);
+  }
+
+  .bezel {
+    flex: 1;
+    display: flex;
+    padding: clamp(0.625rem, 1.4vw, 1.125rem);
+    background: var(--bezel);
+    border-radius: calc(var(--radius-screen) + 0.5rem);
+    box-shadow:
+      inset 0 2px 0 rgb(255 255 255 / 0.06),
+      inset 0 -3px 8px rgb(0 0 0 / 0.5),
+      0 1px 0 var(--edge-light);
+  }
+
+  .glass {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    padding: clamp(1.25rem, 3.2vw, 2.75rem);
+    border-radius: var(--radius-screen);
+    background: radial-gradient(120% 95% at 50% 42%, var(--glass-center), var(--glass) 72%);
+    box-shadow: inset 0 0 3.5rem rgb(0 0 0 / 0.8);
+    color: var(--phosphor);
+    font-family: var(--font-mono);
+    font-size: clamp(var(--size-14), 0.8rem + 0.9vw, var(--size-18));
+    text-shadow: var(--glow);
+    transform-origin: 50% 50%;
+    animation: power-on var(--power-on) var(--ease-out) both;
+  }
+
+  /* Scanlines */
+  .glass::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: repeating-linear-gradient(to bottom, transparent 0 2px, rgb(0 0 0 / 0.24) 2px 3px);
+  }
+
+  .greeting {
+    font-family: var(--font-mono);
+    font-size: var(--size-36);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  .date {
+    margin-block: var(--space-2) var(--space-6);
+    color: var(--phosphor-dim);
+  }
+
+  .readout {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 6ch minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+
+  dt,
+  .dim {
+    color: var(--phosphor-dim);
+  }
+
+  .time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .prompt {
+    margin-block-start: var(--space-6);
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 0.6em;
+    height: 1.05em;
+    vertical-align: text-bottom;
+    background: var(--phosphor);
+    box-shadow: var(--glow);
+    animation: cursor-blink 1.06s steps(1) infinite;
+  }
+
+  @keyframes power-on {
+    0% {
+      transform: scale(0.7, 0.006);
+      filter: brightness(4);
+    }
+    55% {
+      transform: scale(1, 1);
+      filter: brightness(1.7);
+    }
+    100% {
+      transform: none;
+      filter: none;
+    }
+  }
+
+  @keyframes cursor-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .glass,
+    .cursor {
+      animation: none;
+    }
+  }
+</style>

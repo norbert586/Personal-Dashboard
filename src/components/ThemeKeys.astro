@@ -1,0 +1,104 @@
+---
+interface Props {
+  /** The theme the server rendered (from the console-theme cookie). */
+  current: 'auto' | 'light' | 'dark';
+}
+
+const { current } = Astro.props;
+
+const options = [
+  { value: 'auto', label: 'Auto' },
+  { value: 'light', label: 'Day' },
+  { value: 'dark', label: 'Night' },
+] as const;
+---
+
+<fieldset class="keys">
+  <legend class="visually-hidden">Theme</legend>
+  {options.map(({ value, label }) => (
+    <label class="key">
+      <input
+        class="visually-hidden"
+        type="radio"
+        name="theme"
+        value={value}
+        checked={value === current}
+      />
+      <span>{label}</span>
+    </label>
+  ))}
+</fieldset>
+
+<script>
+  // Apply instantly, and remember in a cookie so the server renders it next time.
+  const COOKIE = 'console-theme';
+  const root = document.documentElement;
+
+  for (const input of document.querySelectorAll<HTMLInputElement>('input[name="theme"]')) {
+    input.addEventListener('change', () => {
+      if (!input.checked) return;
+      if (input.value === 'auto') {
+        delete root.dataset.theme;
+        document.cookie = `${COOKIE}=; path=/; max-age=0; samesite=lax`;
+      } else {
+        root.dataset.theme = input.value;
+        document.cookie = `${COOKIE}=${input.value}; path=/; max-age=31536000; samesite=lax`;
+      }
+    });
+  }
+</script>
+
+<style>
+  .keys {
+    display: inline-flex;
+    gap: 3px;
+    padding: 3px;
+    background: var(--seam);
+    border-radius: calc(var(--radius-key) + 3px);
+  }
+
+  .key {
+    position: relative;
+  }
+
+  .key span {
+    position: relative;
+    display: block;
+    min-width: 4.25rem;
+    padding: 0.5em 0.85em 0.6em;
+    text-align: center;
+    font-size: var(--size-14);
+    line-height: 1.2;
+    background: var(--key);
+    border-radius: var(--radius-key);
+    box-shadow:
+      inset 0 1px 0 var(--edge-light),
+      0 2px 0 var(--edge-dark);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  /* Pressed key: sits lower, darker, and shows a lit lamp (state is never colour-only). */
+  .key input:checked + span {
+    background: var(--key-pressed);
+    box-shadow: inset 0 2px 3px var(--edge-dark);
+    transform: translateY(1px);
+  }
+
+  .key input:checked + span::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-end: 0.25em;
+    width: 1rem;
+    height: 3px;
+    translate: -50% 0;
+    border-radius: 2px;
+    background: var(--signal);
+  }
+
+  .key input:focus-visible + span {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+</style>

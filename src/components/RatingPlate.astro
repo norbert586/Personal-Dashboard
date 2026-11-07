@@ -1,0 +1,53 @@
+---
+import { site } from '../site.config.ts';
+import { formatTime, zoneAbbreviation } from '../lib/time.ts';
+
+interface Props {
+  now: Date;
+}
+
+const { now } = Astro.props;
+---
+
+<footer class="plate">
+  <dl>
+    <div>
+      <dt>Model</dt>
+      <dd>
+        {site.device.model} {site.device.name}
+      </dd>
+    </div>
+    <div>
+      <dt>Revision</dt>
+      <dd>{site.device.revision}</dd>
+    </div>
+    <div>
+      <dt>Rendered</dt>
+      <dd>
+        <time datetime={now.toISOString()}>{formatTime(now)}</time> {zoneAbbreviation(now)}
+      </dd>
+    </div>
+  </dl>
+</footer>
+
+<style>
+  .plate {
+    margin-block-start: var(--space-4);
+  }
+
+  dl {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    font-size: var(--size-12);
+  }
+
+  div {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  dt {
+    color: var(--ink-muted);
+  }
+</style>

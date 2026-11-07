@@ -1,0 +1,98 @@
+/*
+ * Design tokens: the single source of truth for colour, type, space, shape and motion.
+ * Intent lives in docs/DESIGN.md. Every pairing here was contrast-checked (WCAG 2.2 AA).
+ * Font families (--font-display, --font-body, --font-mono, --font-segment) are defined by
+ * Astro's Fonts API in astro.config.mjs.
+ */
+@layer reset, tokens, base, layout, utilities;
+
+@layer tokens {
+  :root {
+    color-scheme: light dark;
+
+    /* Materials (Day, Night) */
+    --chassis: light-dark(#cec7b6, #22201c);
+    --seam: light-dark(#a39b89, #0e0d0b);
+    --panel: light-dark(#e1dbcd, #2c2924);
+    --paper: light-dark(#f1ede3, #37332c);
+    --key: light-dark(#ece7dc, #3b3730);
+    --key-pressed: light-dark(#d5cebf, #26231f);
+    --edge-light: light-dark(rgb(255 255 255 / 0.6), rgb(255 255 255 / 0.08));
+    --edge-dark: light-dark(rgb(70 58 36 / 0.25), rgb(0 0 0 / 0.6));
+    --rule: light-dark(#b3ab98, #4a453d);
+
+    /* Ink (silkscreen) */
+    --ink: light-dark(#24221e, #ece6d8);
+    --ink-muted: light-dark(#57524a, #aca496);
+
+    /* Glass: screens stay dark in both themes */
+    --glass: #15120d;
+    --glass-center: #211b12;
+    --bezel: light-dark(#3a362f, #121110);
+    --phosphor: #ffb547;
+    --phosphor-dim: #c4893a;
+    --phosphor-off: #3b2b15;
+    --glow: 0 0 0.4em rgb(255 181 71 / 0.5);
+
+    /* Activity ramp: one hue, unlit to full brightness (sequential) */
+    --ramp-0: var(--phosphor-off);
+    --ramp-1: #6b4718;
+    --ramp-2: #9c661f;
+    --ramp-3: #d08b2a;
+    --ramp-4: var(--phosphor);
+
+    /* Brand stripe (the one decorative mark: logo, favicon) */
+    --stripe-1: #f2b23a;
+    --stripe-2: #ec7d2a;
+    --stripe-3: #d94b1f;
+    --stripe-4: #8f2f1b;
+
+    /* Signal + status (reserved for meaning, never decoration) */
+    --signal: light-dark(#b93c0b, #ff7433);
+    --signal-on-glass: #ff7433;
+    --live: light-dark(#1b7a41, #4fc87d);
+    --offline: light-dark(#bf2a2a, #ff6159);
+    --severity-normal: var(--phosphor);
+    --severity-high: #ff7a2e;
+    --severity-critical: #ff4d4a;
+
+    /* Type scale (classical: 12 14 16 18 21 24 36 48) */
+    --size-12: 0.75rem;
+    --size-14: 0.875rem;
+    --size-16: 1rem;
+    --size-18: 1.125rem;
+    --size-21: 1.3125rem;
+    --size-24: 1.5rem;
+    --size-36: clamp(1.75rem, 1.25rem + 2vw, 2.25rem);
+    --size-48: clamp(2.125rem, 1.4rem + 3vw, 3rem);
+    --leading-body: 1.5;
+    --leading-tight: 1.15;
+
+    /* Space (4 px grid) */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+
+    /* Shape: radius follows hierarchy (chassis > screen > key); panels are square */
+    --radius-chassis: 14px;
+    --radius-screen: 12px;
+    --radius-key: 4px;
+    --seam-width: 2px;
+
+    /* Motion */
+    --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+    --power-on: 450ms;
+  }
+
+  :root[data-theme='light'] {
+    color-scheme: light;
+  }
+
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+  }
+}

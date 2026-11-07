@@ -1,0 +1,76 @@
+---
+import Console from '../layouts/Console.astro';
+import StatusScreen from '../components/StatusScreen.astro';
+import AgendaModule from '../components/AgendaModule.astro';
+import TasksModule from '../components/TasksModule.astro';
+import ProjectsModule from '../components/ProjectsModule.astro';
+import ActivityModule from '../components/ActivityModule.astro';
+import DevicesModule from '../components/DevicesModule.astro';
+import { settle, type Provenance } from '../lib/readings.ts';
+import { getAgenda } from '../lib/sources/agenda.ts';
+import { getTasks } from '../lib/sources/tasks.ts';
+import { getProjects } from '../lib/sources/projects.ts';
+import { getCodeActivity } from '../lib/sources/github.ts';
+import { getDevices } from '../lib/sources/devices.ts';
+import {
+  calendarDaysBetween,
+  formatCountdown,
+  formatLongDate,
+  formatTime,
+  greeting,
+  isoWeek,
+} from '../lib/time.ts';
+import { site } from '../site.config.ts';
+
+const now = new Date();
+
+// Sources run in parallel; any that fail come back as Offline instead of breaking the page.
+const [agenda, tasks, projects, activity, devices] = await Promise.all([
+  settle('Google Calendar', [], () => getAgenda(now)),
+  settle('Tasks', [], () => getTasks(now)),
+  settle('Project files', [], () => getProjects(now)),
+  settle('GitHub', { days: [], previousTotal: 0 }, () => getCodeActivity(now)),
+  settle('flightpi', [], () => getDevices(now)),
+]);
+
+const upcoming = agenda.data.find((event) => event.end > now);
+const next = upcoming && {
+  label: upcoming.start <= now ? ('Now' as const) : ('Next' as const),
+  time: formatTime(upcoming.start),
+  title: upcoming.title,
+  note:
+    upcoming.start <= now
+      ? `until ${formatTime(upcoming.end)}`
+      : formatCountdown(now, upcoming.start),
+};
+
+const dueToday = tasks.data.filter(
+  (task) => task.due !== undefined && calendarDaysBetween(now, task.due) <= 0,
+).length;
+
+const readings = [agenda, tasks, projects, activity, devices];
+const count = (provenance: Provenance) =>
+  readings.filter((reading) => reading.provenance === provenance).length;
+---
+
+<Console title={`${site.device.model} console`} now={now}>
+  <StatusScreen
+    greeting={greeting(now)}
+    owner={site.owner}
+    date={formatLongDate(now)}
+    week={isoWeek(now)}
+    next={next}
+    tasks={{ open: tasks.data.length, dueToday }}
+    sources={{
+      live: count('live'),
+      local: count('local'),
+      sample: count('sample'),
+      offline: count('offline'),
+    }}
+  />
+  <AgendaModule reading={agenda} now={now} />
+  <TasksModule reading={tasks} now={now} />
+  <ProjectsModule reading={projects} now={now} />
+  <ActivityModule reading={activity} />
+  <DevicesModule reading={devices} now={now} />
+</Console>

@@ -1,0 +1,139 @@
+---
+import Module from './Module.astro';
+import type { Reading } from '../lib/readings.ts';
+import type { AgendaEvent } from '../lib/sources/agenda.ts';
+import { formatTime } from '../lib/time.ts';
+
+interface Props {
+  reading: Reading<AgendaEvent[]>;
+  now: Date;
+}
+
+const { reading, now } = Astro.props;
+
+type Row =
+  { kind: 'event'; event: AgendaEvent; state: 'past' | 'current' | 'upcoming' } | { kind: 'now' };
+
+// The "now" line is a tape playhead: it sits before the first event that hasn't started.
+const rows: Row[] = [];
+let placedNow = false;
+for (const event of reading.data) {
+  if (!placedNow && event.start > now) {
+    rows.push({ kind: 'now' });
+    placedNow = true;
+  }
+  const state = event.end <= now ? 'past' : event.start <= now ? 'current' : 'upcoming';
+  rows.push({ kind: 'event', event, state });
+}
+if (!placedNow && reading.data.length > 0) rows.push({ kind: 'now' });
+---
+
+<Module
+  id="agenda"
+  title="Agenda"
+  area="agenda"
+  provenance={reading.provenance}
+  detail={reading.detail}
+>
+  {reading.data.length === 0 ? (
+    <p class="empty">Nothing scheduled today.</p>
+  ) : (
+    <ol class="agenda">
+      {rows.map((row) =>
+        row.kind === 'now' ? (
+          <li class="now">
+            <span class="now-label">
+              Now <time datetime={now.toISOString()}>{formatTime(now)}</time>
+            </span>
+          </li>
+        ) : (
+          <li class:list={['event', row.state]}>
+            <span class="times">
+              <time datetime={row.event.start.toISOString()}>{formatTime(row.event.start)}</time>
+              <span aria-hidden="true">–</span>
+              <span class="visually-hidden">to</span>
+              <time datetime={row.event.end.toISOString()}>{formatTime(row.event.end)}</time>
+            </span>
+            <span class="title">
+              {row.event.title}
+              {row.state === 'current' && <span class="badge">In progress</span>}
+            </span>
+          </li>
+        ),
+      )}
+    </ol>
+  )}
+</Module>
+
+<style>
+  .agenda {
+    display: grid;
+  }
+
+  .event {
+    display: grid;
+    grid-template-columns: 7.25rem minmax(0, 1fr);
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+    border-block-start: 1px solid var(--rule);
+  }
+
+  .event:first-child,
+  .now + .event {
+    border-block-start: 0;
+  }
+
+  .times {
+    display: flex;
+    gap: 0.3em;
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .past .title {
+    color: var(--ink-muted);
+  }
+
+  .current {
+    box-shadow: inset 3px 0 0 var(--signal);
+    padding-inline-start: var(--space-3);
+  }
+
+  .badge {
+    display: block;
+    font-size: var(--size-12);
+    color: var(--ink-muted);
+  }
+
+  .now {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding-block: var(--space-1);
+    font-size: var(--size-12);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .now::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: var(--signal);
+  }
+
+  .now-label {
+    white-space: nowrap;
+  }
+
+  .empty {
+    color: var(--ink-muted);
+  }
+
+  @container (max-width: 17rem) {
+    .event {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+  }
+</style>
