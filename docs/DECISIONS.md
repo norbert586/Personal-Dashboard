@@ -169,3 +169,41 @@ Decision:
 - **Street layout:** OpenStreetMap data, credited on the site as its licence (ODbL) requires.
   Consequences: undocumented sources can change without notice. Each one is a `Reading<T>`, so a
   break shows "offline" instead of breaking the town. The two free keys live in `.env`.
+
+## ADR-016: The whole real grid is the world, generated and streamed by the square mile
+
+**Accepted · 2026-11-08**
+Context: Norbert asked to expand the overall scale. Instead of one compressed slice, the world
+covers everything between 23 and 29 Mile and Mound to Romeo Plank, about 5 by 6 miles.
+Decision: each real square mile becomes a section of about 32 by 32 tiles, the size of the whole
+prototype town. That makes the world roughly 30 times larger: under a minute by bike edge to edge.
+
+- A build-time script turns OpenStreetMap data into typed world data: roads with their types,
+  water, parks and the trail.
+- Seeded rules place houses along subdivision streets, shops along the main roads and farms or
+  woods on open land. Landmarks and project buildings are placed by hand.
+- The client builds only the sections near you and drops far ones; fog hides the edge.
+- Houses share a set of textures and are drawn instanced, so memory and draw calls stay flat as the
+  world grows.
+  Consequences: the MVP grows, and streaming and generation become core engine work. The map data
+  shipped to the browser is a derivative of OpenStreetMap: it carries the ODbL credit and is shared
+  under the same licence. Tiles per mile is one constant, tuned by feel.
+
+## ADR-017: News and traffic sources
+
+**Accepted · 2026-11-08**
+Context: Norbert wants local, tech, national and international news, and asked what the traffic
+question meant. Feeds were checked from the build machine on 2026-11-08.
+Decision:
+
+- **News:** RSS headlines that link back to the source.
+  - Local: ClickOnDetroit (WDIV), WDET and Bridge Michigan. The Free Press and Detroit News block
+    outside readers.
+  - Tech: Ars Technica and The Verge, plus Hacker News' free API.
+  - National: NPR and PBS NewsHour.
+  - World: BBC World and NPR World.
+- **Traffic:** TomTom's traffic API (a free key, about 2,500 requests a day; refreshing every 15
+  minutes uses about 100). MDOT's Mi Drive has no public feed. Default to incidents and slowdowns
+  on the area's main roads, which needs no personal information. A personal drive waits for
+  Norbert's answer.
+  Consequences: a third free key for `.env`. Headlines only, never full articles.

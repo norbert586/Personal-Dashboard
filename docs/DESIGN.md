@@ -38,6 +38,9 @@ copy values here.
 - When something stands between you and the camera, you show as a maize silhouette.
 - One tile is about 6 m. People are about 12 px tall at default zoom (small, realistic
   proportions). One storey is about 20 px.
+- Distances are compressed: one real square mile is a section of about 32 by 32 tiles, so the
+  buildings stay life-size while the trip between mile roads takes seconds. Sections stream in
+  around you, and fog softens the far edge.
 - Heights are written in the 2D art's pixels and converted, so the same numbers describe the 2D and
   3D versions.
 

@@ -24,9 +24,11 @@ check in one sitting.
 1. [ ] **Town island in Astro.** three.js from npm (pinned), the 3D engine ported from `prototype/`
        to TypeScript in `src/game/`, replacing the console page. An e2e smoke test: the canvas boots
        with no console errors.
-2. [ ] **One town definition.** Layout and buildings as typed data, laid out on a compressed slice
-       of the real street grid (SPEC: The map). Add the Town Hall, the park with a small lake, a
-       library, tennis courts and a dog park.
+2. [ ] **The big world** (ADR-016). A build script turns OpenStreetMap data for 23 to 29 Mile and
+       Mound to Romeo Plank into typed world data. Seeded rules place houses and shops along the real
+       streets, and landmarks are placed by hand: the Town Hall, the cinema, Main Street, the
+       airfield and the project buildings. Sections stream in by the square mile. Add the park with
+       a small lake, the library, tennis courts and dog park, then tune tiles per mile by biking it.
 3. [ ] **You.** Walk, run, bike, click or tap to walk, collisions, silhouette, camera rotate and zoom.
        Your device remembers where you were.
 4. [ ] **Projects.** Door prompt and window per building, plus a real page at `/projects/<slug>`
@@ -35,9 +37,9 @@ check in one sitting.
 5. [ ] **Coding activity.** GitHub pushes and new repos drive fireworks and the crane on the empty
        lot.
 6. [ ] **Today panel.** One key away, good on a phone, every feed on sample data with provenance.
-7. [ ] **Real feeds, one at a time:** weather, scores, comics, movies, flights overhead, news,
-       traffic, from the sources in ADR-015. Each gets a parser unit test and an offline state.
-       Answer the spec's open questions before news and traffic.
+7. [ ] **Real feeds, one at a time:** weather, scores, comics, movies, flights overhead, news
+       (local, tech, national, world), traffic, from the sources in ADR-015 and ADR-017. Each gets
+       a parser unit test and an offline state.
 8. [ ] **Town Hall to-dos and calendar** (ADR-014): storage, passkey sign-in for Norbert only,
        add, tick and delete from a phone. Everyone else can read.
 9. [ ] **The town shows the feeds.** Marquee, comic shop window, sports bar sign, real aircraft in
@@ -54,7 +56,8 @@ check in one sitting.
 - [ ] The plane and the landing challenge
 - [ ] Recurring characters who talk
 - [ ] Guestbook: visitors leave a plane or a name (needs moderation)
-- [ ] New districts: cider mill, industrial park, drive-in, high-school field, mall, a base
+- [ ] Past the grid's edges: north toward Romeo, a cider mill, a drive-in, a high-school field, a
+      mall, a base
 - [ ] Helicopter, train rides, skateboard, sled and snowmobile
 - [ ] Interiors for the hero buildings
 - [ ] More secrets

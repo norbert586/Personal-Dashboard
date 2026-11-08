@@ -32,7 +32,12 @@ the site's credits, per its licence). It isn't 1:1; the town keeps the pattern, 
 - Real anchors to borrow: a township office by Van Dyke north of 26 Mile (the Town Hall), a
   township hall, library and pond-filled park near 24 Mile, a multiplex near 23 Mile and Hayes (the
   cinema), and golf courses.
-- The MVP builds one compressed slice of this grid; new districts fill in the rest after launch.
+- **The whole grid is the world** (ADR-016). Each real square mile becomes a section about the
+  size of today's prototype town (32 by 32 tiles to start; one constant to tune). That makes the
+  world about 30 times today's town: under a minute to bike edge to edge, about three minutes on
+  foot.
+- Roads, ponds, parks and the trail come from the map data. Houses and shops are placed along the
+  real streets by seeded rules. Landmarks and project buildings are placed by hand.
 
 ## Why, in order
 
@@ -60,41 +65,41 @@ is no "skip the game" button. The Today panel and DOS mode are the quick ways in
 The MVP is a polished small town with real data. It goes public only when it's polished; there's no
 early deploy. Everything in the table ships together.
 
-| Area               | What ships                                                                                                                       | Done when                                                              |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| The town           | Today's prototype town in 3D on a slice of the real grid, plus a park with a small lake, a library, tennis courts and a dog park | One typed definition drives it; the default view matches the feel test |
-| Town Hall          | A simple to-do list and calendar. Everyone can read them; only Norbert can edit (ADR-014)                                        | Add, tick and delete from a phone in a few taps                        |
-| You                | A regular guy: walk (WASD/arrows), run (Shift), bike (B), click or tap to walk                                                   | Never gets stuck; keyboard alone can reach every building              |
-| Camera             | Isometric angle, free rotation (Q/E, drag), whole-step zoom, follows you; silhouette when hidden                                 | No shimmer while panning; you're always findable                       |
-| Projects           | Each project is a building. Walk up and press F (or tap) for its window: description, screenshots, tech, demo, GitHub, lessons   | Every project also has a real page at `/projects/<slug>`               |
-| Star projects      | Overhead, Tetris Plus and Crossbell Vending get screenshots and a demo link                                                      | Content filled in `src/content/projects/`                              |
-| Coding activity    | Loud: fireworks over a building on days its repo got a push; a crane on the empty lot when a new repo appears                    | Driven by GitHub, with an offline state                                |
-| Today panel        | One key (T) or button away, readable on a phone                                                                                  | Every feed shows its provenance (live, sample, offline)                |
-| Feeds              | Weather, scores (live and final), schedules, new comics, movies, news, traffic, flights overhead. No stocks                      | Each is a `Reading<T>` source with a unit test and an offline state    |
-| Feeds in town      | Cinema marquee, comic shop window, sports bar sign, real aircraft overhead, weather in the sky                                   | The town and the panel never disagree                                  |
-| Time, sky, seasons | Real sun and shadows; weather from the forecast; seasons by date                                                                 | Matches the feel test at day, dusk and night                           |
-| Sound              | Music on by default, starting at the first key press or click; tracks change with place and time                                 | Mute and volume are one key away                                       |
-| DOS mode           | The plain-text version of the whole site                                                                                         | Works with a screen reader and without WebGL                           |
-| Saving             | Your device remembers where you were and what you've found                                                                       | Nothing breaks when storage is blocked                                 |
+| Area               | What ships                                                                                                                                           | Done when                                                                             |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| The town           | The whole real grid, generated from map data and streamed by the square mile, plus a park with a small lake, a library, tennis courts and a dog park | Bike edge to edge in under a minute at 60 fps; the default view matches the feel test |
+| Town Hall          | A simple to-do list and calendar. Everyone can read them; only Norbert can edit (ADR-014)                                                            | Add, tick and delete from a phone in a few taps                                       |
+| You                | A regular guy: walk (WASD/arrows), run (Shift), bike (B), click or tap to walk                                                                       | Never gets stuck; keyboard alone can reach every building                             |
+| Camera             | Isometric angle, free rotation (Q/E, drag), whole-step zoom, follows you; silhouette when hidden                                                     | No shimmer while panning; you're always findable                                      |
+| Projects           | Each project is a building. Walk up and press F (or tap) for its window: description, screenshots, tech, demo, GitHub, lessons                       | Every project also has a real page at `/projects/<slug>`                              |
+| Star projects      | Overhead, Tetris Plus and Crossbell Vending get screenshots and a demo link                                                                          | Content filled in `src/content/projects/`                                             |
+| Coding activity    | Loud: fireworks over a building on days its repo got a push; a crane on the empty lot when a new repo appears                                        | Driven by GitHub, with an offline state                                               |
+| Today panel        | One key (T) or button away, readable on a phone                                                                                                      | Every feed shows its provenance (live, sample, offline)                               |
+| Feeds              | Weather, scores (live and final), schedules, new comics, movies, news, traffic, flights overhead. No stocks                                          | Each is a `Reading<T>` source with a unit test and an offline state                   |
+| Feeds in town      | Cinema marquee, comic shop window, sports bar sign, real aircraft overhead, weather in the sky                                                       | The town and the panel never disagree                                                 |
+| Time, sky, seasons | Real sun and shadows; weather from the forecast; seasons by date                                                                                     | Matches the feel test at day, dusk and night                                          |
+| Sound              | Music on by default, starting at the first key press or click; tracks change with place and time                                                     | Mute and volume are one key away                                                      |
+| DOS mode           | The plain-text version of the whole site                                                                                                             | Works with a screen reader and without WebGL                                          |
+| Saving             | Your device remembers where you were and what you've found                                                                                           | Nothing breaks when storage is blocked                                                |
 
 ### Feeds and where they come from
 
-| Feed              | Plan                                                                                                                                                                     |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Weather           | National Weather Service API (free, no key) for current conditions and the forecast                                                                                      |
-| Scores, schedules | ESPN's public JSON (free, no key, but undocumented) for all seven teams. The NHL and MLB official APIs back up the Red Wings and Tigers                                  |
-| Comics            | This week's DC, Image and Marvel releases from Comic Vine (free key). League of Comic Geeks has no public API and blocks bots. ComicList's weekly lists are the fallback |
-| Movies            | What's playing from TMDB (free key), with a link to Emagine Macomb's showtimes. Emagine has no public API, and its site blocks bots; real showtimes need a paid source   |
-| Flights overhead  | Public ADS-B feeds (adsb.lol or airplanes.live), not flightpi                                                                                                            |
-| Calendar, to-dos  | Built in: the Town Hall (no outside app)                                                                                                                                 |
-| News              | Open question 3                                                                                                                                                          |
-| Traffic           | Open question 4                                                                                                                                                          |
+| Feed              | Plan                                                                                                                                                                             |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Weather           | National Weather Service API (free, no key) for current conditions and the forecast                                                                                              |
+| Scores, schedules | ESPN's public JSON (free, no key, but undocumented) for all seven teams. The NHL and MLB official APIs back up the Red Wings and Tigers                                          |
+| Comics            | This week's DC, Image and Marvel releases from Comic Vine (free key). League of Comic Geeks has no public API and blocks bots. ComicList's weekly lists are the fallback         |
+| Movies            | What's playing from TMDB (free key), with a link to Emagine Macomb's showtimes. Emagine has no public API, and its site blocks bots; real showtimes need a paid source           |
+| Flights overhead  | Public ADS-B feeds (adsb.lol or airplanes.live), not flightpi                                                                                                                    |
+| Calendar, to-dos  | Built in: the Town Hall (no outside app)                                                                                                                                         |
+| News              | Headlines that link back. Local: ClickOnDetroit, WDET, Bridge Michigan. Tech: Ars Technica, The Verge, Hacker News. National: NPR, PBS NewsHour. World: BBC, NPR World (ADR-017) |
+| Traffic           | TomTom traffic (free key, about 2,500 requests a day). Area traffic on the main roads by default; a personal drive only if wanted (open question 3)                              |
 
 ## After the MVP
 
 The car (start-up sequence, radio, gears), the plane and the landing challenge, recurring characters
-who talk, the guestbook (visitors leave a plane or a name), new districts (cider mill, industrial
-park, drive-in, high-school field, mall, a base), the helicopter, train rides, skateboard and winter
+who talk, the guestbook (visitors leave a plane or a name), places past the grid's edges (north toward
+Romeo, a cider mill, a drive-in, a high-school field, a mall, a base), the helicopter, train rides, skateboard and winter
 vehicles, and interiors. Much later, a pizza delivery sim based on where I work. Order lives in
 `ROADMAP.md`.
 
@@ -135,9 +140,9 @@ The access gate (ADR-004) stays in the code and still fails closed when no mode 
 
 ## Open questions
 
-1. **Where the MVP slice sits on the grid.** Proposed: centred on 26 Mile and Van Dyke, with the
-   Town Hall, the orchard trail, M-53 and a pond subdivision in reach.
-2. **Signing in to edit the Town Hall:** a passkey (Face ID or fingerprint) is proposed in ADR-014.
-3. **News:** what kind? Local Detroit news, tech, world, or a few specific sites?
-4. **Traffic:** which drive matters in the morning, e.g. home to work? The general area is enough.
-5. **Hosting:** Claude proposes it before launch (ADR to come).
+1. **Signing in to edit the Town Hall:** a passkey (Face ID or fingerprint) is proposed in ADR-014.
+2. **Tiles per mile:** start at 32 and tune it once the big world is drivable.
+3. **Traffic:** area traffic on the main roads (no personal information), or your own drive, from
+   a start to an end such as home to work? A personal route is public too unless `PRIVATE_FEEDS`
+   is on.
+4. **Hosting:** Claude proposes it before launch (ADR to come).
