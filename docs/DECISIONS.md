@@ -81,3 +81,59 @@ no test framework is needed). Pages get Playwright e2e tests against the built s
 axe accessibility scans in both themes and a check that the gate fails closed.
 `npm run verify` runs everything.
 Consequences: three dev dependencies cover types, unit, e2e and accessibility checks.
+
+## ADR-009: From a private console to Ratiu Twp, a town you can walk
+
+**Accepted · 2026-11-08**
+Context: after three prototypes and a questionnaire, Norbert ranked the site's jobs: a fun place
+to play first, then his morning dashboard, then a showcase. Its audience is him, friends and family.
+Decision: the site becomes Ratiu Twp, a 3D pixel-art town you can walk, run and bike around.
+Projects are buildings, and the morning update lives in town and in a Today panel. The
+cassette-console screen from M0 is superseded. Its tooling, access gate, readings and tests carry
+over. ADR-005 (hosting) and ADR-006 (tasks) become open questions in the spec.
+Consequences: SPEC, DESIGN and ROADMAP are rewritten. The console UI is replaced during the MVP.
+
+## ADR-010: 3D with three.js, drawn to look hand-pixelled
+
+**Accepted · 2026-11-08**
+Context: Norbert wants an isometric look, free camera rotation and some PS1-era 3D, and later cars
+and planes. A pre-drawn 2D image can't rotate freely.
+Decision: render the town with three.js. An orthographic camera looks down at 30°. The scene is
+drawn at low resolution and scaled up by whole device pixels, with nearest-neighbour textures
+painted by code. At the default camera one texel lands on one pixel, so the 3D town matches the 2D
+prototype. Buildings stay parametric (boxes, gables, cylinders), generated from one definition.
+The prototype loads three r149's single-file build so its 3D builders can replace the 2D ones by
+name. The real build installs three from npm, pinned, and imports it as a module.
+Consequences: about 150 KB of gzipped JavaScript for three.js, loaded only by the town. The town
+needs WebGL; DOS mode and the HTML pages are the fallback. three.js upgrades are deliberate.
+
+## ADR-011: Everything public, including the calendar and to-dos
+
+**Accepted · 2026-11-08 · Norbert's call**
+Context: the site is mainly for Norbert, friends and family, and he asked for every feed to be
+public. The risk, plainly: with the town named after a real area, a public calendar tells
+strangers when he's away, and traffic shows his commute.
+Decision: all feeds are public, with two guardrails. The calendar shows titles and times only, with
+no locations and no guest names; that also protects the other people on his calendar. One server
+setting, `PRIVATE_FEEDS`, hides the calendar, to-dos and traffic without a code change. The gate
+(ADR-004) keeps failing closed and gains a `public` mode for launch.
+Consequences: going private later takes one setting. Revisit if the audience grows.
+
+## ADR-012: The name is Ratiu Twp, with no 586
+
+**Accepted · 2026-11-08**
+Context: "586" (the area code and Norbert's handle) felt slapped on. Norbert named the town after
+his last name, written the way Michigan signs write townships.
+Decision: the site, the town and the title screen are Ratiu Twp, and the airfield is Ratiu Field.
+No 586 anywhere in the product, except the GitHub username inside repository links.
+Consequences: the M0 "N-586" naming is retired.
+
+## ADR-013: Keep the prototypes in the repo until they're ported
+
+**Accepted · 2026-11-08**
+Context: the prototypes (2D v3 and the 3D feel test) define the look, the town layout and the
+simulation. They were built in a scratch folder that disappears with the cloud session.
+Decision: keep their sources in `prototype/`, with `prototype/build.sh` to assemble them. They're
+throwaway: no tests, and excluded from formatting and type checks. The MVP ports them to
+TypeScript in `src/game/`. Delete `prototype/` once nothing references it.
+Consequences: one more folder for now, with a clear end date.

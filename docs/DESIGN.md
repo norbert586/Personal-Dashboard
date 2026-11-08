@@ -1,122 +1,72 @@
-# Design: the N-586 console
+# Design: Ratiu Twp
 
-The console is designed as a piece of personal hardware imagined around 1982: a putty-coloured
-chassis with screwed-in panels, a glowing amber CRT, a segment-display clock and tape-deck keys.
-**Cassette futurism** gives the world; **utilitarian design** (Braun, Teenage Engineering,
-cockpit instruments) gives the discipline: every mark has a job.
+A rust-belt Michigan small town in 16-bit pixel art, built in 3D and seen through an isometric camera
+you can turn. Think SimCity 2000 that you can walk into, with Main Street lit up at night.
 
-Token values live in `src/styles/tokens.css` (the source of truth). This doc explains intent;
-don't copy values here.
+Values live in code: materials and colour ramps, building definitions and camera constants are in
+the game source (today `prototype/`, after the port `src/game/`). This doc explains intent; don't
+copy values here.
 
 ## Principles
 
-1. **Casing is printed; screens glow.** Text on the chassis is silkscreen: Michroma for titles,
-   B612 for everything else. Monospace (B612 Mono) appears only _on screens_, as emitted light.
-   This rule decides every font question.
-2. **One loud thing.** The status screen (the CRT) is the only element with scanlines, a
-   vignette and a power-on moment. Other screens (clock, activity, devices) emit light but stay
-   flat, and the casing stays quiet and printed.
-3. **Every indicator means something.** No decorative LEDs. Each indicator reports a real state
-   and is always paired with a word, because colour alone isn't enough.
-4. **Panels, not cards.** Modules are faceplates in one chassis, separated by 2 px seams. No
-   floating cards, no drop shadows, no hover lift. Depth comes from bevels and recessed screens.
-5. **Plain words.** Sentence case. Name things by what they do ("Code activity", not "Telemetry").
-   Tape-transport glyphs (● ▶ ❚❚ ■) add the flavour; the words beside them carry the meaning.
+1. **One texel, one pixel.** The scene renders at low resolution with nearest-neighbour textures and
+   is scaled up by whole device pixels. At the default camera, one texture pixel lands on one screen
+   pixel, so the 3D town reads as hand-pixelled. No smoothing, no fractional zoom, no mipmaps.
+2. **Pixel textures, simple shapes.** Buildings are boxes, gables, cylinders and cones (PS1-era
+   geometry) wearing 16-bit textures painted by code: brick with mortar, lap siding, shingle
+   courses, corrugated tin, lit and unlit windows. Trees are faceted low-poly blobs.
+3. **Hue-shifted materials.** Every material is a short colour ramp with cool shadows and warm
+   highlights. Seasons swap ramps (fall leaves, bare winter trees, snow).
+4. **Real light.** The sun's position comes from the real date and time in Macomb County. Shadows
+   are hard-edged. At night, windows, neon and lamps take over through emissive textures, halos and
+   pools of light on the ground.
+5. **Michigan, not generic.** Brick Main Street with awnings, a Coney diner, a strip mall, a tool and
+   die shop, a grain elevator by the tracks, ranch houses with attached garages, a water tower, power
+   lines, and an airfield with one north-south runway like Romeo State's 18/36.
+6. **Every building means something.** Projects and feeds live in buildings, and what the town shows
+   always agrees with the data. People, cars, smoke and the train are there for life.
+7. **No 586.** The name is Ratiu Twp. The GitHub username inside repository links is the only
+   exception (ADR-012).
 
-## Materials and colour
+## Camera and scale
 
-| Material         | Role                                                                                 |
-| ---------------- | ------------------------------------------------------------------------------------ |
-| Putty / graphite | Chassis plastic. Day theme is putty, night theme is graphite.                        |
-| Faceplate        | Module panels, one step lighter than the chassis.                                    |
-| Seam             | The dark gaps between panels. They draw the grid, so no borders are needed.          |
-| Ink              | Silkscreen text. Muted ink for secondary text (still ≥ 4.5:1).                       |
-| Glass            | Screens. Always dark in both themes, like real CRTs on beige machines.               |
-| Phosphor amber   | Everything a screen emits. Also the single hue of the activity ramp.                 |
-| Signal orange    | International orange, the "REC" colour: now-marker, Building status, focus on glass. |
-| Status           | Green = live, red = offline. Reserved for state, never used for decoration.          |
+- Orthographic, 30° down, at 45° by default. It rotates freely around you (Q/E or drag) and zooms in
+  whole steps. It follows you with a little look-ahead and is snapped to whole pixels while panning,
+  so walls don't shimmer.
+- When something stands between you and the camera, you show as a maize silhouette.
+- One tile is about 6 m. People are about 12 px tall at default zoom (small, realistic
+  proportions). One storey is about 20 px.
+- Heights are written in the 2D art's pixels and converted, so the same numbers describe the 2D and
+  3D versions.
 
-Theming uses `color-scheme` + `light-dark()`, so each token is defined once with both values.
-**Auto** follows the OS. The Day/Night keys override it; the choice is saved in a cookie, so
-the server renders the right theme on the first byte (no flash, no inline script).
+## Light, time and weather
 
-## Type
+- Day: a hemisphere light carries the sky colour and the sun carries the shadows. A low sun is
+  boosted a little so November shadows still read.
+- Night: the emissive layer (lit windows, neon signs, lamps, runway lights) fades in as the sun goes
+  down. Halos are screen-space points nudged toward the camera so nearby walls don't clip them.
+- The bike has a headlight. Cars have headlights and tail lights.
+- Fog only touches the far edges of the world.
+- Weather comes from the forecast: overcast dims the sun and adds cloud, rain and snow fall, and
+  snow covers the ground.
 
-| Face              | Role                                   | Why                                                               |
-| ----------------- | -------------------------------------- | ----------------------------------------------------------------- |
-| **Michroma**      | Brand, module titles, cassette labels  | A Microgramma descendant, the typeface of 70s–80s sci-fi hardware |
-| **B612**          | All casing text: lists, labels, values | Designed for Airbus cockpit displays; built for legibility        |
-| **B612 Mono**     | Screen text only                       | Same skeleton as B612, so screens and casing feel related         |
-| **DSEG7 Classic** | The clock only                         | Real seven-segment geometry, with unlit "ghost" segments          |
+## Interface
 
-Scale (classical, after Bringhurst): 12 · 14 · 16 · 18 · 21 · 24 · 36 · 48 px. Body 16/1.5.
-Line length ≤ 70ch. Large standalone numbers use proportional figures; `tabular-nums` only in
-aligned columns (agenda times, tables).
+- Old PC game: bevelled navy panels, maize accent, ink-coloured text. One dark look for the game.
+- Type: Jersey 10 for display (names, titles), Pixelify Sans for the interface.
+- On screen: a name badge, camera and bike controls, a compass, a door prompt that names its key,
+  and a hint bar. Windows open in the centre on desktop and as a bottom sheet on phones.
+- Plain words, sentence case. Buttons say what happens. Status is always a word as well as a colour.
 
-## Layout
+## Sound
 
-```
-┌ chassis ─────────────────────────────────────────────────────────────┐
-│ ▤ N-586  Personal console                 [ 14:32 ]  [Auto|Day|Night] │ ← rail
-│ ┌──────────────────────────────────────────┬──────────────────────┐   │
-│ │ STATUS SCREEN (CRT, the loud thing)      │ Agenda               │   │
-│ │ Good afternoon, Norbert.                 │ 12:00 Lunch          │   │
-│ │ Next  15:00 Lab session   in 28 min      │ ── now 14:32 ──      │   │
-│ │ Tasks 4 open, 1 due today                │ 15:00 Lab session    │   │
-│ ├──────────────────────────────────────────┼──────────────────────┤   │
-│ │ Projects (cassette spines)               │ Tasks                │   │
-│ │ ● Building  Crossbell vending   2 d ago  │ ☐ Review the spec    │   │
-│ │ ❚❚ Paused   flightpi            8 mo ago │ ☐ Pick hosting       │   │
-│ ├────────────────────────────┬─────────────┴──────────────────────┤   │
-│ │ Code activity (LED matrix) │ Devices (LED bar meters)           │   │
-│ └────────────────────────────┴────────────────────────────────────┘   │
-│ rating plate: model, revision, rendered-at                            │
-└───────────────────────────────────────────────────────────────────────┘
-```
+Chiptune music on by default once you press a key or click, since browsers need that first gesture.
+Tracks change with the place and time of day. Mute and volume sit in the controls.
 
-- 12-column panel grid at ≥ 1100 px, 6 columns at ≥ 720 px, one column below that, with the
-  status screen first. Modules use container queries for their own internals.
-- Everything is left-aligned. Numbers in columns align right.
-- Radii follow hierarchy: chassis 14 px > screens 12 px > keys 4 px. Panels are square;
-  the seams do the separating.
+## Accessibility
 
-## Components
-
-- **Status screen:** CRT with bezel, vignette, scanlines, phosphor glow, blinking cursor.
-- **Segment clock:** DSEG7 digits over ghost "88:88"; the colon blinks once per second.
-- **Theme keys:** three tape-deck keys (Auto, Day, Night); the pressed key sits lower. They're
-  native radio buttons underneath.
-- **Module faceplate:** title (Michroma) and provenance indicator (dot + word) on one line.
-- **Cassette spine:** one row per project: status band and glyph, title, stack, last activity.
-- **LED matrix:** 12 weeks × 7 days of round LEDs on glass, five-step amber ramp, with a table
-  view underneath.
-- **LED bar meter:** ten segments. Lit segments take the severity colour (amber normal,
-  orange warm, red hot), unlit ones stay dim. The value and state are always printed beside it.
-- **Rating plate:** footer facts (model, revision, render time), like the label under a device.
-
-## Motion
-
-One orchestrated moment: the status screen powers on at page load (≤ 450 ms). The only
-ongoing motion is the clock colon and the cursor blinking. With `prefers-reduced-motion`,
-all of it stops. No entrance animations on panels, no hover effects beyond colour.
-
-## Accessibility floor
-
-WCAG 2.2 AA. axe runs in every e2e test, in both themes. Visible focus everywhere (ink outline
-on casing, orange on glass). Every chart has a text or table equivalent. Status indicators pair
-colour with a shape and a word. Hit targets ≥ 24 px. Works at 200 % zoom and without JS.
-
-## Deliberately avoided
-
-These are the patterns that make a page look generated or templated:
-
-- The SaaS card kit: floating rounded cards with soft grey shadows and gradient washes.
-- All-caps tracked-out eyebrow labels above headings; labels in monospace on the casing.
-- Meta strings joined with middle dots; "→" glued onto links; hover-lift on everything.
-- Off-the-shelf UI kits (MUI, shadcn defaults). Our look comes from our own tokens.
-
-## Open design questions
-
-1. Amber phosphor (current) or green?
-2. Physical details: keep it as is, or add more (screw heads, a speaker grille)?
-3. Does Day or Night feel like "the" console to you? Both ship; Auto follows your OS.
+- The town is the fun layer. Every piece of content also exists as HTML: project pages, the Today
+  panel and DOS mode.
+- The town works by keyboard alone, with visible focus, and prompts name the key to press.
+- Reduced motion: ambient traffic and animation pause, and nothing flashes.
+- Colour is never the only signal.

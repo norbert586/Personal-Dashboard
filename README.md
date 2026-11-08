@@ -1,19 +1,32 @@
-# N-586 personal console
+# Ratiu Twp
 
-My private command console: today's agenda, open tasks, every project's state, code activity
-and device health on one screen. Designed like a piece of cassette-futurist hardware.
+My personal site as a small 3D pixel-art town you can walk, run and bike around. Every building
+is one of my projects, and the morning update (weather, scores, comics, showtimes and more) lives
+in town and in a Today panel. Loosely based on Romeo and Washington Township, Michigan.
 
-Built with Astro 7 + TypeScript. Private by default: a production server refuses every
-request until an access mode is configured (see `docs/DECISIONS.md`, ADR-004 and ADR-005).
+**Status:** direction and MVP defined in [`docs/SPEC.md`](docs/SPEC.md) and
+[`docs/ROADMAP.md`](docs/ROADMAP.md). The town exists as prototypes in `prototype/`. Until the MVP
+replaces it, the Astro app still serves the earlier console.
 
-## Run it
+Built with Astro 7, TypeScript and three.js.
+
+## Prototypes
+
+```sh
+prototype/build.sh     # writes prototype/dist/town-2d.html and ratiu-twp-3d.html
+```
+
+Open either file in a browser. The 3D one loads three.js from a CDN.
+
+## Run the app
 
 ```sh
 npm install
 npm run dev            # http://localhost:4321
 ```
 
-Production build, gated to loopback, LAN and Tailscale addresses:
+Production build, gated to loopback, LAN and Tailscale addresses until the `public` mode lands
+(ADR-011):
 
 ```sh
 npm run build

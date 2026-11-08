@@ -1,8 +1,9 @@
-# Personal console
+# Ratiu Twp
 
-Norbert's private command console: one screen showing today's agenda, open tasks, every
-project's state, code activity and device health. Single user, private by default.
-Astro 7 + TypeScript, server-rendered (Node adapter), plain CSS with design tokens.
+Norbert's personal site as a small 3D pixel-art town you can walk, run and bike around. Every
+building is a project; the morning update lives in town and in a Today panel. Public, for
+Norbert, friends and family. Astro 7 + TypeScript, server-rendered (Node adapter); the town is a
+three.js island; plain CSS with design tokens for the HTML parts.
 
 ## Read before you work
 
@@ -55,7 +56,8 @@ npm run format       # prettier --write .
 
 ## Code conventions
 
-- TypeScript strict. Server-only logic in `src/lib/`. UI in `src/components/*.astro`.
+- TypeScript strict. Server-only logic in `src/lib/`. UI in `src/components/*.astro`. The town
+  (client-side, three.js) goes in `src/game/`.
 - Every data source returns a `Reading<T>` (`src/lib/readings.ts`) carrying provenance:
   `live | local | sample | offline`. Sources never throw into a page: on failure, return
   `offline` with a human-readable `detail`.
@@ -77,3 +79,6 @@ npm run format       # prettier --write .
 - The CSP only applies to `build` + `preview`/server, never `dev`. e2e tests run against the
   built server, so they catch CSP violations.
 - Cloud sandboxes can't reach the GitHub REST/GraphQL user APIs; sources fall back to sample.
+- `prototype/` holds the throwaway 2D and 3D prototypes the MVP ports from (ADR-013).
+  `prototype/build.sh` assembles them into `prototype/dist/`. They're excluded from formatting
+  and type checks. Port from them; don't add features there.

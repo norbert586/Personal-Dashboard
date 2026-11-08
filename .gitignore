@@ -18,3 +18,4 @@ playwright-report/
 .vscode/*
 !.vscode/extensions.json
 .idea/
+prototype/dist/

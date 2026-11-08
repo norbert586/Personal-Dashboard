@@ -1,0 +1,83 @@
+
+<canvas id="world" aria-hidden="true"></canvas>
+<p class="vh">An animated, 1995-style isometric airfield town where each building is one of Norbert's projects. Press Escape or the Menu button to open the pause menu.</p>
+
+<header class="hud" id="hud" hidden>
+  <div class="badge bevel"><b>NORBERT FIELD</b><span>municipal airfield</span></div>
+  <div class="readout bevel"><span id="hud-date"></span><span id="hud-time"></span><span id="hud-wx"></span></div>
+  <div class="hud-keys">
+    <button class="key" id="btn-pause" type="button">Menu</button>
+    <button class="key" id="btn-items" type="button">Projects</button>
+    <button class="key" id="btn-map" type="button">Map</button>
+    <button class="key" id="btn-zout" type="button" aria-label="Zoom out">−</button>
+    <button class="key" id="btn-zin" type="button" aria-label="Zoom in">+</button>
+  </div>
+</header>
+
+<footer class="statusbar" id="statusbar" hidden>
+  <span class="label" id="status-label" aria-live="polite"></span>
+  <span class="hint"><span class="kb">Click a building. Esc pauses. Scroll zooms, arrows pan.</span><span class="touch">Tap a building. Drag to pan, pinch to zoom.</span></span>
+</footer>
+
+<section class="bwin bevel" id="bwin" role="dialog" aria-labelledby="bwin-title" hidden>
+  <div class="titlebar" id="bwin-bar"><h2 id="bwin-title"></h2><button class="key" id="bwin-close" type="button">Close</button></div>
+  <div class="bwin-body" id="bwin-body"></div>
+</section>
+
+<section class="pause" id="pause" role="dialog" aria-modal="true" aria-labelledby="pause-title" hidden>
+  <div class="window bevel">
+    <div class="titlebar">
+      <h2 id="pause-title">PAUSED</h2>
+      <span class="meta" id="pause-meta"></span>
+      <button class="key" id="btn-resume" type="button">Resume</button>
+    </div>
+    <div class="body">
+      <ul class="menu-list" id="menu">
+        <li><button class="menu-item" type="button" data-pane="resume">Resume</button></li>
+        <li><button class="menu-item" type="button" data-pane="map">Map</button></li>
+        <li><button class="menu-item" type="button" data-pane="projects">Projects <small id="proj-count"></small></button></li>
+        <li><button class="menu-item" type="button" data-pane="inventory">Inventory <small id="inv-count"></small></button></li>
+        <li><button class="menu-item" type="button" data-pane="status">Status <small>today</small></button></li>
+        <li><button class="menu-item" type="button" data-pane="jukebox">Jukebox</button></li>
+        <li><button class="menu-item" type="button" data-pane="options">Options</button></li>
+        <li class="menu-sep" role="presentation"></li>
+        <li><button class="menu-item" type="button" data-pane="quit">Quit to DOS</button></li>
+      </ul>
+      <div class="pane" id="pane" tabindex="-1"></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen dos" id="boot-dos" hidden><span id="boot-text"></span><span class="caret"></span></section>
+
+<section class="screen setup" id="boot-setup" hidden>
+  <div class="setup-box">
+    <h1>NORBERT FIELD SETUP</h1>
+    <p>Select your sound device:</p>
+    <div class="setup-opts" id="setup-opts" role="listbox" aria-label="Sound device">
+      <button type="button" role="option" aria-selected="true" data-sound="on">Sound Blaster 16 (sound on)</button>
+      <button type="button" role="option" aria-selected="false" data-sound="off">No sound</button>
+    </div>
+    <p class="setup-foot">Up and Down to choose. Enter to confirm.</p>
+  </div>
+</section>
+
+<section class="screen title-screen" id="boot-title" hidden>
+  <div>
+    <h1>NORBERT<br>FIELD</h1>
+    <p class="sub">A real-time airfield town. It grows as Norbert ships.</p>
+    <p class="press">Press any key</p>
+    <p class="copy">© 1995 Norbert Software. Prototype build 0.3</p>
+  </div>
+</section>
+
+<button class="key skip" id="btn-skip" type="button" hidden>Skip intro</button>
+
+<section class="screen dos dos-quit" id="dosq" hidden aria-label="DOS prompt">
+  <pre id="dosq-out"></pre>
+  <form class="dos-line" id="dosq-form">
+    <label for="dosq-in">C:\GAMES\NORBERT&gt;</label>
+    <input id="dosq-in" autocomplete="off" autocapitalize="characters" spellcheck="false">
+  </form>
+  <button class="key back" id="btn-back" type="button">Back to the game</button>
+</section>
