@@ -22,7 +22,9 @@ copy values here.
    pools of light on the ground.
 5. **Michigan, not generic.** Brick Main Street with awnings, a Coney diner, a strip mall, a tool and
    die shop, a grain elevator by the tracks, ranch houses with attached garages, a water tower, power
-   lines, and an airfield with one north-south runway like Romeo State's 18/36.
+   lines, and an airfield with one north-south runway like Romeo State's 18/36. Streets follow the
+   real section-road grid (mile roads, M-53, the Van Dyke corridor, the Macomb Orchard Trail and
+   subdivision ponds), compressed. See the spec's map section.
 6. **Every building means something.** Projects and feeds live in buildings, and what the town shows
    always agrees with the data. People, cars, smoke and the train are there for life.
 7. **No 586.** The name is Ratiu Twp. The GitHub username inside repository links is the only

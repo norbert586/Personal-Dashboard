@@ -24,8 +24,9 @@ check in one sitting.
 1. [ ] **Town island in Astro.** three.js from npm (pinned), the 3D engine ported from `prototype/`
        to TypeScript in `src/game/`, replacing the console page. An e2e smoke test: the canvas boots
        with no console errors.
-2. [ ] **One town definition.** Layout and buildings as typed data. Add the park with a small lake,
-       a library, tennis courts and a dog park.
+2. [ ] **One town definition.** Layout and buildings as typed data, laid out on a compressed slice
+       of the real street grid (SPEC: The map). Add the Town Hall, the park with a small lake, a
+       library, tennis courts and a dog park.
 3. [ ] **You.** Walk, run, bike, click or tap to walk, collisions, silhouette, camera rotate and zoom.
        Your device remembers where you were.
 4. [ ] **Projects.** Door prompt and window per building, plus a real page at `/projects/<slug>`
@@ -34,16 +35,18 @@ check in one sitting.
 5. [ ] **Coding activity.** GitHub pushes and new repos drive fireworks and the crane on the empty
        lot.
 6. [ ] **Today panel.** One key away, good on a phone, every feed on sample data with provenance.
-7. [ ] **Real feeds, one at a time:** weather, scores, comics, showtimes, flights overhead,
-       calendar, to-dos, news, traffic. Each gets a parser unit test and an offline state. Answer
-       the spec's open questions before the last four.
-8. [ ] **The town shows the feeds.** Marquee, comic shop window, sports bar sign, real aircraft in
+7. [ ] **Real feeds, one at a time:** weather, scores, comics, movies, flights overhead, news,
+       traffic, from the sources in ADR-015. Each gets a parser unit test and an offline state.
+       Answer the spec's open questions before news and traffic.
+8. [ ] **Town Hall to-dos and calendar** (ADR-014): storage, passkey sign-in for Norbert only,
+       add, tick and delete from a phone. Everyone else can read.
+9. [ ] **The town shows the feeds.** Marquee, comic shop window, sports bar sign, real aircraft in
        the sky, the forecast's weather and seasons.
-9. [ ] **Music and sound.** On by default after the first key press; tracks by place and time.
-10. [ ] **DOS mode, passport stamps and a handful of secrets.**
-11. [ ] **Polish.** Performance (fewer draw calls, phones), an accessibility pass, `public` gate
+10. [ ] **Music and sound.** On by default after the first key press; tracks by place and time.
+11. [ ] **DOS mode, passport stamps and a handful of secrets.**
+12. [ ] **Polish.** Performance (fewer draw calls, phones), an accessibility pass, `public` gate
         mode and `PRIVATE_FEEDS`.
-12. [ ] **Launch.** Pick hosting (new ADR), deploy, check it from a phone off Wi-Fi.
+13. [ ] **Launch.** Pick hosting (new ADR), deploy, check it from a phone off Wi-Fi.
 
 ## M2: After launch
 
@@ -55,6 +58,7 @@ check in one sitting.
 - [ ] Helicopter, train rides, skateboard, sled and snowmobile
 - [ ] Interiors for the hero buildings
 - [ ] More secrets
+- [ ] Much later: a pizza delivery sim based on where Norbert works
 
 ## Ideas (not planned)
 

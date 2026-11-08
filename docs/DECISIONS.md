@@ -137,3 +137,35 @@ Decision: keep their sources in `prototype/`, with `prototype/build.sh` to assem
 throwaway: no tests, and excluded from formatting and type checks. The MVP ports them to
 TypeScript in `src/game/`. Delete `prototype/` once nothing references it.
 Consequences: one more folder for now, with a clear end date.
+
+## ADR-014: The Town Hall keeps its own to-dos and calendar
+
+**Proposed · 2026-11-08 · sign-in method needs Norbert's OK**
+Context: Norbert wants a simple to-do list with a calendar in the town's Town Hall, rather than
+reading another app. Everything is readable by the public (ADR-011), so changes must be locked
+to him.
+Decision: the site stores to-dos and calendar entries itself (title, optional date and time, done).
+Anyone can read them; only Norbert can add, tick or delete. Proposed sign-in: a passkey, so Face ID
+or a fingerprint on his phone, with no password to leak. That needs one small WebAuthn server
+library. Storage follows hosting: a SQLite file on a Node host, or the host's own key-value store.
+Consequences: the site gains its first write path and its first login, for one person. Hosting now
+needs persistent storage. Visitors still never sign in.
+
+## ADR-015: Where the feeds come from
+
+**Accepted · 2026-11-08**
+Context: Norbert wants free sources. We checked each one from the build machine on 2026-11-08.
+Decision:
+
+- **Scores:** ESPN's public JSON for all seven teams. It's free and needs no key, but it's
+  undocumented. The NHL and MLB official APIs back up the Red Wings and Tigers.
+- **Comics:** Comic Vine (a free key) for this week's DC, Image and Marvel releases. League of Comic
+  Geeks has no public API and refuses automated requests, so it's out. ComicList's weekly lists are
+  the fallback.
+- **Movies:** TMDB (a free key) for what's playing, with a link to Emagine Macomb's own showtimes
+  page. Emagine has no public API and its site blocks bots, so we don't scrape it. Real showtimes
+  wait for a paid or official source.
+- **Weather:** the National Weather Service API (no key).
+- **Street layout:** OpenStreetMap data, credited on the site as its licence (ODbL) requires.
+  Consequences: undocumented sources can change without notice. Each one is a `Reading<T>`, so a
+  break shows "offline" instead of breaking the town. The two free keys live in `.env`.

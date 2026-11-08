@@ -1,6 +1,6 @@
 # Spec: Ratiu Twp
 
-**Status:** v1.0, MVP defined · **Updated:** 2026-11-08
+**Status:** v1.1, MVP defined · **Updated:** 2026-11-08
 
 This is the only spec. Change it here, in place; don't fork it.
 
@@ -10,9 +10,29 @@ My personal site as a small 3D pixel-art town you can walk, run and bike around.
 is one of my projects. The morning update lives in town (the cinema, the comic shop, the sports
 bar) and in a Today panel one key away. The town is loosely Romeo and Washington Township,
 Michigan: a rust-belt small town with an airfield, a brick Main Street, a subdivision, a tool and
-die shop, a grain elevator by the tracks and orchards at the edge.
+die shop, a grain elevator by the tracks and orchards at the edge. Its streets follow the real
+road grid between 23 and 29 Mile and Mound to Romeo Plank, compressed rather than to scale (see
+The map).
 
 Prototypes that define the look and feel live in `prototype/` (see ADR-013).
+
+## The map
+
+The street layout is based on the real section-road grid, from OpenStreetMap data (credited in
+the site's credits, per its licence). It isn't 1:1; the town keeps the pattern, not the distances.
+
+- **Mile roads** run east-west one mile apart (23 to 29 Mile). **Section roads** run north-south:
+  Mound, Van Dyke, Jewell, Schoenherr, Hayes, Garfield and Romeo Plank.
+- **M-53** curves north-south through the middle as a freeway, with Van Dyke running beside it as
+  the old main road.
+- The **Macomb Orchard Trail** crosses diagonally from 26 Mile and Mound toward Romeo. It's the
+  town's rail trail.
+- Dense, curvy **subdivisions with ponds** fill the southern squares. The north-east is open land
+  with a few roads.
+- Real anchors to borrow: a township office by Van Dyke north of 26 Mile (the Town Hall), a
+  township hall, library and pond-filled park near 24 Mile, a multiplex near 23 Mile and Hayes (the
+  cinema), and golf courses.
+- The MVP builds one compressed slice of this grid; new districts fill in the rest after launch.
 
 ## Why, in order
 
@@ -42,14 +62,15 @@ early deploy. Everything in the table ships together.
 
 | Area               | What ships                                                                                                                       | Done when                                                              |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| The town           | Today's prototype town in 3D, plus a park with a small lake, a library, tennis courts and a dog park                             | One typed definition drives it; the default view matches the feel test |
+| The town           | Today's prototype town in 3D on a slice of the real grid, plus a park with a small lake, a library, tennis courts and a dog park | One typed definition drives it; the default view matches the feel test |
+| Town Hall          | A simple to-do list and calendar. Everyone can read them; only Norbert can edit (ADR-014)                                        | Add, tick and delete from a phone in a few taps                        |
 | You                | A regular guy: walk (WASD/arrows), run (Shift), bike (B), click or tap to walk                                                   | Never gets stuck; keyboard alone can reach every building              |
 | Camera             | Isometric angle, free rotation (Q/E, drag), whole-step zoom, follows you; silhouette when hidden                                 | No shimmer while panning; you're always findable                       |
 | Projects           | Each project is a building. Walk up and press F (or tap) for its window: description, screenshots, tech, demo, GitHub, lessons   | Every project also has a real page at `/projects/<slug>`               |
 | Star projects      | Overhead, Tetris Plus and Crossbell Vending get screenshots and a demo link                                                      | Content filled in `src/content/projects/`                              |
 | Coding activity    | Loud: fireworks over a building on days its repo got a push; a crane on the empty lot when a new repo appears                    | Driven by GitHub, with an offline state                                |
 | Today panel        | One key (T) or button away, readable on a phone                                                                                  | Every feed shows its provenance (live, sample, offline)                |
-| Feeds              | Weather, scores (live and final), schedules, new comics, showtimes, calendar, to-dos, news, traffic, flights overhead. No stocks | Each is a `Reading<T>` source with a unit test and an offline state    |
+| Feeds              | Weather, scores (live and final), schedules, new comics, movies, news, traffic, flights overhead. No stocks                      | Each is a `Reading<T>` source with a unit test and an offline state    |
 | Feeds in town      | Cinema marquee, comic shop window, sports bar sign, real aircraft overhead, weather in the sky                                   | The town and the panel never disagree                                  |
 | Time, sky, seasons | Real sun and shadows; weather from the forecast; seasons by date                                                                 | Matches the feel test at day, dusk and night                           |
 | Sound              | Music on by default, starting at the first key press or click; tracks change with place and time                                 | Mute and volume are one key away                                       |
@@ -58,24 +79,24 @@ early deploy. Everything in the table ships together.
 
 ### Feeds and where they come from
 
-| Feed              | Plan                                                                                                                                                        |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Weather           | National Weather Service API (free, no key) for current conditions and the forecast                                                                         |
-| Scores, schedules | Pistons, Lions, Tigers, Red Wings, Michigan basketball and football, Georgia Tech football. Free sources are mostly unofficial, so pick one with a fallback |
-| Comics            | This week's new releases from DC, Image and Marvel. No good official API; research in the feeds step                                                        |
-| Movies            | Showtimes for Emagine Macomb. No public API; research in the feeds step                                                                                     |
-| Flights overhead  | Public ADS-B feeds (adsb.lol or airplanes.live), not flightpi                                                                                               |
-| Calendar          | Open question 1                                                                                                                                             |
-| To-dos            | Open question 2                                                                                                                                             |
-| News              | Open question 3                                                                                                                                             |
-| Traffic           | Open question 4                                                                                                                                             |
+| Feed              | Plan                                                                                                                                                                     |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Weather           | National Weather Service API (free, no key) for current conditions and the forecast                                                                                      |
+| Scores, schedules | ESPN's public JSON (free, no key, but undocumented) for all seven teams. The NHL and MLB official APIs back up the Red Wings and Tigers                                  |
+| Comics            | This week's DC, Image and Marvel releases from Comic Vine (free key). League of Comic Geeks has no public API and blocks bots. ComicList's weekly lists are the fallback |
+| Movies            | What's playing from TMDB (free key), with a link to Emagine Macomb's showtimes. Emagine has no public API, and its site blocks bots; real showtimes need a paid source   |
+| Flights overhead  | Public ADS-B feeds (adsb.lol or airplanes.live), not flightpi                                                                                                            |
+| Calendar, to-dos  | Built in: the Town Hall (no outside app)                                                                                                                                 |
+| News              | Open question 3                                                                                                                                                          |
+| Traffic           | Open question 4                                                                                                                                                          |
 
 ## After the MVP
 
 The car (start-up sequence, radio, gears), the plane and the landing challenge, recurring characters
 who talk, the guestbook (visitors leave a plane or a name), new districts (cider mill, industrial
 park, drive-in, high-school field, mall, a base), the helicopter, train rides, skateboard and winter
-vehicles, and interiors. Order lives in `ROADMAP.md`.
+vehicles, and interiors. Much later, a pizza delivery sim based on where I work. Order lives in
+`ROADMAP.md`.
 
 ## Not planned
 
@@ -93,8 +114,11 @@ Stocks. Accounts or logins for visitors. Multiplayer. A "skip the game" button.
 Everything is public, including the calendar and to-dos. That's my call; the risk is recorded in
 ADR-011. Two guardrails stay:
 
-- The calendar shows titles and times only, with no locations and no guest names.
+- The Town Hall calendar holds titles and times only, with no location field.
 - One server setting (`PRIVATE_FEEDS`) hides the calendar, to-dos and traffic without a code change.
+
+Reading is public; changing things isn't. Editing the Town Hall's to-dos and calendar needs my
+sign-in (ADR-014).
 
 The access gate (ADR-004) stays in the code and still fails closed when no mode is set. Launch adds a
 `public` mode.
@@ -111,10 +135,9 @@ The access gate (ADR-004) stays in the code and still fails closed when no mode 
 
 ## Open questions
 
-1. **Calendar:** Google, Apple (iCloud), Outlook, or none? Google and iCloud both offer a private
-   address the server can read.
-2. **To-dos:** where do they live today? Google Tasks, Apple Reminders, Todoist, Notes, or nowhere?
-   With nothing in place, a simple list built into the site works.
+1. **Where the MVP slice sits on the grid.** Proposed: centred on 26 Mile and Van Dyke, with the
+   Town Hall, the orchard trail, M-53 and a pond subdivision in reach.
+2. **Signing in to edit the Town Hall:** a passkey (Face ID or fingerprint) is proposed in ADR-014.
 3. **News:** what kind? Local Detroit news, tech, world, or a few specific sites?
 4. **Traffic:** which drive matters in the morning, e.g. home to work? The general area is enough.
 5. **Hosting:** Claude proposes it before launch (ADR to come).
