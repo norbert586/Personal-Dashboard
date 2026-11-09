@@ -22,16 +22,23 @@ Open either file in a browser. The 3D one loads three.js from a CDN.
 
 ```sh
 npm install
+cp .env.example .env   # then add the free keys for movies, traffic and comics
 npm run dev            # http://localhost:4321
 ```
+
+Without a key, that feed shows its saved sample and says which key to add. `FEEDS=sample npm run
+dev` runs every feed from saved samples, with no network.
 
 Production build, gated to loopback, LAN and Tailscale addresses until the `public` mode lands
 (ADR-011):
 
 ```sh
 npm run build
-ACCESS_MODE=private-network HOST=0.0.0.0 PORT=4321 node dist/server/entry.mjs
+HOST=0.0.0.0 PORT=4321 node --env-file=.env dist/server/entry.mjs
 ```
+
+`--env-file` loads `ACCESS_MODE` and the feed keys; the built server doesn't read `.env` by
+itself.
 
 ## Check it
 

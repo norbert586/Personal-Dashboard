@@ -1,6 +1,6 @@
 # Spec: Ratiu Twp
 
-**Status:** v1.1, MVP defined · **Updated:** 2026-11-08
+**Status:** v1.1, MVP defined · **Updated:** 2026-11-09
 
 This is the only spec. Change it here, in place; don't fork it.
 
@@ -114,7 +114,7 @@ network (ADR-018), and goes public only when it's polished. Everything in the ta
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Weather           | National Weather Service API (free, no key) for current conditions and the forecast                                                                                              |
 | Scores, schedules | ESPN's public JSON (free, no key, but undocumented) for all seven teams. The NHL and MLB official APIs back up the Red Wings and Tigers                                          |
-| Comics            | This week's DC, Image and Marvel releases from Comic Vine (free key). League of Comic Geeks has no public API and blocks bots. ComicList's weekly lists are the fallback         |
+| Comics            | This week's DC, Image and Marvel releases from Comic Vine (free key). League of Comic Geeks has no public API and blocks bots. No fallback for now (ADR-025)                     |
 | Movies            | What's playing from TMDB (free key), with a link to Emagine Macomb's showtimes. Emagine has no public API, and its site blocks bots; real showtimes need a paid source           |
 | Flights overhead  | Public ADS-B feeds (adsb.lol or airplanes.live), not flightpi                                                                                                                    |
 | Calendar, to-dos  | Built in: the Town Hall (no outside app)                                                                                                                                         |

@@ -296,3 +296,26 @@ hour), with no token. Project titles come from `src/content/projects`, matched b
 Consequences: private repos don't show. The API keeps 90 days of events, plenty for two weeks.
 Claude's cloud sandboxes can't reach GitHub's user endpoints, so the saved sample is built from
 GitHub's documented format and this repo's real commits; Norbert's machine reads it live.
+
+## ADR-024: API keys travel in headers wherever the API allows
+
+**Accepted · 2026-11-09**
+Context: keys in URLs end up in logs, caches and error messages. Claude's cloud sandboxes also
+inject saved keys into request headers, so a header key works there without being stored.
+Decision: TMDB's read token goes in `Authorization: Bearer`. Traffic uses TomTom's v2 incident API,
+which reads `TomTom-Api-Key`, instead of v5, which takes `?key=`. Comic Vine only reads
+`?api_key=`, so its key stays in the URL. Error messages name the upstream and the status, never
+the URL.
+Consequences: two of the three keys never appear in a URL. In a cloud sandbox, Comic Vine's key
+has to be an environment variable rather than an injected secret.
+
+## ADR-025: Comics have no fallback for now
+
+**Accepted · 2026-11-09 · supersedes ADR-015's ComicList fallback**
+Context: ADR-015 named ComicList's weekly lists as the fallback for Comic Vine. ComicList now
+redirects to a GoCollect blog post: HTML only, with no feed, so reading it means scraping prose.
+Decision: no comics fallback. When Comic Vine fails, the last good answer stands in for up to a day
+and a half (ADR-021), and after that the card is offline with the reason. If Comic Vine can't tell
+publishers apart, every book shows, with a note.
+Consequences: a long Comic Vine outage empties the comic shop window. Revisit if Comic Vine proves
+unreliable.

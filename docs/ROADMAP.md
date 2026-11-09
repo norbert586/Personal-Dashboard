@@ -23,13 +23,15 @@ check in one sitting.
 
 Feeds come first: they're useful on their own, and the town reads them later.
 
-1. [ ] **Feeds, server side.** One source per feed in `src/lib/sources/`, each a `Reading<T>` with a
+1. [x] **Feeds, server side.** One source per feed in `src/lib/sources/`, each a `Reading<T>` with a
        parser unit test on a saved sample and an offline state. Weather, scores, comics, movies,
        news (local, tech, national, world), area traffic, flights overhead and GitHub activity, from
        the sources in ADR-015 and ADR-017. Free keys (Comic Vine, TMDB, TomTom) live in `.env`. One
-       cached JSON endpoint serves them all.
-2. [ ] **Today panel.** The morning update as an HTML page on real data, good on a phone. It's the
-       home page until the town lands.
+       cached JSON endpoint serves them all (`/api/feeds.json`, ADR-021).
+   - [ ] Check comics against the live Comic Vine API once a session has the key: its sample is
+         built from the docs, and the batched volume lookup isn't documented (ADR-025).
+2. [x] **Today panel.** The morning update as an HTML page on real data, good on a phone. It's the
+       home page until the town lands (ADR-022).
 3. [ ] **Town island in Astro.** Port the 3D engine from `prototype/3d/` to TypeScript in
        `src/game/`, including what the prototype learned: street-aligned keys, click-to-walk with A*,
        going inside, flyovers. An e2e smoke test: the canvas boots with no console errors.
@@ -46,7 +48,8 @@ Feeds come first: they're useful on their own, and the town reads them later.
 9. [ ] **DOS mode, passport stamps and a handful of secrets.**
 10. [ ] **Polish.** Performance (draw calls, phones), accessibility, saved position.
 11. [ ] **Going public.** Hosting (new ADR), the `public` gate mode, `PRIVATE_FEEDS`, passkey
-        sign-in for the Town Hall (ADR-014), deploy, and a check from a phone off Wi-Fi.
+        sign-in for the Town Hall (ADR-014), TMDB's logo beside its notice, deploy, and a check
+        from a phone off Wi-Fi.
 
 ## M2: After launch
 
