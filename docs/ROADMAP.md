@@ -38,8 +38,10 @@ Feeds come first: they're useful on their own, and the town reads them later.
 5. [ ] **Town Hall.** To-dos and calendar stored locally (SQLite), editable from this machine.
 6. [ ] **Projects.** Building windows and real pages at `/projects/<slug>`, screenshots and demo
        links for the star projects. GitHub pushes drive fireworks; new repos drive the crane.
-7. [ ] **The big world** (ADR-016). OpenStreetMap data to typed world data, seeded houses along the
-       real streets, landmarks by hand, streaming by the square mile, then tune tiles per mile.
+7. [ ] **The big world** (ADR-016, ADR-019). OpenStreetMap data to typed world data through one
+       fixed projection. Roads become a named, routable graph. Every building gets a stable address,
+       lot and door. Seeded houses go along the real streets and landmarks are placed by hand.
+       Sections stream by the square mile, then tune tiles per mile.
 8. [ ] **Music and sound.** On by default after the first key press; tracks by place and time.
 9. [ ] **DOS mode, passport stamps and a handful of secrets.**
 10. [ ] **Polish.** Performance (draw calls, phones), accessibility, saved position.
@@ -57,7 +59,8 @@ Feeds come first: they're useful on their own, and the town reads them later.
 - [ ] Helicopter, train rides, skateboard, sled and snowmobile
 - [ ] Interiors for the hero buildings
 - [ ] More secrets
-- [ ] Much later: a pizza delivery sim based on where Norbert works
+- [ ] Much later: a pizza delivery sim based on where Norbert works. Orders are addresses, routes
+      come from the road graph, and you drive the car (needs the pizzeria's location)
 
 ## Ideas (not planned)
 

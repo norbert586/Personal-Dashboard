@@ -39,6 +39,26 @@ the site's credits, per its licence). It isn't 1:1; the town keeps the pattern, 
 - Roads, ponds, parks and the trail come from the map data. Houses and shops are placed along the
   real streets by seeded rules. Landmarks and project buildings are placed by hand.
 
+### World data: built for driving, deliveries and growth
+
+The world is data first and pixels second, so later features (the car, traffic, the pizza delivery
+sim, new areas) plug in without regenerating it (ADR-019).
+
+- **One fixed projection** turns real latitude and longitude into world tiles: one origin and one
+  tiles-per-mile constant, defined in one place. New areas generated later line up with old ones.
+- **Roads are a graph.** Intersections and segments carry the real name, type (freeway, mile road,
+  subdivision street), lanes, speed and one-way, from the map data. Walking, traffic, the car, GPS
+  routes and deliveries all route on it.
+- **Every building has a stable address:** the real street name and a generated house number (even
+  on one side, odd on the other, rising along the street), plus its lot, its door and a type (house,
+  shop, civic, industrial). The same seed always gives the same address.
+- **Sections** (one per real square mile) have stable IDs. Expanding the world adds sections past
+  the edge without moving anything that exists.
+- **Places of interest** (project buildings, feed buildings, the Town Hall, the pizzeria) are placed
+  by hand and referenced by ID.
+- **The pizza delivery sim** (after launch) uses all of it: an order is an address, the route comes
+  from the road graph, and you drive it in the car against the clock and real traffic.
+
 ## Why, in order
 
 1. **A fun place to play.** A game first: I want to open it for the fun of it.
@@ -100,7 +120,7 @@ network (ADR-018), and goes public only when it's polished. Everything in the ta
 The car (start-up sequence, radio, gears), the plane and the landing challenge, recurring characters
 who talk, the guestbook (visitors leave a plane or a name), places past the grid's edges (north toward
 Romeo, a cider mill, a drive-in, a high-school field, a mall, a base), the helicopter, train rides, skateboard and winter
-vehicles, and interiors. Much later, a pizza delivery sim based on where I work. Order lives in
+vehicles, and interiors. Much later, a pizza delivery sim based on where I work (see World data). Order lives in
 `ROADMAP.md`.
 
 ## Not planned
@@ -147,3 +167,5 @@ The access gate (ADR-004) stays in the code and still fails closed when no mode 
    a start to an end such as home to work? A personal route is public too unless `PRIVATE_FEEDS`
    is on.
 4. **Hosting:** Claude proposes it before launch (ADR to come).
+5. **The pizzeria:** which shop and roughly where (cross streets are enough)? Its real name, or a
+   stand-in on the same corner, since the site will be public?

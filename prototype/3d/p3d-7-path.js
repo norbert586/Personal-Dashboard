@@ -37,13 +37,17 @@ const STATIC_HITS = [];
 function pick(cx, cy) {
   const r = cv3.getBoundingClientRect(); ray.setFromCamera({ x: ((cx - r.left) / r.width) * 2 - 1, y: -((cy - r.top) / r.height) * 2 + 1 }, camera);
   const hit = ray.intersectObjects(STATIC_HITS, false)[0];
-  if (hit && hit.point.y > 0.03) { const x = hit.point.x, y = hit.point.z, c = COLLIDE.find((k) => x > k[0] - 0.12 && x < k[2] + 0.12 && y > k[1] - 0.12 && y < k[3] + 0.12); return { x, y, id: c ? c[4] || 0 : 0 }; }
+  if (hit && hit.point.y > 0.03) { // canopies, awnings and signs stick out past the footprint, so take the nearest building within half a tile
+    const x = hit.point.x, y = hit.point.z; let best = null, bd = 0.5;
+    for (const k of COLLIDE) { const dd = Math.hypot(Math.max(k[0] - x, 0, x - k[2]), Math.max(k[1] - y, 0, y - k[3])); if (dd < bd) { bd = dd; best = k; } }
+    return { x, y, id: best ? best[4] || 0 : 0 };
+  }
   const g = groundAt(cx, cy); return g ? { x: g[0], y: g[1], id: 0 } : null;
 }
 function clickAt(cx, cy) {
   const p = pick(cx, cy); if (!p) return;
   const d = p.id && DOORS.filter((k) => k.id === p.id).sort((a, b) => Math.hypot(a.x - ME.x, a.y - ME.y) - Math.hypot(b.x - ME.x, b.y - ME.y))[0];
-  if (d && Math.hypot(d.x - ME.x, d.y - ME.y) < 0.25) { enterBuilding(d.id); return; }
+  if (d && Math.hypot(d.x - ME.x, d.y - ME.y) < d.reach) { enterBuilding(d.id); return; } // already at the door
   const path = findPath(ME.x, ME.y, d ? d.x : p.x, d ? d.y : p.y); if (!path) return;
   ME.path = path; ME.enterId = d ? d.id : 0;
 }

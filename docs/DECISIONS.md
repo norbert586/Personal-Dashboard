@@ -219,3 +219,21 @@ deploy or sign-in until the going-public step. While local, the Town Hall can be
 own machine without a login. Free API keys live in a local `.env`.
 Consequences: feeds come first in the roadmap. Hosting and passkey sign-in (ADR-014) move to
 the going-public step. Every source must work from a home internet connection.
+
+## ADR-019: World data built for driving, deliveries and growth
+
+**Accepted · 2026-11-09**
+Context: Norbert wants the map ready for a pizza delivery sim and for future expansion. Both need
+more than a pretty town: deliveries need addresses and routes, and expansion needs new areas to line
+up with old ones.
+Decision: the world generator outputs data before pixels.
+
+- One fixed projection from latitude and longitude to tiles.
+- Roads as a graph with real names, types, lanes, speeds and one-way flags.
+- Every building with a stable address (real street name, generated number), a lot, a door and a
+  type.
+- Sections with stable IDs.
+- Hand-placed places of interest, referenced by ID.
+  Walking already routes with A* on a grid; driving and deliveries will route on the road graph.
+  Consequences: the big-world step does more up front, but the car, traffic and the pizza sim plug in
+  later without regenerating the world or breaking saved progress.
