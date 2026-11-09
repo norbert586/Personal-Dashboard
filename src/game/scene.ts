@@ -51,6 +51,44 @@ export interface Town {
   halos: Object3D[];
   /** The runway's crisp light dots, faint by day. */
   dots: PointsMaterial;
+  /** Lights that move (headlights, nav lights), refilled every frame. */
+  moving: MovingLights;
+}
+
+/** A point cloud of moving glows, refilled every frame: call add() for each, then flush(). */
+export class MovingLights {
+  readonly points: Points<BufferGeometry, PointsMaterial>;
+  private readonly pos: Float32Array;
+  private readonly col: Float32Array;
+  private n = 0;
+  private readonly max: number;
+
+  constructor(points: Points<BufferGeometry, PointsMaterial>, max: number) {
+    this.points = points;
+    this.max = max;
+    this.pos = new Float32Array(max * 3);
+    this.col = new Float32Array(max * 3);
+    points.geometry.setAttribute('position', new Float32BufferAttribute(this.pos, 3));
+    points.geometry.setAttribute('color', new Float32BufferAttribute(this.col, 3));
+  }
+
+  /** A glow at grid (x, y), z pixels up, colour 0–1. */
+  add(x: number, y: number, z: number, c: RGB): void {
+    if (this.n >= this.max) return;
+    const i = this.n * 3;
+    const p = V(x, y, z);
+    this.pos.set(p, i);
+    this.col.set(c, i);
+    this.n++;
+  }
+
+  flush(): void {
+    const g = this.points.geometry;
+    g.setDrawRange(0, this.n);
+    g.attributes.position!.needsUpdate = true;
+    g.attributes.color!.needsUpdate = true;
+    this.n = 0;
+  }
 }
 
 /** How far the camera sits from what it looks at, in tiles; fog starts a little past it. */
@@ -328,7 +366,7 @@ export function glowPoints(
   return p;
 }
 
-function glows(scene: Scene, world: World): Pick<Town, 'glows' | 'halos' | 'dots'> {
+function glows(scene: Scene, world: World): Pick<Town, 'glows' | 'halos' | 'dots' | 'moving'> {
   const mats: Material[] = [];
   const halos: Object3D[] = [];
   const buckets = new Map<number, Light[]>();
@@ -410,7 +448,10 @@ function glows(scene: Scene, world: World): Pick<Town, 'glows' | 'halos' | 'dots
   );
   mats.push(halo.material);
   halos.push(halo);
-  return { glows: mats, halos, dots };
+  const moving = new MovingLights(glowPoints(scene, [], 18), 160);
+  mats.push(moving.points.material);
+  halos.push(moving.points);
+  return { glows: mats, halos, dots, moving };
 }
 
 export function buildTown(world: World): Town {

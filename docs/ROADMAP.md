@@ -59,7 +59,7 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
    - [x] Light and time (`p3d-3-scene.js`, and `applyLight` in `p3d-5-player.js`): the orthographic
          camera, the sky light and the real sun for Macomb County, hard shadows, fog at the edges,
          and the night layer of lit windows, neon, lamps and halos.
-   - [ ] You (`p3d-4-bodies.js`, `p3d-5-player.js`): walk, run with Shift, and bike with B, with a
+   - [x] You (`p3d-4-bodies.js`, `p3d-5-player.js`): walk, run with Shift, and bike with B, with a
          headlight and a bell on Space. Keys follow the streets, you never get stuck, and you show
          as a silhouette behind buildings. The camera turns freely (Q/E, drag), zooms in whole
          steps and follows you. On phones, buttons turn the camera, zoom and switch to the bike.

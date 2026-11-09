@@ -75,3 +75,31 @@ test('N and the time button step through real time, midday, dusk and night', asy
   await page.keyboard.press('n');
   await expect(page.getByRole('button', { name: 'Night' })).toBeVisible();
 });
+
+test('keys walk you along the street, and B gets on the bike', async ({ page }) => {
+  await page.goto('/town');
+  await expect(page.locator('html')).toHaveAttribute('data-town', 'ready', { timeout: 20_000 });
+  const world = page.locator('#world');
+  await world.focus();
+  const start = (await world.getAttribute('data-at')) ?? '';
+  await page.keyboard.down('KeyW');
+  await page.waitForTimeout(700);
+  await page.keyboard.up('KeyW');
+  const [x0, y0] = start.split(',').map(Number);
+  const [x1, y1] = ((await world.getAttribute('data-at')) ?? '').split(',').map(Number);
+  // Up walks north (-x) along Main Street's sidewalk, and stays on it.
+  expect(x1!).toBeLessThan(x0! - 0.3);
+  expect(y1).toBe(y0);
+
+  await page.keyboard.press('b');
+  await expect(page.getByRole('button', { name: 'Bike' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('html')).toHaveAttribute('data-mode', 'bike');
+});
+
+test('phones get touch help instead of keyboard help', async ({ page, isMobile }) => {
+  await page.goto('/town');
+  await expect(page.locator('html')).toHaveAttribute('data-town', 'ready', { timeout: 20_000 });
+  const hint = page.locator('#hint-text');
+  if (isMobile) await expect(hint).toContainText('Drag to turn the camera');
+  else await expect(hint).toContainText('WASD');
+});

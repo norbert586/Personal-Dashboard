@@ -17,23 +17,59 @@ import Page from '../layouts/Page.astro';
       tabindex="0"
       role="application"
       aria-roledescription="town"
-      aria-label="Ratiu Twp, the town. N changes the time of day; plus and minus zoom."
+      aria-label="Ratiu Twp, the town. Walk with the arrow keys or W A S D, Shift runs, B rides the bike, Q and E turn the camera, N changes the time of day."
     ></canvas>
   </main>
   <header class="hud badge">
     <h1>Ratiu Twp</h1>
   </header>
   <nav class="hud tools" aria-label="Controls">
+    <button
+      class="key"
+      id="b-left"
+      type="button"
+      aria-label="Turn the camera left"
+      aria-keyshortcuts="Q"
+    >
+      ↺
+    </button>
+    <button
+      class="key"
+      id="b-right"
+      type="button"
+      aria-label="Turn the camera right"
+      aria-keyshortcuts="E"
+    >
+      ↻
+    </button>
+    <button class="key" id="b-out" type="button" aria-label="Zoom out" aria-keyshortcuts="-">
+      −
+    </button>
+    <button class="key" id="b-in" type="button" aria-label="Zoom in" aria-keyshortcuts="+">
+      +
+    </button>
+    <button class="key" id="b-bike" type="button" aria-pressed="false" aria-keyshortcuts="B">
+      Bike
+    </button>
     <button class="key" id="b-time" type="button" aria-keyshortcuts="N" aria-describedby="time-tip">
       Real time
     </button>
     <span id="time-tip" class="visually-hidden">
       Changes the time of day
     </span>
+    <div id="compass" aria-hidden="true">
+      <i>
+        <b>N</b>
+      </i>
+    </div>
   </nav>
   <footer id="help" class="hud hint">
     <p>
-      N changes the time of day; + and − zoom. <a href="/">Today</a> has the morning update.
+      <span id="hint-text">
+        WASD or the arrows walk along the streets. Shift runs, B rides the bike and Space rings its
+        bell, Q/E or drag turns the camera, N changes the time.
+      </span>{' '}
+      <a href="/">Today</a> has the morning update.
     </p>
   </footer>
   <div id="loading" class="hud cover" role="status">
@@ -107,6 +143,48 @@ import Page from '../layouts/Page.astro';
     justify-content: flex-end;
     gap: var(--space-2);
     max-width: min(520px, 62vw);
+  }
+
+  #compass {
+    flex: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--panel);
+    border: 2px solid var(--outline);
+    box-shadow: var(--bevel-up);
+  }
+
+  #compass i {
+    position: relative;
+    display: block;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  #compass i::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 7px;
+    inset-block-start: 7px;
+    border: 5px solid transparent;
+    border-block-end: 9px solid var(--maize);
+    border-block-start: 0;
+  }
+
+  #compass b {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: -9px;
+    text-align: center;
+    font: 400 var(--size-12) / 1 var(--font-ui);
+  }
+
+  .key[aria-pressed='true'] {
+    color: var(--maize);
+    box-shadow: var(--bevel-down);
   }
 
   .hint {
