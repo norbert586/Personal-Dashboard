@@ -44,6 +44,8 @@ export default defineConfig({
         values: ['live', 'sample'],
         default: 'live',
       }),
+      // Free API keys for the feeds. A missing one shows that feed's saved sample.
+      TMDB_READ_TOKEN: envField.string({ context: 'server', access: 'secret', optional: true }),
     },
   },
 

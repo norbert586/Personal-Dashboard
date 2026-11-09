@@ -9,6 +9,7 @@ const CARDS = [
   'Tech news',
   'National news',
   'World news',
+  'Movies',
   'Flights overhead',
   'Coding activity',
 ];
@@ -61,6 +62,11 @@ test('reads the saved samples as they were when captured', async ({ page }) => {
     /^https:\/\/www\.clickondetroit\.com\//,
   );
   await expect(local).toContainText('hours ago');
+
+  const movies = page.getByRole('region', { name: 'Movies' });
+  await expect(movies.getByRole('listitem').first()).toContainText('Wildwood');
+  await expect(movies.getByRole('listitem').first()).toContainText('PG-13');
+  await expect(movies.getByRole('link', { name: 'Showtimes at Emagine Macomb' })).toBeVisible();
 
   await expect(page.getByRole('region', { name: 'Flights overhead' })).toContainText('N831VP');
   const activity = page.getByRole('region', { name: 'Coding activity' });

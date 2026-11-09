@@ -1,0 +1,96 @@
+---
+import Card from './Card.astro';
+import { readingNow, type Reading } from '../lib/readings.ts';
+import type { Movie, Movies } from '../lib/sources/movies.ts';
+import { formatCalendarDate, isoDate } from '../lib/time.ts';
+
+interface Props {
+  reading: Reading<Movies>;
+  now: Date;
+  /** Films to list, most popular first. */
+  limit?: number;
+}
+
+const { reading, now, limit = 8 } = Astro.props;
+const at = readingNow(reading, now);
+const today = isoDate(at);
+const { movies, showtimes } = reading.data;
+const opening = (movie: Movie) =>
+  movie.opened === undefined
+    ? undefined
+    : `${movie.opened > today ? 'Opens' : 'Opened'} ${formatCalendarDate(movie.opened, at)}`;
+---
+
+<Card id="movies" title="Movies" reading={reading}>
+  {movies.length > 0 && (
+    <ol class="films">
+      {movies.slice(0, limit).map((movie) => (
+        <li class="film">
+          <a href={movie.url}>{movie.title}</a>
+          <p class="meta">
+            {movie.rating && (
+              <span class="rating">
+                <span class="visually-hidden">Rated </span>
+                {movie.rating}
+              </span>
+            )}
+            {opening(movie)}
+          </p>
+        </li>
+      ))}
+    </ol>
+  )}
+  <p class="showtimes">
+    In US theaters now. <a href={showtimes.url}>Showtimes at {showtimes.theatre}</a>
+  </p>
+</Card>
+
+<style>
+  .films {
+    display: grid;
+  }
+
+  .film {
+    padding-block: var(--space-2);
+    border-block-start: 2px solid var(--panel-lo);
+    line-height: 1.3;
+  }
+
+  .film:first-child {
+    border-block-start: 0;
+    padding-block-start: 0;
+  }
+
+  .film > a {
+    text-decoration: none;
+  }
+
+  .film > a:hover,
+  .film > a:focus-visible {
+    text-decoration: underline;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2);
+    margin-block-start: var(--space-1);
+    font-size: var(--size-14);
+    color: var(--ink-dim);
+  }
+
+  .rating {
+    padding: 0 0.35em;
+    font-size: var(--size-12);
+    color: var(--ink);
+    background: var(--panel-lo);
+    box-shadow: var(--bevel-down);
+  }
+
+  .showtimes {
+    margin-block-start: var(--space-3);
+    font-size: var(--size-14);
+    color: var(--ink-dim);
+  }
+</style>

@@ -44,6 +44,11 @@ test('serves every feed as JSON, each with its provenance', async ({ request }) 
   expect(flights.data.via).toBe('adsb.lol');
   expect(flights.data.aircraft[0]).toMatchObject({ callsign: 'N831VP', direction: 'WSW' });
 
+  const movies = body.feeds.movies;
+  expect(movies.source).toBe('TMDB');
+  expect(movies.provenance).toBe('sample');
+  expect(movies.data.movies[0]).toMatchObject({ title: 'Wildwood', rating: 'PG-13' });
+
   const activity = body.feeds.activity;
   expect(activity.source).toBe('GitHub');
   expect(activity.provenance).toBe('sample');

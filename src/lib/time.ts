@@ -98,6 +98,21 @@ export function formatMonthDay(date: Date): string {
   }).format(date);
 }
 
+/**
+ * A calendar date written YYYY-MM-DD ("2026-10-23" → "Oct 23", or "Oct 29, 1993" in another
+ * year). Read as a date, never as UTC midnight, which is the evening before in Detroit.
+ */
+export function formatCalendarDate(iso: string, now: Date): string {
+  const [year = 0, month = 1, day = 1] = iso.split('-').map(Number);
+  const noon = new Date(Date.UTC(year, month - 1, day, 12));
+  return new Intl.DateTimeFormat(site.locale, {
+    timeZone: 'UTC',
+    month: 'short',
+    day: 'numeric',
+    ...(year === zonedParts(now).year ? {} : { year: 'numeric' }),
+  }).format(noon);
+}
+
 /** "Today", "Tomorrow", "Yesterday", a weekday within the week either side, or "Nov 21". */
 export function formatDay(date: Date, now: Date): string {
   const days = calendarDaysBetween(now, date);

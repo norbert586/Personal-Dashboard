@@ -8,6 +8,7 @@ import ActivityCard from '../components/ActivityCard.astro';
 import Credits from '../components/Credits.astro';
 import FlightsCard from '../components/FlightsCard.astro';
 import Mark from '../components/Mark.astro';
+import MoviesCard from '../components/MoviesCard.astro';
 import NewsCard from '../components/NewsCard.astro';
 import ScoresCard from '../components/ScoresCard.astro';
 import WeatherCard from '../components/WeatherCard.astro';
@@ -23,6 +24,7 @@ const readings = [
   feeds.weather,
   feeds.scores,
   ...Object.values(feeds.news),
+  feeds.movies,
   feeds.flights,
   feeds.activity,
 ];
@@ -69,6 +71,7 @@ const summary = order
       <NewsCard section="tech" reading={feeds.news.tech} now={now} />
       <NewsCard section="national" reading={feeds.news.national} now={now} />
       <NewsCard section="world" reading={feeds.news.world} now={now} />
+      <MoviesCard reading={feeds.movies} now={now} />
       <FlightsCard reading={feeds.flights} />
       <ActivityCard reading={feeds.activity} now={now} />
     </main>

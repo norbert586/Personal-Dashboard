@@ -1,6 +1,12 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { calendarDaysBetween, formatDay, formatRelative, isoDate } from './time.ts';
+import {
+  calendarDaysBetween,
+  formatCalendarDate,
+  formatDay,
+  formatRelative,
+  isoDate,
+} from './time.ts';
 
 // 23:30 on Sunday 8 November 2026 in Detroit (EST, UTC−5).
 const NOW = new Date('2026-11-09T04:30:00Z');
@@ -18,6 +24,11 @@ describe('time, in the town’s zone', () => {
     assert.equal(formatDay(at('2026-11-08T02:00:00Z'), NOW), 'Yesterday'); // 21:00 Saturday
     assert.equal(formatDay(at('2026-11-12T00:00:00Z'), NOW), 'Wed');
     assert.equal(formatDay(at('2027-02-19T17:00:00Z'), NOW), 'Feb 19');
+  });
+
+  it('writes calendar dates without shifting them a day', () => {
+    assert.equal(formatCalendarDate('2026-10-23', NOW), 'Oct 23');
+    assert.equal(formatCalendarDate('1993-10-29', NOW), 'Oct 29, 1993');
   });
 
   it('says how long ago, in words', () => {

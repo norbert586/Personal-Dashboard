@@ -1,0 +1,175 @@
+{
+ "id": 1339713,
+ "results": [
+  {
+   "iso_3166_1": "AE",
+   "release_dates": [
+    {
+     "certification": "",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "",
+     "release_date": "2026-05-21T00:00:00.000Z",
+     "type": 3
+    }
+   ]
+  },
+  {
+   "iso_3166_1": "US",
+   "release_dates": [
+    {
+     "certification": "",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "Fantastic Fest",
+     "release_date": "2025-09-21T00:00:00.000Z",
+     "type": 1
+    },
+    {
+     "certification": "",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "South by Southwest Film & TV Festival",
+     "release_date": "2026-03-14T00:00:00.000Z",
+     "type": 1
+    },
+    {
+     "certification": "",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "Wisconsin Film Festival",
+     "release_date": "2026-04-10T00:00:00.000Z",
+     "type": 1
+    },
+    {
+     "certification": "",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "Beyond Chicago",
+     "release_date": "2026-04-02T00:00:00.000Z",
+     "type": 1
+    },
+    {
+     "certification": "",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "Boston Underground Film Festival",
+     "release_date": "2026-03-20T00:00:00.000Z",
+     "type": 1
+    },
+    {
+     "certification": "",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "Overlook Film Festival",
+     "release_date": "2026-04-09T00:00:00.000Z",
+     "type": 1
+    },
+    {
+     "certification": "",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "PFS SpringFest",
+     "release_date": "2026-04-18T00:00:00.000Z",
+     "type": 1
+    },
+    {
+     "certification": "",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "Cleveland International Film Festival",
+     "release_date": "2026-04-17T00:00:00.000Z",
+     "type": 1
+    },
+    {
+     "certification": "",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "Minneapolis St. Paul International Film Festival",
+     "release_date": "2026-04-16T00:00:00.000Z",
+     "type": 1
+    },
+    {
+     "certification": "",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "Miami Film Festival",
+     "release_date": "2026-04-15T00:00:00.000Z",
+     "type": 1
+    },
+    {
+     "certification": "",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "Seattle International Film Festival",
+     "release_date": "2026-05-09T00:00:00.000Z",
+     "type": 1
+    },
+    {
+     "certification": "",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "Florida Film Festival",
+     "release_date": "2026-04-11T00:00:00.000Z",
+     "type": 1
+    },
+    {
+     "certification": "",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "FocusFest",
+     "release_date": "2025-10-18T00:00:00.000Z",
+     "type": 1
+    },
+    {
+     "certification": "R",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "4DX",
+     "release_date": "2026-10-14T00:00:00.000Z",
+     "type": 2
+    },
+    {
+     "certification": "R",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "",
+     "release_date": "2026-05-15T00:00:00.000Z",
+     "type": 3
+    },
+    {
+     "certification": "R",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "",
+     "release_date": "2026-06-30T00:00:00.000Z",
+     "type": 4
+    },
+    {
+     "certification": "R",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "Peacock",
+     "release_date": "2026-07-17T00:00:00.000Z",
+     "type": 4
+    },
+    {
+     "certification": "R",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "Netflix",
+     "release_date": "2026-11-17T00:00:00.000Z",
+     "type": 4
+    },
+    {
+     "certification": "R",
+     "descriptors": [],
+     "iso_639_1": "",
+     "note": "4K Ultra HD / Blu-ray / DVD",
+     "release_date": "2026-07-14T00:00:00.000Z",
+     "type": 5
+    }
+   ]
+  }
+ ]
+}

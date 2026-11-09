@@ -4,11 +4,12 @@
  * everything from the saved samples, with no network.
  */
 import { getCollection } from 'astro:content';
-import { FEEDS } from 'astro:env/server';
+import { FEEDS, TMDB_READ_TOKEN } from 'astro:env/server';
 import { UpstreamCache, sampleFetcher } from './fetcher.ts';
 import { readSource, type ReadOptions, type Source } from './readings.ts';
 import { activity, titlesByRepo } from './sources/activity.ts';
 import { flights } from './sources/flights.ts';
+import { movies } from './sources/movies.ts';
 import { news } from './sources/news.ts';
 import { scores } from './sources/scores.ts';
 import { weather } from './sources/weather.ts';
@@ -44,6 +45,7 @@ export async function getFeeds(now: Date = new Date()) {
       national: read(news('national')),
       world: read(news('world')),
     }),
+    movies: read(movies(TMDB_READ_TOKEN)),
     flights: read(flights()),
     activity: read(activity(site.github.user, titles)),
   });
