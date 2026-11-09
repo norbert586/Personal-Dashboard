@@ -6,6 +6,7 @@
 import { FEEDS } from 'astro:env/server';
 import { UpstreamCache, sampleFetcher } from './fetcher.ts';
 import { readSource, type ReadOptions, type Source } from './readings.ts';
+import { flights } from './sources/flights.ts';
 import { news } from './sources/news.ts';
 import { scores } from './sources/scores.ts';
 import { weather } from './sources/weather.ts';
@@ -30,19 +31,29 @@ export async function getFeeds(now: Date = new Date()) {
     sampleNow: SAMPLES_CAPTURED_AT,
   };
   const read = <T>(source: Source<T>) => readSource(source, options);
-  const [weatherReading, scoresReading, local, tech, national, world] = await Promise.all([
-    read(weather()),
-    read(scores()),
-    read(news('local')),
-    read(news('tech')),
-    read(news('national')),
-    read(news('world')),
-  ]);
-  return {
-    weather: weatherReading,
-    scores: scoresReading,
-    news: { local, tech, national, world },
-  };
+  // Every read starts at once and settles on its own; readSource never throws.
+  return together({
+    weather: read(weather()),
+    scores: read(scores()),
+    news: together({
+      local: read(news('local')),
+      tech: read(news('tech')),
+      national: read(news('national')),
+      world: read(news('world')),
+    }),
+    flights: read(flights()),
+  });
 }
 
 export type Feeds = Awaited<ReturnType<typeof getFeeds>>;
+
+/** Await a record of promises in parallel, keeping its keys and types. */
+async function together<T extends Record<string, Promise<unknown>>>(
+  pending: T,
+): Promise<{ [K in keyof T]: Awaited<T[K]> }> {
+  const keys = Object.keys(pending);
+  const values = await Promise.all(Object.values(pending));
+  return Object.fromEntries(keys.map((key, i) => [key, values[i]])) as {
+    [K in keyof T]: Awaited<T[K]>;
+  };
+}

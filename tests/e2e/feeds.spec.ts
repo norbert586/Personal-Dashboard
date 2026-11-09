@@ -38,4 +38,9 @@ test('serves every feed as JSON, each with its provenance', async ({ request }) 
     expect(reading.data.length, section).toBeGreaterThanOrEqual(6);
     expect(reading.data[0].url, section).toMatch(/^https:\/\//);
   }
+
+  const flights = body.feeds.flights;
+  expect(flights.provenance).toBe('sample');
+  expect(flights.data.via).toBe('adsb.lol');
+  expect(flights.data.aircraft[0]).toMatchObject({ callsign: 'N831VP', direction: 'WSW' });
 });
