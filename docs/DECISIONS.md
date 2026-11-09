@@ -237,3 +237,18 @@ Decision: the world generator outputs data before pixels.
   Walking already routes with A* on a grid; driving and deliveries will route on the road graph.
   Consequences: the big-world step does more up front, but the car, traffic and the pizza sim plug in
   later without regenerating the world or breaking saved progress.
+
+## ADR-020: The delivery zone is built from real footprints
+
+**Accepted · 2026-11-09**
+Context: Norbert works at the pizzeria at Auburn and Dequindre and wants the delivery sim to mimic
+a 2.5-mile radius around it as closely as possible. OpenStreetMap covers it well: about 11,650
+building footprints, 1,951 streets, M-59, 155 ponds and 18 parks, checked 2026-11-09.
+Decision: the delivery zone uses real footprints, extruded with heights and styles by building
+type, rather than the seeded houses of the main grid. Footprints are grouped by block for
+streaming and draw calls. Roads, water and parks come from the same data, through the same
+projection and road graph as the town (ADR-019). The pizzeria's sign uses a stand-in name, with no
+real brand or logo.
+Consequences: the zone is far denser than the main grid, so block grouping and instancing matter
+from the start. Once the site is public, it shows where Norbert works; that's his call. The
+pizzeria's location lives in the place data, so moving or renaming it is one edit.

@@ -41,7 +41,7 @@ Feeds come first: they're useful on their own, and the town reads them later.
 7. [ ] **The big world** (ADR-016, ADR-019). OpenStreetMap data to typed world data through one
        fixed projection. Roads become a named, routable graph. Every building gets a stable address,
        lot and door. Seeded houses go along the real streets and landmarks are placed by hand.
-       Sections stream by the square mile, then tune tiles per mile.
+       Sections stream by the square mile, then tune tiles per mile. The generator handles more than one area, so the delivery zone (ADR-020) drops in later.
 8. [ ] **Music and sound.** On by default after the first key press; tracks by place and time.
 9. [ ] **DOS mode, passport stamps and a handful of secrets.**
 10. [ ] **Polish.** Performance (draw calls, phones), accessibility, saved position.
@@ -60,7 +60,7 @@ Feeds come first: they're useful on their own, and the town reads them later.
 - [ ] Interiors for the hero buildings
 - [ ] More secrets
 - [ ] Much later: a pizza delivery sim based on where Norbert works. Orders are addresses, routes
-      come from the road graph, and you drive the car (needs the pizzeria's location)
+      come from the road graph, and you drive the car, in the delivery zone around Auburn and Dequindre (ADR-020)
 
 ## Ideas (not planned)
 

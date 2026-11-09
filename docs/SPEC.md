@@ -56,6 +56,12 @@ sim, new areas) plug in without regenerating it (ADR-019).
   the edge without moving anything that exists.
 - **Places of interest** (project buildings, feed buildings, the Town Hall, the pizzeria) are placed
   by hand and referenced by ID.
+- **The delivery zone** (ADR-020) is a second real area: a 2.5-mile radius around the pizzeria at
+  Auburn and Dequindre, built as close to real as the map allows. It uses the area's roughly 11,650
+  OpenStreetMap building footprints as they are, grouped by block, with heights and styles by type:
+  houses, strip malls, industrial, schools and churches. Its roads, ponds and parks are real too,
+  M-59 included. It sits on the same projection as the town, just south-west of 23 Mile and Mound,
+  so later expansion can join the two.
 - **The pizza delivery sim** (after launch) uses all of it: an order is an address, the route comes
   from the road graph, and you drive it in the car against the clock and real traffic.
 
@@ -167,5 +173,5 @@ The access gate (ADR-004) stays in the code and still fails closed when no mode 
    a start to an end such as home to work? A personal route is public too unless `PRIVATE_FEEDS`
    is on.
 4. **Hosting:** Claude proposes it before launch (ADR to come).
-5. **The pizzeria:** which shop and roughly where (cross streets are enough)? Its real name, or a
-   stand-in on the same corner, since the site will be public?
+5. **The pizzeria's sign:** a stand-in name on the real corner, with no real brand or logo in the
+   product. Norbert picks one, or Claude does.
