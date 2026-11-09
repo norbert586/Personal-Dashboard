@@ -44,34 +44,35 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
          lists books around release day, so last week's show until this week's arrive (ADR-026).
 2. [x] **Today panel.** The morning update as an HTML page on real data, good on a phone. It's the
        home page until the town lands (ADR-022).
-3. [ ] **Town island in Astro.** Port the 3D engine from `prototype/3d/` to TypeScript in
+3. [x] **Town island in Astro.** Port the 3D engine from `prototype/3d/` to TypeScript in
        `src/game/`, with three.js from npm, bundled and loaded only on the town's page (ADR-010,
        SPEC: Quality bar). Keep what the prototype learned (DESIGN: Camera and scale, Moving
        around). The town gets its own page; the Today panel stays the home page until step 4.
-   - [ ] Boot: the canvas island renders at low resolution and scales up by whole device pixels,
+   - [x] Boot: the canvas island renders at low resolution and scales up by whole device pixels,
          with the input and frame loop from `p3d-6-loop.js`. An e2e smoke test checks that it boots
          with no console errors or CSP violations. Without WebGL, the page says so and links the
          plain pages.
-   - [ ] The town: the texture atlas, 3D primitives, colliders and doors (`p3d-1-atlas.js`), the
+   - [x] The town: the texture atlas, 3D primitives, colliders and doors (`p3d-1-atlas.js`), the
          building and prop builders (`p3d-2-build.js`, `p3d-2b-build.js`), and the town data,
          texture painters and layout they reuse from `prototype/2d/` (the shared parts in
          `build.sh`). The default view matches the feel test.
-   - [ ] Light and time (`p3d-3-scene.js`, and `applyLight` in `p3d-5-player.js`): the orthographic
+   - [x] Light and time (`p3d-3-scene.js`, and `applyLight` in `p3d-5-player.js`): the orthographic
          camera, the sky light and the real sun for Macomb County, hard shadows, fog at the edges,
          and the night layer of lit windows, neon, lamps and halos.
-   - [ ] You (`p3d-4-bodies.js`, `p3d-5-player.js`): walk, run with Shift, and bike with B, with a
+   - [x] You (`p3d-4-bodies.js`, `p3d-5-player.js`): walk, run with Shift, and bike with B, with a
          headlight and a bell on Space. Keys follow the streets, you never get stuck, and you show
          as a silhouette behind buildings. The camera turns freely (Q/E, drag), zooms in whole
          steps and follows you. On phones, buttons turn the camera, zoom and switch to the bike.
-   - [ ] Click to walk and going in (`p3d-7-path.js`): the nav grid, A* with string-pulling, the
+   - [x] Click to walk and going in (`p3d-7-path.js`): the nav grid, A* with string-pulling, the
          dotted path and ring, and tap to walk on phones. Clicking a building walks you to its door.
-         How going in looks and works in 3D, walking straight into a door included, is SPEC open
-         question 6: settle it with Norbert before building this. The building's window is an
-         accessible HTML dialog. Keyboard alone reaches every building.
-   - [ ] Life: townspeople, cars, the train and smoke (`p3d-4-bodies.js`, moved by the 2D
+         Going in is the short entrance from ADR-027: walking into a door, F or a click opens the
+         door, you walk through, the camera eases in, and the window opens; closing it brings you
+         back out. The building's window is an accessible HTML dialog. Keyboard alone reaches
+         every building.
+   - [x] Life: townspeople, cars, the train and smoke (`p3d-4-bodies.js`, moved by the 2D
          simulation in `prototype/2d/p5b-actors.js`), and low flyovers and high jets with contrails
          (`p3d-7-path.js`), on sample data until step 4.
-   - [ ] The old-PC shell (SPEC: Menus), ported from `prototype/2d/p6-ui.js` and `p7-windows.js`: a
+   - [x] The old-PC shell (SPEC: Menus), ported from `prototype/2d/p6-ui.js` and `p7-windows.js`: a
          short DOS boot, the sound-card setup screen (which doubles as the first gesture music
          needs), the title screen, and the pause menu on Esc with Map, Projects, Inventory, Today,
          Jukebox, Options and Quit to DOS. Later steps fill the panes. The 2D shell still says
@@ -222,8 +223,8 @@ details in the spec and a plan before work starts.
 - [ ] Past the grid's edges: north toward Romeo, a cider mill, a drive-in whose screen shows
       what's playing, a high-school football field, a mall and a base. Each one adds sections on
       the same projection, so nothing that exists moves (ADR-016, ADR-019).
-- [ ] Hero interiors: real rooms you can walk around in for the hero buildings, beyond what going
-      inside became in step 3 (SPEC open question 6).
+- [ ] Hero interiors: real rooms you can walk around in for the hero buildings, beyond step 3's
+      door-and-camera entrance (ADR-027).
 - [ ] More secrets.
 
 ### M6: Pizza delivery (much later)

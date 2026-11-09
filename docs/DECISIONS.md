@@ -334,3 +334,29 @@ Comics read two weeks and show last week's books, saying so, until this week's a
 Consequences: only the first load after a restart waits for every feed. A reading can be up to six
 freshness times old without a note; its time shows its age. Fast-changing feeds have short windows
 (live scores 12 minutes, aircraft 3), so after a quiet spell they still wait for fresh data.
+
+## ADR-027: Going inside is a short entrance, not a room
+
+**Accepted · 2026-11-09 · Norbert's call**
+Context: in the 3D feel test, entering only hid you and opened the building's window over an
+unchanged town, and walking into a door did nothing until you pressed F. Norbert: "nothing happens
+when you walk into a building". The options were a short 3D entrance, or that plus a simple room for
+each building type (SPEC open question 6).
+Decision: the short entrance. Walking into a door, pressing F there, or clicking the building (which
+walks you to its door) opens the door; you walk through while the camera eases in and the view dims,
+then the window opens as an HTML dialog. Closing it walks you back out. No rooms per building type.
+Consequences: about half the work of rooms, and nothing to throw away when M5 builds real interiors
+for the hero buildings. The town still never shows the inside of a building until then.
+
+## ADR-028: three.js 0.186, set up to look like the r149 feel test
+
+**Accepted · 2026-11-09**
+Context: the feel test was tuned on three r149. Since then three turned on colour management (r152)
+and dropped the legacy light scale (r165), so the same scene renders darker and with shifted colours.
+The newest release, 0.187, was ten days old when the town was ported.
+Decision: pin `three` and `@types/three` to 0.186.x, the last release a few weeks old, and bump
+deliberately (ADR-010). Turn colour management off, render in linear space, and multiply light
+intensities by π, so the code-painted colours land on screen as they did in the feel test. The
+default view, midday and night were checked against the prototype's screenshots.
+Consequences: the town doesn't use physically based light units; materials are painted, not lit
+realistically, which is the look. A three upgrade must be checked against those screenshots again.
