@@ -2,7 +2,7 @@
 import Card from './Card.astro';
 import { readingNow, type Reading } from '../lib/readings.ts';
 import type { Incident, Traffic } from '../lib/sources/traffic.ts';
-import { formatDay } from '../lib/time.ts';
+import { formatDay, formatTime } from '../lib/time.ts';
 
 interface Props {
   reading: Reading<Traffic>;
@@ -27,7 +27,9 @@ const where = (incident: Incident) => {
 const since = (incident: Incident) => {
   if (incident.since === undefined) return undefined;
   const day = formatDay(incident.since, at);
-  return `since ${/^(Today|Yesterday)$/.test(day) ? day.toLowerCase() : day}`;
+  // Today's slowdowns by the clock; older closures by the day.
+  if (day === 'Today') return `since ${formatTime(incident.since)}`;
+  return `since ${day === 'Yesterday' ? 'yesterday' : day}`;
 };
 const details = (incident: Incident) =>
   [
