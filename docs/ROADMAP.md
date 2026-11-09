@@ -52,7 +52,7 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
          with the input and frame loop from `p3d-6-loop.js`. An e2e smoke test checks that it boots
          with no console errors or CSP violations. Without WebGL, the page says so and links the
          plain pages.
-   - [ ] The town: the texture atlas, 3D primitives, colliders and doors (`p3d-1-atlas.js`), the
+   - [x] The town: the texture atlas, 3D primitives, colliders and doors (`p3d-1-atlas.js`), the
          building and prop builders (`p3d-2-build.js`, `p3d-2b-build.js`), and the town data,
          texture painters and layout they reuse from `prototype/2d/` (the shared parts in
          `build.sh`). The default view matches the feel test.

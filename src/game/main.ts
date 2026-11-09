@@ -5,17 +5,18 @@
 import {
   ColorManagement,
   LinearSRGBColorSpace,
-  Mesh,
-  MeshBasicMaterial,
   OrthographicCamera,
-  PlaneGeometry,
-  Scene,
-  Color,
   Vector3,
   WebGLRenderer,
 } from 'three';
 import { listen, onKey, startLoop } from './loop.ts';
+import { applyLight } from './light.ts';
 import { PXU, pixelScale, zoomStep } from './pixels.ts';
+import { buildTown } from './scene.ts';
+import { START, buildWorld } from './world/layout.ts';
+import { seasonOf } from './world/materials.ts';
+import { lighting, todayAt } from './world/sun.ts';
+import { site } from '../site.config.ts';
 
 // The prototype was tuned on three r149, before colour management and physical light units. Colours
 // are painted in display space, so keep them there.
@@ -52,21 +53,26 @@ function boot(): void {
     return;
   }
 
-  const scene = new Scene();
-  scene.background = new Color(0x8899aa);
+  const now = new Date();
+  const [month, day] = new Intl.DateTimeFormat('en-US', {
+    timeZone: site.timeZone,
+    month: 'numeric',
+    day: 'numeric',
+  })
+    .formatToParts(now)
+    .filter((p) => p.type === 'month' || p.type === 'day')
+    .map((p) => Number(p.value));
+  const world = buildWorld({ season: seasonOf(month ?? 1, day ?? 1) });
+  const town = buildTown(world);
+  const { scene } = town;
   const camera = new OrthographicCamera(-8, 8, 5, -5, 0.1, 400);
-
-  // A stand-in island until the town is built from the prototype's layout.
-  const ground = new Mesh(new PlaneGeometry(32, 32), new MeshBasicMaterial({ color: 0x5a8a3c }));
-  ground.rotation.x = -Math.PI / 2;
-  ground.position.set(16, 0, 16);
-  scene.add(ground);
 
   // Orthographic, 30° down, at 45° (DESIGN: Camera and scale).
   const elevation = Math.PI / 6;
   const yaw = Math.PI / 4;
   const distance = 90;
-  const target = new Vector3(14.6, 0, 19.22);
+  const target = new Vector3(START.x, 0, START.y);
+  applyLight(town, lighting(todayAt(12.5)), target.x, target.z);
   camera.position
     .set(
       Math.cos(elevation) * Math.cos(yaw),
