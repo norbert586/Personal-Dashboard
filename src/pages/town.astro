@@ -3,7 +3,34 @@
  * The town: a three.js island that fills the screen (ADR-010), with the game's interface floating
  * over it in bevelled panels. Its own page until it becomes the home page (roadmap step 4).
  */
+import { getCollection } from 'astro:content';
 import Page from '../layouts/Page.astro';
+import { PLACES } from '../game/world/places.ts';
+import { formatRelative } from '../lib/time.ts';
+
+// Each place's window, rendered here from the same content the project pages will use, and
+// copied into the dialog when you go in.
+const projects = new Map((await getCollection('projects')).map((p) => [p.id, p.data]));
+const now = new Date();
+const STATUS = {
+  building: ['Building', 'under construction'],
+  live: ['Live', 'open'],
+  paused: ['Paused', 'closed for now'],
+  archived: ['Archived', 'retired'],
+} as const;
+// Recent work in days or weeks; older work by its month.
+const lastActive = (date: Date) =>
+  now.getTime() - date.getTime() < 60 * 86_400_000
+    ? formatRelative(date, now)
+    : new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
+        date,
+      );
+const windows = PLACES.map((place) => {
+  if (place.kind !== 'project') return { place, title: place.title, label: place.title };
+  const project = projects.get(place.slug);
+  if (!project) throw new Error(`No project content for ${place.slug}`);
+  return { place, project, title: project.title, label: `${place.building}: ${project.title}` };
+});
 ---
 
 <Page
@@ -72,6 +99,70 @@ import Page from '../layouts/Page.astro';
       <a href="/">Today</a> has the morning update.
     </p>
   </footer>
+  <button id="prompt" class="hud key" type="button" hidden>
+    <span class="k" id="prompt-key">
+      F
+    </span>
+    <span id="prompt-text"></span>
+  </button>
+  <div id="dim" class="hud" aria-hidden="true"></div>
+  <dialog id="window" class="win" aria-labelledby="window-title">
+    <header>
+      <h2 id="window-title"></h2>
+      <form method="dialog">
+        <button class="key" type="submit">
+          Close
+        </button>
+      </form>
+    </header>
+    <div id="window-body"></div>
+  </dialog>
+  {windows.map(({ place, project, title, label }) => (
+    <template data-place={place.id} data-title={title} data-label={label}>
+      {place.kind === 'project' && project ? (
+        <>
+          <p class="dim">
+            {place.building}, {STATUS[project.status][1]}
+          </p>
+          <p>{project.summary ?? 'No summary yet.'}</p>
+          <dl>
+            <dt>Status</dt>
+            <dd>{STATUS[project.status][0]}</dd>
+            <dt>Stack</dt>
+            <dd>{project.stack.join(', ') || 'Not listed'}</dd>
+            <dt>Last activity</dt>
+            <dd>
+              <time datetime={project.lastActivity.toISOString().slice(0, 10)}>
+                {lastActive(project.lastActivity)}
+              </time>
+            </dd>
+          </dl>
+          {project.repo && (
+            <p>
+              <a class="key" href={project.repo} rel="noopener">
+                Open on GitHub
+              </a>
+            </p>
+          )}
+        </>
+      ) : place.kind === 'feed' ? (
+        <>
+          <p class="dim">Main Street</p>
+          <p>{place.note}</p>
+          <p>
+            <a class="key" href="/">
+              Open Today
+            </a>
+          </p>
+        </>
+      ) : (
+        <>
+          <p class="dim">Landmark</p>
+          <p>{place.kind === 'landmark' && place.note}</p>
+        </>
+      )}
+    </template>
+  ))}
   <div id="loading" class="hud cover" role="status">
     Building Ratiu Twp…
   </div>
@@ -196,6 +287,98 @@ import Page from '../layouts/Page.astro';
     color: var(--ink-dim);
     font-size: var(--size-14);
     text-align: center;
+  }
+
+  #prompt {
+    inset-inline-start: 50%;
+    inset-block-end: calc(env(safe-area-inset-bottom, 0px) + 4.5rem);
+    transform: translateX(-50%);
+    max-width: calc(100vw - 2rem);
+  }
+
+  #prompt[hidden] {
+    display: none;
+  }
+
+  #prompt .k {
+    padding: 0.2rem 0.45rem;
+    background: var(--maize);
+    color: var(--night);
+  }
+
+  #dim {
+    inset: 0;
+    background: var(--night);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .win {
+    margin: auto;
+    width: min(28rem, calc(100vw - 2rem));
+    max-height: min(72vh, 40rem);
+    padding: 0;
+    background: var(--panel);
+    color: var(--ink);
+    border: 2px solid var(--outline);
+    box-shadow:
+      var(--bevel-up),
+      0 12px 40px rgb(0 0 0 / 0.55);
+  }
+
+  .win[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .win::backdrop {
+    background: transparent;
+  }
+
+  .win header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+    background: var(--panel-lo);
+  }
+
+  .win h2 {
+    color: var(--maize);
+    font-size: var(--size-28);
+  }
+
+  #window-body {
+    padding: var(--space-1) var(--space-4) var(--space-4);
+    overflow: auto;
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  #window-body dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-1) var(--space-4);
+  }
+
+  #window-body dt {
+    color: var(--ink-dim);
+  }
+
+  #window-body dd {
+    margin: 0;
+  }
+
+  @media (max-width: 40rem) {
+    .win {
+      width: 100vw;
+      max-width: 100vw;
+      margin-block-end: 0;
+      margin-inline: 0;
+      max-height: 70vh;
+      padding-block-end: env(safe-area-inset-bottom, 0px);
+    }
   }
 
   .cover[hidden] {

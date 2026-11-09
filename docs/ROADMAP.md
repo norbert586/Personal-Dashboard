@@ -63,7 +63,7 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
          headlight and a bell on Space. Keys follow the streets, you never get stuck, and you show
          as a silhouette behind buildings. The camera turns freely (Q/E, drag), zooms in whole
          steps and follows you. On phones, buttons turn the camera, zoom and switch to the bike.
-   - [ ] Click to walk and going in (`p3d-7-path.js`): the nav grid, A* with string-pulling, the
+   - [x] Click to walk and going in (`p3d-7-path.js`): the nav grid, A* with string-pulling, the
          dotted path and ring, and tap to walk on phones. Clicking a building walks you to its door.
          Going in is the short entrance from ADR-027: walking into a door, F or a click opens the
          door, you walk through, the camera eases in, and the window opens; closing it brings you

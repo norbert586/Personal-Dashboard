@@ -4,6 +4,11 @@
  */
 import { BasicShadowMap, ColorManagement, LinearSRGBColorSpace, WebGLRenderer } from 'three';
 import { CameraRig } from './camera.ts';
+import { nearestDoor, walksIn } from './entrance.ts';
+import { GoingIn } from './going-in.ts';
+import { PathMarks } from './marks.ts';
+import { buildNav, findPath, pathLength, type Point } from './nav.ts';
+import type { Door } from './world/builders.ts';
 import { keys, listen, onKey, startLoop } from './loop.ts';
 import { applyLight } from './light.ts';
 import { Player } from './player.ts';
@@ -92,30 +97,121 @@ function boot(): void {
   $('#b-in').addEventListener('click', () => rig.zoomBy(1));
   $('#b-out').addEventListener('click', () => rig.zoomBy(-1));
 
+  // ---- Going in, and the door prompt ----
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const going = new GoingIn(
+    town.scene,
+    world,
+    player,
+    rig,
+    {
+      dialog: $<HTMLDialogElement>('#window'),
+      title: $<HTMLElement>('#window-title'),
+      body: $<HTMLElement>('#window-body'),
+      dim: $<HTMLElement>('#dim'),
+      template: (id) => document.querySelector<HTMLTemplateElement>(`template[data-place="${id}"]`),
+    },
+    still,
+  );
+  going.onOut = () => canvas.focus({ focusVisible: false });
+  const enter = (id: number) => {
+    path = null;
+    enterId = 0;
+    keys.clear();
+    going.enter(id);
+  };
+  const prompt = $<HTMLButtonElement>('#prompt');
+  const promptText = $<HTMLElement>('#prompt-text');
+  const touch = matchMedia('(hover: none)').matches;
+  if (touch) $('#prompt-key').textContent = 'Tap';
+  let near: Door | null = null;
+  const updatePrompt = () => {
+    const d = going.busy ? null : nearestDoor(world, you.x, you.y);
+    if (d === near) return;
+    near = d;
+    prompt.hidden = !d;
+    if (d)
+      promptText.textContent =
+        document.querySelector<HTMLTemplateElement>(`template[data-place="${d.id}"]`)?.dataset
+          .label ?? '';
+  };
+  prompt.addEventListener('click', () => near && enter(near.id));
+
   listen();
   onKey((event) => {
+    if (going.busy) return true; // the window has the keys
     if (event.key === '+' || event.key === '=') rig.zoomBy(1);
     else if (event.key === '-') rig.zoomBy(-1);
     else if (event.code === 'KeyN') cycleTime();
     else if (event.code === 'KeyB') setBike(you.mode !== 'bike');
     else if (event.code === 'Space' && you.mode === 'bike') player.bell();
+    else if ((event.code === 'KeyF' || event.code === 'Enter') && near) enter(near.id);
     else return false;
     return true;
   });
 
-  // Drag turns the camera; the wheel zooms.
+  // ---- Click or tap to walk; click a building to walk to its door and go in ----
+  let path: Point[] | null = null;
+  let enterId = 0;
+  const nav = buildNav(world);
+  const pick = (cx: number, cy: number): { x: number; y: number; id: number } | null => {
+    const hit = rig.pointAt(cx, cy).intersectObjects(town.hits, false)[0];
+    if (hit && hit.point.y > 0.03) {
+      // Canopies, awnings and signs stick out past the footprint: take the nearest within half a tile.
+      const { x, z: y } = hit.point;
+      let id = 0;
+      let bd = 0.5;
+      for (const c of world.colliders) {
+        const d = Math.hypot(Math.max(c.x0 - x, 0, x - c.x1), Math.max(c.y0 - y, 0, y - c.y1));
+        if (d < bd) {
+          bd = d;
+          id = c.id;
+        }
+      }
+      return { x, y, id };
+    }
+    const g = rig.groundAt(cx, cy);
+    return g ? { x: g[0], y: g[1], id: 0 } : null;
+  };
+  const clickAt = (cx: number, cy: number) => {
+    if (going.busy) return;
+    const p = pick(cx, cy);
+    if (!p) return;
+    const door = world.doors
+      .filter((d) => d.id === p.id)
+      .sort(
+        (a, b) => Math.hypot(a.x - you.x, a.y - you.y) - Math.hypot(b.x - you.x, b.y - you.y),
+      )[0];
+    if (door && Math.hypot(door.x - you.x, door.y - you.y) < door.reach) return enter(door.id);
+    const found = findPath(nav, you.x, you.y, door ? door.x : p.x, door ? door.y : p.y);
+    if (!found) return;
+    path = found;
+    enterId = door ? door.id : 0;
+  };
+
+  // Drag turns the camera, a click or tap walks; the wheel zooms.
   let drag: { x: number; y: number; yaw: number; moved: boolean } | null = null;
+  let hoverAt = 0;
   canvas.addEventListener('pointerdown', (e) => {
     drag = { x: e.clientX, y: e.clientY, yaw: rig.yawTarget, moved: false };
     canvas.setPointerCapture(e.pointerId);
   });
   canvas.addEventListener('pointermove', (e) => {
-    if (!drag) return;
-    const dx = e.clientX - drag.x;
-    if (Math.abs(dx) + Math.abs(e.clientY - drag.y) > 8) drag.moved = true;
-    if (drag.moved) rig.yawTarget = drag.yaw + dx * 0.008;
+    if (drag) {
+      const dx = e.clientX - drag.x;
+      if (Math.abs(dx) + Math.abs(e.clientY - drag.y) > 8) drag.moved = true;
+      if (drag.moved) rig.yawTarget = drag.yaw + dx * 0.008;
+      return;
+    }
+    // A hand over a building you can go into.
+    if (e.pointerType === 'touch' || e.timeStamp - hoverAt < 120) return;
+    hoverAt = e.timeStamp;
+    canvas.style.cursor = pick(e.clientX, e.clientY)?.id ? 'pointer' : 'crosshair';
   });
-  canvas.addEventListener('pointerup', () => (drag = null));
+  canvas.addEventListener('pointerup', (e) => {
+    if (drag && !drag.moved) clickAt(e.clientX, e.clientY);
+    drag = null;
+  });
   canvas.addEventListener('pointercancel', () => (drag = null));
   canvas.addEventListener(
     'wheel',
@@ -129,26 +225,58 @@ function boot(): void {
   rig.resize();
 
   const compass = $<HTMLElement>('#compass i');
-  if (matchMedia('(hover: none)').matches)
+  if (touch)
     $('#hint-text').textContent =
-      'Drag to turn the camera. The buttons zoom, switch to the bike and change the time.';
+      'Tap anywhere to walk there, or tap a building to go in. Drag to turn the camera.';
+  const marks = new PathMarks(town.scene);
   $<HTMLElement>('#loading').hidden = true;
   document.documentElement.dataset.town = 'ready';
   canvas.focus({ focusVisible: false });
 
-  startLoop((dt) => {
-    const ix = (held('KeyD', 'ArrowRight') ? 1 : 0) - (held('KeyA', 'ArrowLeft') ? 1 : 0);
-    const iy = (held('KeyW', 'ArrowUp') ? 1 : 0) - (held('KeyS', 'ArrowDown') ? 1 : 0);
-    const [dx, dy] = keyDirection(ix, iy, rig.yaw);
-    step(you, world, dx, dy, held('ShiftLeft', 'ShiftRight'), dt);
-    rig.update(dt, you, (held('KeyE') ? 1 : 0) - (held('KeyQ') ? 1 : 0));
+  startLoop((dt, now) => {
+    if (going.busy) going.update(dt);
+    else {
+      const ix = (held('KeyD', 'ArrowRight') ? 1 : 0) - (held('KeyA', 'ArrowLeft') ? 1 : 0);
+      const iy = (held('KeyW', 'ArrowUp') ? 1 : 0) - (held('KeyS', 'ArrowDown') ? 1 : 0);
+      let [dx, dy] = keyDirection(ix, iy, rig.yaw);
+      let run = held('ShiftLeft', 'ShiftRight');
+      if (ix || iy) path = null;
+      else if (path) {
+        // Follow the path; long trips break into a run.
+        const [px, py] = path[0]!;
+        const d = Math.hypot(px - you.x, py - you.y);
+        if (d < (you.mode === 'bike' ? 0.22 : 0.07)) {
+          path.shift();
+          if (!path.length) {
+            path = null;
+            if (enterId) enter(enterId);
+          }
+        } else {
+          dx = (px - you.x) / d;
+          dy = (py - you.y) / d;
+          run ||= pathLength(path, you.x, you.y) > 5;
+        }
+      }
+      if (!going.busy) {
+        step(you, world, dx, dy, run, dt);
+        // Walking straight into a door goes in.
+        const d = (ix || iy) && nearestDoor(world, you.x, you.y);
+        if (d && walksIn(world, d, you.x, you.y, you.fx, you.fy)) enter(d.id);
+      }
+    }
+    updatePrompt();
+    rig.update(dt, you, going.busy ? 0 : (held('KeyE') ? 1 : 0) - (held('KeyQ') ? 1 : 0));
     compass.style.transform = `rotate(${-rig.yaw}rad)`;
     // Where you are, to a tenth of a tile, for tests and tools (written only when it changes).
     const at = `${you.x.toFixed(1)},${you.y.toFixed(1)}`;
     if (canvas.dataset.at !== at) canvas.dataset.at = at;
+    const inside = going.phase === 'inside' ? 'inside' : 'out';
+    if (document.documentElement.dataset.place !== inside)
+      document.documentElement.dataset.place = inside;
 
     const L = lighting(simDate(time));
     player.sync(town, nightK(L.night));
+    marks.update(path, you.x, you.y, now, still);
     town.moving.flush();
     applyLight(town, L, {
       x: rig.target.x,

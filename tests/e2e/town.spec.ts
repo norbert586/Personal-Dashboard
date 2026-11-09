@@ -103,3 +103,38 @@ test('phones get touch help instead of keyboard help', async ({ page, isMobile }
   if (isMobile) await expect(hint).toContainText('Drag to turn the camera');
   else await expect(hint).toContainText('WASD');
 });
+
+test('keyboard alone: walk to a door, go in, read its window, and come back out', async ({
+  page,
+}) => {
+  await page.goto('/town');
+  await expect(page.locator('html')).toHaveAttribute('data-town', 'ready', { timeout: 20_000 });
+  await page.locator('#world').focus();
+  // From the start, S walks south along Main Street to the Coney diner's door.
+  await page.keyboard.down('KeyS');
+  const prompt = page.getByRole('button', { name: /Coney diner: Food Orders/ });
+  await expect(prompt).toBeVisible({ timeout: 5000 });
+  await page.keyboard.up('KeyS');
+
+  await page.keyboard.press('f');
+  const window = page.getByRole('dialog', { name: 'Food Orders' });
+  await expect(window).toBeVisible();
+  await expect(window).toContainText('Coney diner');
+  await expect(window.getByRole('link', { name: 'Open on GitHub' })).toHaveAttribute(
+    'href',
+    'https://github.com/norbert586/food-orders-app',
+  );
+  const results = await new AxeBuilder({ page }).include('#window').analyze();
+  expect(results.violations).toEqual([]);
+
+  await page.keyboard.press('Escape');
+  await expect(window).toBeHidden();
+  await expect(page.locator('html')).toHaveAttribute('data-place', 'out');
+  await expect(prompt).toBeVisible();
+
+  // Walking straight into the door goes in too (D heads into the shopfront in this view).
+  await page.locator('#world').focus();
+  await page.keyboard.down('KeyD');
+  await expect(window).toBeVisible({ timeout: 5000 });
+  await page.keyboard.up('KeyD');
+});
