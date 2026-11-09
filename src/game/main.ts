@@ -9,6 +9,7 @@ import { GoingIn } from './going-in.ts';
 import { createLife, stepLife } from './life.ts';
 import { LifeBodies } from './life-bodies.ts';
 import { PathMarks } from './marks.ts';
+import { Shell } from './shell.ts';
 import { buildNav, findPath, pathLength, type Point } from './nav.ts';
 import type { Door } from './world/builders.ts';
 import { keys, listen, onKey, startLoop } from './loop.ts';
@@ -139,15 +140,24 @@ function boot(): void {
   };
   prompt.addEventListener('click', () => near && enter(near.id));
 
+  // The old-PC shell: boot, setup, title and the pause menu.
+  const shell = new Shell();
+  shell.onPlay = () => {
+    keys.clear();
+    canvas.focus({ focusVisible: false });
+  };
+
   listen();
   onKey((event) => {
     if (going.busy) return true; // the window has the keys
+    if (shell.key(event)) return true;
     if (event.key === '+' || event.key === '=') rig.zoomBy(1);
     else if (event.key === '-') rig.zoomBy(-1);
     else if (event.code === 'KeyN') cycleTime();
     else if (event.code === 'KeyB') setBike(you.mode !== 'bike');
-    else if (event.code === 'Space' && you.mode === 'bike') player.bell();
-    else if ((event.code === 'KeyF' || event.code === 'Enter') && near) enter(near.id);
+    else if (event.code === 'Space' && you.mode === 'bike') {
+      if (shell.sound) player.bell();
+    } else if ((event.code === 'KeyF' || event.code === 'Enter') && near) enter(near.id);
     else return false;
     return true;
   });
@@ -176,7 +186,7 @@ function boot(): void {
     return g ? { x: g[0], y: g[1], id: 0 } : null;
   };
   const clickAt = (cx: number, cy: number) => {
-    if (going.busy) return;
+    if (going.busy || !shell.playing) return;
     const p = pick(cx, cy);
     if (!p) return;
     const door = world.doors
@@ -236,10 +246,12 @@ function boot(): void {
   const bodies = new LifeBodies(town.scene, world, life);
   $<HTMLElement>('#loading').hidden = true;
   document.documentElement.dataset.town = 'ready';
-  canvas.focus({ focusVisible: false });
+  void shell.boot(still);
 
   startLoop((dt, now) => {
-    if (going.busy) going.update(dt);
+    if (!shell.playing) {
+      // the town holds still behind the menus
+    } else if (going.busy) going.update(dt);
     else {
       const ix = (held('KeyD', 'ArrowRight') ? 1 : 0) - (held('KeyA', 'ArrowLeft') ? 1 : 0);
       const iy = (held('KeyW', 'ArrowUp') ? 1 : 0) - (held('KeyS', 'ArrowDown') ? 1 : 0);
@@ -281,7 +293,7 @@ function boot(): void {
 
     const L = lighting(simDate(time));
     const night = nightK(L.night);
-    if (!still) {
+    if (!still && shell.playing) {
       stepLife(life, dt);
       bodies.sky(dt, rig.target.x, rig.target.z, rig.yaw);
     }

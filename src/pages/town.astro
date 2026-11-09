@@ -51,6 +51,9 @@ const windows = PLACES.map((place) => {
     <h1>Ratiu Twp</h1>
   </header>
   <nav class="hud tools" aria-label="Controls">
+    <button class="key" id="btn-menu" type="button" aria-keyshortcuts="Escape">
+      Menu
+    </button>
     <button
       class="key"
       id="b-left"
@@ -163,6 +166,156 @@ const windows = PLACES.map((place) => {
       )}
     </template>
   ))}
+  <dialog id="pause" class="win pause" aria-labelledby="pause-title">
+    <header>
+      <h2 id="pause-title">Paused</h2>
+      <form method="dialog">
+        <button class="key" type="submit">
+          Resume
+        </button>
+      </form>
+    </header>
+    <div class="pause-body">
+      <ul class="menu" aria-label="Menu">
+        <li>
+          <button class="menu-item" type="button" data-pane="resume">
+            Resume
+          </button>
+        </li>
+        <li>
+          <button class="menu-item" type="button" data-pane="map">
+            Map
+          </button>
+        </li>
+        <li>
+          <button class="menu-item" type="button" data-pane="projects">
+            Projects
+          </button>
+        </li>
+        <li>
+          <button class="menu-item" type="button" data-pane="inventory">
+            Inventory
+          </button>
+        </li>
+        <li>
+          <button class="menu-item" type="button" data-pane="today">
+            Today
+          </button>
+        </li>
+        <li>
+          <button class="menu-item" type="button" data-pane="jukebox">
+            Jukebox
+          </button>
+        </li>
+        <li>
+          <button class="menu-item" type="button" data-pane="options">
+            Options
+          </button>
+        </li>
+        <li>
+          <button class="menu-item" type="button" data-pane="quit">
+            Quit to DOS
+          </button>
+        </li>
+      </ul>
+      <section class="pane" data-pane-body="map" aria-label="Map">
+        <h3>Map</h3>
+        <p>
+          The town is frozen while you look around. The map comes when the town grows to the real
+          roads between 23 and 29 Mile.
+        </p>
+      </section>
+      <section class="pane" data-pane-body="projects" aria-label="Projects" hidden>
+        <h3>Projects</h3>
+        <p class="dim">Every project is a building. Walk up to one, or click it, to go in.</p>
+        <ul class="projects">
+          {windows
+            .filter((w) => w.place.kind === 'project')
+            .map((w) => (
+              <li>
+                <span>{w.title}</span>
+                <span class="dim">
+                  {w.place.kind === 'project' && w.place.building}
+                  {w.project && `, ${STATUS[w.project.status][0].toLowerCase()}`}
+                </span>
+              </li>
+            ))}
+        </ul>
+      </section>
+      <section class="pane" data-pane-body="inventory" aria-label="Inventory" hidden>
+        <h3>Inventory</h3>
+        <p>
+          The tools Norbert builds with, and the projects that use each one, come with the project
+          pages.
+        </p>
+      </section>
+      <section class="pane" data-pane-body="today" aria-label="Today" hidden>
+        <h3>Today</h3>
+        <p>The morning update: weather, scores, comics, movies, news, traffic and flights.</p>
+        <p>
+          <a class="key" href="/">
+            Open Today
+          </a>
+        </p>
+      </section>
+      <section class="pane" data-pane-body="jukebox" aria-label="Jukebox" hidden>
+        <h3>Jukebox</h3>
+        <p>
+          Chiptune that changes with the place and the time of day is on its way. Until then the
+          bike bell is the only song in town.
+        </p>
+      </section>
+      <section class="pane" data-pane-body="options" aria-label="Options" hidden>
+        <h3>Options</h3>
+        <p>
+          Sound, volume, detail and motion settings are on their way. The town already follows your
+          device's reduced-motion setting.
+        </p>
+      </section>
+      <section class="pane" data-pane-body="quit" aria-label="Quit to DOS" hidden>
+        <h3>Quit to DOS</h3>
+        <p>
+          DOS mode, the plain-text version of the whole site, is on its way. Until then, Today and
+          the buildings' windows have everything.
+        </p>
+      </section>
+    </div>
+  </dialog>
+  <section id="boot-dos" class="screen dos" aria-label="Starting up" hidden>
+    <pre id="boot-text"></pre>
+  </section>
+  <section id="boot-setup" class="screen setup" aria-labelledby="setup-title" hidden>
+    <div class="setup-box">
+      <h2 id="setup-title">RATIU TWP SETUP</h2>
+      <p>Select your sound device:</p>
+      <div class="setup-opts" role="listbox" aria-label="Sound device">
+        <button type="button" role="option" aria-selected="true" data-sound="on">
+          Sound Blaster 16 (sound on)
+        </button>
+        <button type="button" role="option" aria-selected="false" data-sound="off">
+          No sound
+        </button>
+      </div>
+      <p class="setup-foot">Up and Down to choose. Enter to confirm.</p>
+    </div>
+  </section>
+  <section id="boot-title" class="screen title-screen" aria-labelledby="title-name" hidden>
+    <div>
+      <p id="title-name" class="title-name">
+        RATIU
+        <br />
+        TWP
+      </p>
+      <p class="sub">A small Michigan town where every building is a project.</p>
+      <button id="btn-start" class="press" type="button">
+        Press any key
+      </button>
+      <p class="copy">© 1995 Ratiu Software. Build 0.4</p>
+    </div>
+  </section>
+  <button id="btn-skip" class="key skip" type="button" hidden>
+    Skip intro
+  </button>
   <div id="loading" class="hud cover" role="status">
     Building Ratiu Twp…
   </div>
@@ -378,6 +531,211 @@ const windows = PLACES.map((place) => {
       margin-inline: 0;
       max-height: 70vh;
       padding-block-end: env(safe-area-inset-bottom, 0px);
+    }
+  }
+
+  .screen {
+    position: fixed;
+    inset: 0;
+    z-index: 6;
+    display: grid;
+    place-items: center;
+    padding: var(--space-4);
+  }
+
+  .screen[hidden] {
+    display: none;
+  }
+
+  .dos {
+    place-items: start;
+    background: #000;
+    color: #c8c8c8;
+  }
+
+  .dos pre {
+    margin: 0;
+    font: var(--size-18) / 1.35 var(--font-ui);
+    white-space: pre-wrap;
+  }
+
+  .setup {
+    background: #0000aa;
+    color: #e8e8e8;
+  }
+
+  .setup-box {
+    display: grid;
+    gap: var(--space-3);
+    min-width: min(30rem, 100%);
+    padding: var(--space-4) var(--space-5);
+    border: 3px double #e8e8e8;
+  }
+
+  .setup-box h2 {
+    font: var(--size-24) / 1.2 var(--font-ui);
+    text-align: center;
+  }
+
+  .setup-opts {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .setup-opts button {
+    padding: var(--space-1) var(--space-2);
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+
+  .setup-opts button[aria-selected='true'] {
+    background: #e8e8e8;
+    color: #0000aa;
+  }
+
+  .setup-foot {
+    color: #aab;
+    font-size: var(--size-14);
+  }
+
+  .title-screen {
+    background: var(--night);
+    text-align: center;
+  }
+
+  .title-screen > div {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: center;
+  }
+
+  .title-name {
+    color: var(--maize);
+    font: clamp(4rem, 3rem + 8vw, 9rem) / 0.85 var(--font-display);
+    letter-spacing: 0.06em;
+    text-shadow: 4px 4px 0 var(--outline);
+  }
+
+  .title-screen .sub {
+    color: var(--ink-dim);
+  }
+
+  .press {
+    padding: var(--space-2) var(--space-3);
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    font: var(--size-24) / 1 var(--font-display);
+    cursor: pointer;
+    animation: blink 1.2s steps(2, jump-none) infinite;
+  }
+
+  @keyframes blink {
+    50% {
+      opacity: 0.35;
+    }
+  }
+
+  .copy {
+    color: var(--ink-dim);
+    font-size: var(--size-12);
+  }
+
+  .skip {
+    position: fixed;
+    z-index: 7;
+    inset-block-end: calc(env(safe-area-inset-bottom, 0px) + var(--space-4));
+    inset-inline-end: calc(env(safe-area-inset-right, 0px) + var(--space-4));
+  }
+
+  .skip[hidden] {
+    display: none;
+  }
+
+  .pause {
+    width: min(44rem, calc(100vw - 2rem));
+  }
+
+  .pause .pause-body {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4) var(--space-4);
+    overflow: auto;
+  }
+
+  .menu {
+    display: grid;
+    align-content: start;
+    gap: 2px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .menu-item {
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    font: 600 var(--size-16) / 1.2 var(--font-ui);
+    text-align: start;
+    cursor: pointer;
+  }
+
+  .menu-item:hover,
+  .menu-item[aria-current='true'] {
+    background: var(--panel-lo);
+    color: var(--maize);
+  }
+
+  .menu-item[aria-current='true']::before {
+    content: '▸ ';
+  }
+
+  .pane {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+  }
+
+  .pane[hidden] {
+    display: none;
+  }
+
+  .pane h3 {
+    color: var(--maize);
+    font-size: var(--size-24);
+  }
+
+  .projects {
+    display: grid;
+    gap: var(--space-2);
+    padding: 0;
+    list-style: none;
+  }
+
+  .projects li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  @media (max-width: 40rem) {
+    .pause .pause-body {
+      grid-template-columns: 1fr;
+    }
+
+    .menu {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .win.pause {
+      width: 100vw;
     }
   }
 

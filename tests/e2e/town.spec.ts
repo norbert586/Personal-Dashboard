@@ -1,6 +1,14 @@
 import { test, expect, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
+/** Open the town and skip the intro. */
+async function enterTown(page: Page): Promise<void> {
+  await page.goto('/town');
+  await expect(page.locator('html')).toHaveAttribute('data-town', 'ready', { timeout: 20_000 });
+  await page.getByRole('button', { name: 'Skip intro' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-shell', 'play');
+}
+
 /** Console errors include CSP violations, so an empty list means the policy holds. */
 function collectErrors(page: Page): string[] {
   const errors: string[] = [];
@@ -13,8 +21,7 @@ function collectErrors(page: Page): string[] {
 
 test('the town boots with no console errors or CSP violations', async ({ page }) => {
   const errors = collectErrors(page);
-  await page.goto('/town');
-  await expect(page.locator('html')).toHaveAttribute('data-town', 'ready', { timeout: 20_000 });
+  await enterTown(page);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Ratiu Twp');
   await expect(page.locator('#loading')).toBeHidden();
 
@@ -57,15 +64,13 @@ test('without WebGL, the page says so and links the plain pages', async ({ page 
 });
 
 test('the town page passes axe', async ({ page }) => {
-  await page.goto('/town');
-  await expect(page.locator('html')).toHaveAttribute('data-town', 'ready', { timeout: 20_000 });
+  await enterTown(page);
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations).toEqual([]);
 });
 
 test('N and the time button step through real time, midday, dusk and night', async ({ page }) => {
-  await page.goto('/town');
-  await expect(page.locator('html')).toHaveAttribute('data-town', 'ready', { timeout: 20_000 });
+  await enterTown(page);
   const button = page.getByRole('button', { name: 'Real time' });
   await button.click();
   await expect(page.getByRole('button', { name: 'Midday' })).toBeVisible();
@@ -77,8 +82,7 @@ test('N and the time button step through real time, midday, dusk and night', asy
 });
 
 test('keys walk you along the street, and B gets on the bike', async ({ page }) => {
-  await page.goto('/town');
-  await expect(page.locator('html')).toHaveAttribute('data-town', 'ready', { timeout: 20_000 });
+  await enterTown(page);
   const world = page.locator('#world');
   await world.focus();
   const start = (await world.getAttribute('data-at')) ?? '';
@@ -97,8 +101,7 @@ test('keys walk you along the street, and B gets on the bike', async ({ page }) 
 });
 
 test('phones get touch help instead of keyboard help', async ({ page, isMobile }) => {
-  await page.goto('/town');
-  await expect(page.locator('html')).toHaveAttribute('data-town', 'ready', { timeout: 20_000 });
+  await enterTown(page);
   const hint = page.locator('#hint-text');
   if (isMobile) await expect(hint).toContainText('Drag to turn the camera');
   else await expect(hint).toContainText('WASD');
@@ -107,8 +110,7 @@ test('phones get touch help instead of keyboard help', async ({ page, isMobile }
 test('keyboard alone: walk to a door, go in, read its window, and come back out', async ({
   page,
 }) => {
-  await page.goto('/town');
-  await expect(page.locator('html')).toHaveAttribute('data-town', 'ready', { timeout: 20_000 });
+  await enterTown(page);
   await page.locator('#world').focus();
   // From the start, S walks south along Main Street to the Coney diner's door.
   await page.keyboard.down('KeyS');
@@ -137,4 +139,42 @@ test('keyboard alone: walk to a door, go in, read its window, and come back out'
   await page.keyboard.down('KeyD');
   await expect(window).toBeVisible({ timeout: 5000 });
   await page.keyboard.up('KeyD');
+});
+
+test('it boots like an old PC game, and Esc pauses it', async ({ page }) => {
+  await page.goto('/town');
+  await expect(page.getByText('Loading RATIU TWP')).toBeVisible({ timeout: 20_000 });
+  await page.keyboard.press('Enter'); // any key skips ahead to setup
+  const setup = page.getByRole('region', { name: 'RATIU TWP SETUP' });
+  await expect(setup).toBeVisible();
+  await page.keyboard.press('ArrowDown');
+  await expect(setup.getByRole('option', { name: 'No sound' })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('region', { name: 'RATIU TWP' })).toBeVisible();
+  await page.keyboard.press('x'); // press any key
+  await expect(page.locator('html')).toHaveAttribute('data-shell', 'play');
+  // No trace of the old names (ADR-012).
+  await expect(page.locator('body')).not.toContainText(/586|Norbert Field/i);
+
+  await page.keyboard.press('Escape');
+  const menu = page.getByRole('dialog', { name: 'Paused' });
+  await expect(menu).toBeVisible();
+  await expect(page.locator('html')).toHaveAttribute('data-shell', 'paused');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+  await expect(menu.getByRole('region', { name: 'Projects' })).toContainText('Tetris Plus');
+  const results = await new AxeBuilder({ page }).include('#pause').analyze();
+  expect(results.violations).toEqual([]);
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
+  await expect(page.locator('html')).toHaveAttribute('data-shell', 'play');
+});
+
+test('with reduced motion, the intro is skipped', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/town');
+  await expect(page.locator('html')).toHaveAttribute('data-shell', 'play', { timeout: 20_000 });
 });

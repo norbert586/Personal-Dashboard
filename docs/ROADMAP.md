@@ -44,7 +44,7 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
          lists books around release day, so last week's show until this week's arrive (ADR-026).
 2. [x] **Today panel.** The morning update as an HTML page on real data, good on a phone. It's the
        home page until the town lands (ADR-022).
-3. [ ] **Town island in Astro.** Port the 3D engine from `prototype/3d/` to TypeScript in
+3. [x] **Town island in Astro.** Port the 3D engine from `prototype/3d/` to TypeScript in
        `src/game/`, with three.js from npm, bundled and loaded only on the town's page (ADR-010,
        SPEC: Quality bar). Keep what the prototype learned (DESIGN: Camera and scale, Moving
        around). The town gets its own page; the Today panel stays the home page until step 4.
@@ -72,7 +72,7 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
    - [x] Life: townspeople, cars, the train and smoke (`p3d-4-bodies.js`, moved by the 2D
          simulation in `prototype/2d/p5b-actors.js`), and low flyovers and high jets with contrails
          (`p3d-7-path.js`), on sample data until step 4.
-   - [ ] The old-PC shell (SPEC: Menus), ported from `prototype/2d/p6-ui.js` and `p7-windows.js`: a
+   - [x] The old-PC shell (SPEC: Menus), ported from `prototype/2d/p6-ui.js` and `p7-windows.js`: a
          short DOS boot, the sound-card setup screen (which doubles as the first gesture music
          needs), the title screen, and the pause menu on Esc with Map, Projects, Inventory, Today,
          Jukebox, Options and Quit to DOS. Later steps fill the panes. The 2D shell still says
