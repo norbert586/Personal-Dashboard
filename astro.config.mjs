@@ -46,6 +46,7 @@ export default defineConfig({
       }),
       // Free API keys for the feeds. A missing one shows that feed's saved sample.
       TMDB_READ_TOKEN: envField.string({ context: 'server', access: 'secret', optional: true }),
+      TOMTOM_API_KEY: envField.string({ context: 'server', access: 'secret', optional: true }),
     },
   },
 

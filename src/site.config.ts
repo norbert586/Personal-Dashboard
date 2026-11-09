@@ -18,6 +18,12 @@ export interface SiteConfig {
   teams: Team[];
   /** Headlines by section (ADR-017). Each outlet is an RSS or Atom feed, or Hacker News. */
   news: Record<NewsSection, Outlet[]>;
+  /** Area traffic (ADR-017): incidents inside the box, closures only on the main roads. */
+  traffic: {
+    box: { west: number; south: number; east: number; north: number };
+    /** Closures and road work count when they touch one of these. Mile roads always count. */
+    mainRoads: string[];
+  };
 }
 
 export type NewsSection = 'local' | 'tech' | 'national' | 'world';
@@ -152,6 +158,24 @@ export const site: SiteConfig = {
         feed: 'https://feeds.npr.org/1004/rss.xml',
         home: 'https://www.npr.org/sections/world/',
       },
+    ],
+  },
+  traffic: {
+    // The real grid (23 to 29 Mile, Mound to Romeo Plank) plus Hall Road (M-59) to the south.
+    box: { west: -83.12, south: 42.6, east: -82.88, north: 42.8 },
+    mainRoads: [
+      'Mound',
+      'Van Dyke',
+      'Jewell',
+      'Schoenherr',
+      'Hayes',
+      'Garfield',
+      'Romeo Plank',
+      'North Ave',
+      'Hall Rd',
+      'Hall Road',
+      'M-53',
+      'M-59',
     ],
   },
 };

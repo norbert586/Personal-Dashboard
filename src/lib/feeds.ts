@@ -4,7 +4,7 @@
  * everything from the saved samples, with no network.
  */
 import { getCollection } from 'astro:content';
-import { FEEDS, TMDB_READ_TOKEN } from 'astro:env/server';
+import { FEEDS, TMDB_READ_TOKEN, TOMTOM_API_KEY } from 'astro:env/server';
 import { UpstreamCache, sampleFetcher } from './fetcher.ts';
 import { readSource, type ReadOptions, type Source } from './readings.ts';
 import { activity, titlesByRepo } from './sources/activity.ts';
@@ -12,6 +12,7 @@ import { flights } from './sources/flights.ts';
 import { movies } from './sources/movies.ts';
 import { news } from './sources/news.ts';
 import { scores } from './sources/scores.ts';
+import { traffic } from './sources/traffic.ts';
 import { weather } from './sources/weather.ts';
 import { site } from '../site.config.ts';
 
@@ -38,6 +39,7 @@ export async function getFeeds(now: Date = new Date()) {
   // Every read starts at once and settles on its own; readSource never throws.
   return together({
     weather: read(weather()),
+    traffic: read(traffic(TOMTOM_API_KEY)),
     scores: read(scores()),
     news: together({
       local: read(news('local')),

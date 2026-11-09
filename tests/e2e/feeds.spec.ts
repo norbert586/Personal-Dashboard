@@ -44,6 +44,11 @@ test('serves every feed as JSON, each with its provenance', async ({ request }) 
   expect(flights.data.via).toBe('adsb.lol');
   expect(flights.data.aircraft[0]).toMatchObject({ callsign: 'N831VP', direction: 'WSW' });
 
+  const traffic = body.feeds.traffic;
+  expect(traffic.source).toBe('TomTom');
+  expect(traffic.provenance).toBe('sample');
+  expect(traffic.data.incidents[1]).toMatchObject({ road: '24 Mile Rd', bothWays: true });
+
   const movies = body.feeds.movies;
   expect(movies.source).toBe('TMDB');
   expect(movies.provenance).toBe('sample');

@@ -1,0 +1,111 @@
+---
+import Card from './Card.astro';
+import { readingNow, type Reading } from '../lib/readings.ts';
+import type { Incident, Traffic } from '../lib/sources/traffic.ts';
+import { formatDay } from '../lib/time.ts';
+
+interface Props {
+  reading: Reading<Traffic>;
+  now: Date;
+  /** Incidents to list, worst first. */
+  limit?: number;
+}
+
+const { reading, now, limit = 6 } = Astro.props;
+const at = readingNow(reading, now);
+const { incidents, sideStreets } = reading.data;
+
+const where = (incident: Incident) => {
+  const span =
+    incident.from && incident.to && incident.from !== incident.to
+      ? `${incident.from} to ${incident.to}`
+      : incident.from
+        ? `at ${incident.from}`
+        : undefined;
+  return [span, incident.bothWays ? 'both ways' : undefined].filter(Boolean).join(', ');
+};
+const since = (incident: Incident) => {
+  if (incident.since === undefined) return undefined;
+  const day = formatDay(incident.since, at);
+  return `since ${/^(Today|Yesterday)$/.test(day) ? day.toLowerCase() : day}`;
+};
+const details = (incident: Incident) =>
+  [
+    incident.delayMin !== undefined ? `${incident.delayMin} min slower` : undefined,
+    incident.lengthMi >= 0.1 ? `${incident.lengthMi.toFixed(1)} mi` : undefined,
+    since(incident),
+  ]
+    .filter(Boolean)
+    .join(', ');
+---
+
+<Card id="traffic" title="Traffic" reading={reading} wide>
+  {incidents.length > 0 ? (
+    <ul class="incidents">
+      {incidents.slice(0, limit).map((incident) => (
+        <li class:list={['incident', incident.kind]}>
+          <p class="what">
+            <span class="label">{incident.label}</span>
+            {incident.road && <span class="road">{incident.road}</span>}
+          </p>
+          {where(incident) && <p class="where">{where(incident)}</p>}
+          {details(incident) && <p class="meta">{details(incident)}</p>}
+        </li>
+      ))}
+    </ul>
+  ) : (
+    reading.provenance !== 'offline' && (
+      <p>No accidents, slowdowns or closures on the main roads right now.</p>
+    )
+  )}
+  {sideStreets > 0 && (
+    <p class="side">
+      {sideStreets} {sideStreets === 1 ? 'closure' : 'closures'} on side streets not shown.
+    </p>
+  )}
+</Card>
+
+<style>
+  .incidents {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+    gap: var(--space-1) var(--space-4);
+  }
+
+  .incident {
+    padding-block: var(--space-2);
+    border-block-start: 2px solid var(--panel-lo);
+    line-height: 1.3;
+  }
+
+  .what {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-2);
+    font-weight: 600;
+  }
+
+  .accident .label,
+  .closed .label {
+    color: var(--offline);
+  }
+
+  .slow .label {
+    color: var(--maize);
+  }
+
+  .where,
+  .meta {
+    font-size: var(--size-14);
+  }
+
+  .meta,
+  .side {
+    color: var(--ink-dim);
+  }
+
+  .side {
+    margin-block-start: var(--space-3);
+    font-size: var(--size-12);
+  }
+</style>

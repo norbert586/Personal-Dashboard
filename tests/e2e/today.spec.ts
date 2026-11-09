@@ -4,6 +4,7 @@ import AxeBuilder from '@axe-core/playwright';
 // The e2e server runs with FEEDS=sample (serve.mjs): every card shows its saved sample.
 const CARDS = [
   'Weather',
+  'Traffic',
   'Scores',
   'Local news',
   'Tech news',
@@ -62,6 +63,12 @@ test('reads the saved samples as they were when captured', async ({ page }) => {
     /^https:\/\/www\.clickondetroit\.com\//,
   );
   await expect(local).toContainText('hours ago');
+
+  const traffic = page.getByRole('region', { name: 'Traffic' });
+  await expect(traffic.getByRole('listitem').first()).toContainText('Clinton River Rd');
+  await expect(traffic).toContainText('24 Mile Rd');
+  await expect(traffic).toContainText('Romeo Plank Rd to North Ave, both ways');
+  await expect(traffic).toContainText('12 closures on side streets not shown.');
 
   const movies = page.getByRole('region', { name: 'Movies' });
   await expect(movies.getByRole('listitem').first()).toContainText('Wildwood');
