@@ -1,0 +1,102 @@
+---
+import Card from './Card.astro';
+import type { Reading } from '../lib/readings.ts';
+import type { Aircraft, Flights } from '../lib/sources/flights.ts';
+
+interface Props {
+  reading: Reading<Flights>;
+  /** Aircraft to list, nearest first. */
+  limit?: number;
+}
+
+const { reading, limit = 6 } = Astro.props;
+const { aircraft, radiusMi, via } = reading.data;
+const radius = Math.round(radiusMi);
+const feet = new Intl.NumberFormat('en-US');
+const height = (plane: Aircraft) =>
+  plane.onGround
+    ? 'On the ground'
+    : plane.altitudeFt === undefined
+      ? 'Altitude unknown'
+      : `${feet.format(plane.altitudeFt)} ft`;
+---
+
+<Card id="flights" title="Flights overhead" reading={reading}>
+  {aircraft.length > 0 ? (
+    <>
+      <ol class="aircraft">
+        {aircraft.slice(0, limit).map((plane) => (
+          <li class="plane">
+            <p class="who">
+              <a href={`https://globe.adsb.lol/?icao=${plane.hex}`}>
+                {plane.callsign ?? plane.registration ?? plane.hex.toUpperCase()}
+              </a>
+              {plane.type && <span class="dim"> {plane.type}</span>}
+              {plane.military && <span class="tag">Military</span>}
+              {plane.emergency && <span class="tag alert">{plane.emergency}</span>}
+            </p>
+            <p class="where">
+              {height(plane)}, {Math.round(plane.distanceMi)} mi {plane.direction}
+            </p>
+          </li>
+        ))}
+      </ol>
+      <p class="via">
+        Within {radius} miles of town, from {via}
+      </p>
+    </>
+  ) : (
+    reading.provenance !== 'offline' && (
+      <p class="dim">Nothing in the air within {radius} miles of town right now.</p>
+    )
+  )}
+</Card>
+
+<style>
+  .aircraft {
+    display: grid;
+  }
+
+  .plane {
+    padding-block: var(--space-2);
+    border-block-start: 2px solid var(--panel-lo);
+    line-height: 1.3;
+  }
+
+  .plane:first-child {
+    border-block-start: 0;
+    padding-block-start: 0;
+  }
+
+  .who {
+    font-weight: 600;
+  }
+
+  .who .dim {
+    font-weight: 400;
+  }
+
+  .where {
+    font-size: var(--size-14);
+    color: var(--ink-dim);
+  }
+
+  .tag {
+    margin-inline-start: 0.5em;
+    padding: 0 0.35em;
+    font-size: var(--size-12);
+    font-weight: 400;
+    background: var(--panel-lo);
+    box-shadow: var(--bevel-down);
+  }
+
+  .alert {
+    color: var(--offline);
+  }
+
+  .via {
+    margin-block-start: var(--space-3);
+    font-size: var(--size-12);
+    color: var(--ink-dim);
+  }
+</style>

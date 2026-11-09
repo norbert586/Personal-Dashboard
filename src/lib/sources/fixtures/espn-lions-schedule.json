@@ -1,0 +1,532 @@
+{
+ "timestamp": "2026-11-09T04:21:54Z",
+ "status": "success",
+ "season": {
+  "year": 2026,
+  "type": 2,
+  "name": "Regular Season",
+  "displayName": "2026",
+  "half": 1
+ },
+ "requestedSeason": {
+  "year": 2026,
+  "type": 2,
+  "name": "Regular Season",
+  "displayName": "2026"
+ },
+ "team": {
+  "id": "8",
+  "abbreviation": "DET",
+  "location": "Detroit",
+  "name": "Lions",
+  "displayName": "Detroit Lions",
+  "recordSummary": "6-2",
+  "standingSummary": "2nd in NFC North"
+ },
+ "events": [
+  {
+   "id": "401873020",
+   "date": "2026-10-25T20:25Z",
+   "name": "Green Bay Packers at Detroit Lions",
+   "shortName": "GB @ DET",
+   "season": {
+    "year": 2026,
+    "displayName": "2026"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401873020",
+     "date": "2026-10-25T20:25Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0:00",
+      "period": 4,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "Fox"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "8",
+       "homeAway": "home",
+       "winner": true,
+       "score": {
+        "value": 20.0,
+        "displayValue": "20"
+       },
+       "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Lions",
+        "shortDisplayName": "Lions",
+        "location": "Detroit"
+       }
+      },
+      {
+       "id": "9",
+       "homeAway": "away",
+       "winner": false,
+       "score": {
+        "value": 17.0,
+        "displayValue": "17"
+       },
+       "team": {
+        "id": "9",
+        "abbreviation": "GB",
+        "displayName": "Green Bay Packers",
+        "shortDisplayName": "Packers",
+        "location": "Green Bay"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401873030",
+   "date": "2026-11-01T18:00Z",
+   "name": "Minnesota Vikings at Detroit Lions",
+   "shortName": "MIN @ DET",
+   "season": {
+    "year": 2026,
+    "displayName": "2026"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401873030",
+     "date": "2026-11-01T18:00Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0:00",
+      "period": 4,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "Fox"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "8",
+       "homeAway": "home",
+       "winner": true,
+       "score": {
+        "value": 19.0,
+        "displayValue": "19"
+       },
+       "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Lions",
+        "shortDisplayName": "Lions",
+        "location": "Detroit"
+       }
+      },
+      {
+       "id": "16",
+       "homeAway": "away",
+       "winner": false,
+       "score": {
+        "value": 15.0,
+        "displayValue": "15"
+       },
+       "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Vikings",
+        "shortDisplayName": "Vikings",
+        "location": "Minnesota"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401873042",
+   "date": "2026-11-08T18:00Z",
+   "name": "Detroit Lions at Miami Dolphins",
+   "shortName": "DET @ MIA",
+   "season": {
+    "year": 2026,
+    "displayName": "2026"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401873042",
+     "date": "2026-11-08T18:00Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0:00",
+      "period": 4,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "CBS"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "15",
+       "homeAway": "home",
+       "winner": false,
+       "score": {
+        "value": 9.0,
+        "displayValue": "9"
+       },
+       "team": {
+        "id": "15",
+        "abbreviation": "MIA",
+        "displayName": "Miami Dolphins",
+        "shortDisplayName": "Dolphins",
+        "location": "Miami"
+       }
+      },
+      {
+       "id": "8",
+       "homeAway": "away",
+       "winner": true,
+       "score": {
+        "value": 19.0,
+        "displayValue": "19"
+       },
+       "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Lions",
+        "shortDisplayName": "Lions",
+        "location": "Detroit"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401873053",
+   "date": "2026-11-15T14:30Z",
+   "name": "New England Patriots at Detroit Lions",
+   "shortName": "NE VS DET",
+   "season": {
+    "year": 2026,
+    "displayName": "2026"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401873053",
+     "date": "2026-11-15T14:30Z",
+     "timeValid": true,
+     "neutralSite": true,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sun, November 15th at 9:30 AM EST",
+       "shortDetail": "11/15 - 9:30 AM EST"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "Fox"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "8",
+       "homeAway": "home",
+       "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Lions",
+        "shortDisplayName": "Lions",
+        "location": "Detroit"
+       }
+      },
+      {
+       "id": "17",
+       "homeAway": "away",
+       "team": {
+        "id": "17",
+        "abbreviation": "NE",
+        "displayName": "New England Patriots",
+        "shortDisplayName": "Patriots",
+        "location": "New England"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401873072",
+   "date": "2026-11-22T18:00Z",
+   "name": "Tampa Bay Buccaneers at Detroit Lions",
+   "shortName": "TB @ DET",
+   "season": {
+    "year": 2026,
+    "displayName": "2026"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401873072",
+     "date": "2026-11-22T18:00Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sun, November 22nd at 1:00 PM EST",
+       "shortDetail": "11/22 - 1:00 PM EST"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "Fox"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "8",
+       "homeAway": "home",
+       "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Lions",
+        "shortDisplayName": "Lions",
+        "location": "Detroit"
+       }
+      },
+      {
+       "id": "27",
+       "homeAway": "away",
+       "team": {
+        "id": "27",
+        "abbreviation": "TB",
+        "displayName": "Tampa Bay Buccaneers",
+        "shortDisplayName": "Buccaneers",
+        "location": "Tampa Bay"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401873081",
+   "date": "2026-11-26T18:00Z",
+   "name": "Chicago Bears at Detroit Lions",
+   "shortName": "CHI @ DET",
+   "season": {
+    "year": 2026,
+    "displayName": "2026"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401873081",
+     "date": "2026-11-26T18:00Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Thu, November 26th at 1:00 PM EST",
+       "shortDetail": "11/26 - 1:00 PM EST"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "CBS"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "8",
+       "homeAway": "home",
+       "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Lions",
+        "shortDisplayName": "Lions",
+        "location": "Detroit"
+       }
+      },
+      {
+       "id": "3",
+       "homeAway": "away",
+       "team": {
+        "id": "3",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bears",
+        "shortDisplayName": "Bears",
+        "location": "Chicago"
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

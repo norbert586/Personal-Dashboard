@@ -1,0 +1,187 @@
+---
+import Card from './Card.astro';
+import { readingNow, type Reading } from '../lib/readings.ts';
+import type { Game, TeamScores } from '../lib/sources/scores.ts';
+import { formatDay, formatTime } from '../lib/time.ts';
+
+interface Props {
+  reading: Reading<TeamScores[]>;
+  now: Date;
+}
+
+const { reading, now } = Astro.props;
+const at = readingNow(reading, now);
+
+const where = (game: Game) => (game.home || game.neutral ? 'vs' : 'at');
+const scoreline = (game: Game) => (game.score ? `${game.score.us}–${game.score.them}` : '');
+/** "Final/OT" → "OT"; nothing for a plain final. */
+const overtime = (game: Game) => (game.status.startsWith('Final/') ? game.status.slice(6) : '');
+const when = (game: Game) =>
+  `${formatDay(game.start, at)}${game.timeKnown ? ` ${formatTime(game.start)}` : ', time TBD'}`;
+const RESULT_WORDS = { W: 'Won', L: 'Lost', T: 'Tied' } as const;
+---
+
+<Card id="scores" title="Scores" reading={reading} wide>
+  {reading.data.length === 0 ? (
+    <p class="dim">No scores to show right now.</p>
+  ) : (
+    <ul class="teams">
+      {reading.data.map((team) => (
+        <li class="team">
+          <p class="name">
+            {team.name}
+            {team.record && <span class="record">{team.record}</span>}
+          </p>
+          <dl class="games">
+            {team.live && (
+              <div class="game">
+                <dt>Now</dt>
+                <dd>
+                  <span class="live">Live</span> {scoreline(team.live)} {where(team.live)}{' '}
+                  <abbr title={team.live.opponent.name}>{team.live.opponent.abbreviation}</abbr>{' '}
+                  <span class="dim">{team.live.status}</span>
+                </dd>
+              </div>
+            )}
+            <div class="game">
+              <dt>Last</dt>
+              <dd>
+                {team.last ? (
+                  <>
+                    {team.last.result && (
+                      <span class:list={['result', team.last.result.toLowerCase()]}>
+                        <span aria-hidden="true">{team.last.result}</span>
+                        <span class="visually-hidden">{RESULT_WORDS[team.last.result]}</span>
+                      </span>
+                    )}{' '}
+                    {scoreline(team.last)} {where(team.last)}{' '}
+                    <abbr title={team.last.opponent.name}>{team.last.opponent.abbreviation}</abbr>
+                    {overtime(team.last) && ` ${overtime(team.last)}`}{' '}
+                    <span class="dim">{formatDay(team.last.start, at)}</span>
+                  </>
+                ) : (
+                  <span class="dim">{team.offseason ? 'Offseason' : 'No games yet'}</span>
+                )}
+              </dd>
+            </div>
+            <div class="game">
+              <dt>Next</dt>
+              <dd>
+                {team.next ? (
+                  <>
+                    {when(team.next)} {where(team.next)}{' '}
+                    <abbr title={team.next.opponent.name}>{team.next.opponent.abbreviation}</abbr>
+                    {(team.next.broadcast || team.next.stage) && (
+                      <span class="dim">
+                        {' '}
+                        {[team.next.stage, team.next.broadcast].filter(Boolean).join(', ')}
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <span class="dim">Nothing scheduled</span>
+                )}
+              </dd>
+            </div>
+          </dl>
+          {team.problem && <p class="problem">Couldn't load: {team.problem}</p>}
+          {team.via && <p class="via">From {team.via}, while ESPN is down</p>}
+        </li>
+      ))}
+    </ul>
+  )}
+</Card>
+
+<style>
+  .teams {
+    display: grid;
+    container-type: inline-size;
+  }
+
+  .team {
+    display: grid;
+    gap: var(--space-1) var(--space-4);
+    padding-block: var(--space-2);
+    border-block-start: 2px solid var(--panel-lo);
+  }
+
+  .team:first-child {
+    border-block-start: 0;
+    padding-block-start: 0;
+  }
+
+  .name {
+    font-weight: 600;
+  }
+
+  .record {
+    margin-inline-start: 0.5em;
+    font-weight: 400;
+    color: var(--ink-dim);
+  }
+
+  .games {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+    gap: var(--space-1) var(--space-4);
+    font-size: var(--size-14);
+  }
+
+  .game {
+    min-width: 0;
+  }
+
+  dt {
+    font-size: var(--size-12);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+
+  dd {
+    margin: 0;
+  }
+
+  .result {
+    display: inline-block;
+    min-width: 1.1em;
+    font-weight: 600;
+  }
+
+  .result.w {
+    color: var(--win);
+  }
+
+  .result.l {
+    color: var(--loss);
+  }
+
+  .live {
+    padding: 0 0.35em;
+    background: var(--maize);
+    color: var(--night);
+    font-weight: 600;
+  }
+
+  .problem {
+    font-size: var(--size-14);
+    color: var(--offline);
+  }
+
+  .via {
+    font-size: var(--size-12);
+    color: var(--ink-dim);
+  }
+
+  @container (min-width: 36rem) {
+    .team {
+      grid-template-columns: 12rem minmax(0, 1fr);
+      align-items: baseline;
+    }
+
+    .problem,
+    .via {
+      grid-column: 2;
+    }
+  }
+</style>

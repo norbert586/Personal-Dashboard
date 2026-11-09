@@ -1,0 +1,100 @@
+{
+ "team": {
+  "id": "130",
+  "abbreviation": "MICH",
+  "location": "Michigan",
+  "name": "Wolverines",
+  "displayName": "Michigan Wolverines",
+  "standingSummary": "10th in Big Ten",
+  "record": {
+   "items": [
+    {
+     "description": "Overall Record",
+     "type": "total",
+     "summary": "5-4"
+    }
+   ]
+  },
+  "nextEvent": [
+   {
+    "id": "401858523",
+    "date": "2026-11-14T20:30Z",
+    "name": "Michigan Wolverines at Oregon Ducks",
+    "shortName": "MICH @ ORE",
+    "season": {
+     "displayName": "2026",
+     "year": 2026
+    },
+    "seasonType": {
+     "abbreviation": "reg",
+     "id": "2",
+     "name": "Regular Season",
+     "type": 2
+    },
+    "timeValid": true,
+    "competitions": [
+     {
+      "id": "401858523",
+      "date": "2026-11-14T20:30Z",
+      "timeValid": true,
+      "neutralSite": false,
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0:00",
+       "period": 0,
+       "type": {
+        "completed": false,
+        "description": "Scheduled",
+        "detail": "Sat, November 14th at 3:30 PM EST",
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "shortDetail": "11/14 - 3:30 PM EST",
+        "state": "pre"
+       }
+      },
+      "broadcasts": [
+       {
+        "type": {
+         "id": "1",
+         "shortName": "TV"
+        },
+        "market": {
+         "id": "1",
+         "type": "National"
+        },
+        "media": {
+         "shortName": "FS1"
+        },
+        "region": "us"
+       }
+      ],
+      "competitors": [
+       {
+        "id": "2483",
+        "homeAway": "home",
+        "team": {
+         "id": "2483",
+         "abbreviation": "ORE",
+         "displayName": "Oregon Ducks",
+         "shortDisplayName": "Oregon",
+         "location": "Oregon"
+        }
+       },
+       {
+        "id": "130",
+        "homeAway": "away",
+        "team": {
+         "id": "130",
+         "abbreviation": "MICH",
+         "displayName": "Michigan Wolverines",
+         "shortDisplayName": "Michigan",
+         "location": "Michigan"
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

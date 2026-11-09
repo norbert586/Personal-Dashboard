@@ -1,0 +1,56 @@
+---
+/**
+ * Where a card's data came from, as a word and a pixel mark (filled = live, hollow = sample,
+ * red = offline), with when it was fetched. Colour is never the only signal.
+ */
+import Mark from './Mark.astro';
+import { provenanceLabel, type Reading } from '../lib/readings.ts';
+import { formatMonthDay, formatTime } from '../lib/time.ts';
+
+interface Props {
+  reading: Reading<unknown>;
+}
+
+const { reading } = Astro.props;
+const when =
+  reading.provenance === 'live'
+    ? formatTime(reading.fetchedAt)
+    : reading.provenance === 'sample'
+      ? `saved ${formatMonthDay(reading.fetchedAt)}`
+      : undefined;
+---
+
+<p class="provenance" data-state={reading.provenance}>
+  <Mark state={reading.provenance} />
+  <span>
+    <span class="visually-hidden">Data: </span>
+    {provenanceLabel[reading.provenance]}
+  </span>
+  {when && (
+    <span class="when">
+      <span aria-hidden="true">·</span>
+      <time datetime={reading.fetchedAt.toISOString()}>{when}</time>
+    </span>
+  )}
+</p>
+
+<style>
+  .provenance {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35em 0.5em;
+    font-size: var(--size-14);
+    line-height: 1.2;
+    color: var(--ink-dim);
+  }
+
+  .when {
+    display: inline-flex;
+    gap: 0.5em;
+  }
+
+  [data-state='offline'] {
+    color: var(--offline);
+  }
+</style>

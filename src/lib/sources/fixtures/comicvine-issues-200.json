@@ -1,0 +1,1045 @@
+{
+ "error": "OK",
+ "limit": 100,
+ "offset": 200,
+ "number_of_page_results": 94,
+ "number_of_total_results": 294,
+ "status_code": 1,
+ "results": [
+  {
+   "id": 1198137,
+   "issue_number": "3",
+   "name": "Vol. 3",
+   "site_detail_url": "https://comicvine.gamespot.com/nishitokyo-metal-brothers-3-vol-3/4000-1198137/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 172538,
+    "name": "Nishitokyo Metal Brothers"
+   }
+  },
+  {
+   "id": 1198138,
+   "issue_number": "5",
+   "name": "Vol. 5",
+   "site_detail_url": "https://comicvine.gamespot.com/tsumugi-no-maho-5-vol-5/4000-1198138/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 165688,
+    "name": "Tsumugi no Mahō"
+   }
+  },
+  {
+   "id": 1198139,
+   "issue_number": "2",
+   "name": "Vol. 2",
+   "site_detail_url": "https://comicvine.gamespot.com/akuryo-kazoku-2-vol-2/4000-1198139/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 172570,
+    "name": "Akuryō Kazoku"
+   }
+  },
+  {
+   "id": 1198198,
+   "issue_number": "29",
+   "name": "Chō Rock",
+   "site_detail_url": "https://comicvine.gamespot.com/sakamoto-days-29-cho-rock/4000-1198198/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 135095,
+    "name": "Sakamoto Days"
+   }
+  },
+  {
+   "id": 1198199,
+   "issue_number": "17",
+   "name": "Mizukara no Chikara de",
+   "site_detail_url": "https://comicvine.gamespot.com/nue-no-onmyoji-17-mizukara-no-chikara-de/4000-1198199/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 153909,
+    "name": "Nue no Onmyōji"
+   }
+  },
+  {
+   "id": 1198200,
+   "issue_number": "10",
+   "name": "Hakke Shūshū",
+   "site_detail_url": "https://comicvine.gamespot.com/shinobigoto-10-hakke-shushu/4000-1198200/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 161891,
+    "name": "Shinobigoto"
+   }
+  },
+  {
+   "id": 1198201,
+   "issue_number": "3",
+   "name": "Hebi Tsukai",
+   "site_detail_url": "https://comicvine.gamespot.com/under-doctor-3-hebi-tsukai/4000-1198201/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 172509,
+    "name": "Under Doctor"
+   }
+  },
+  {
+   "id": 1198202,
+   "issue_number": "2",
+   "name": "\"Harai\" to \"Kyūsai\"",
+   "site_detail_url": "https://comicvine.gamespot.com/roku-no-okashi-na-ie-2-harai-to-kyusai/4000-1198202/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 176762,
+    "name": "Roku no Okashi na Ie"
+   }
+  },
+  {
+   "id": 1198203,
+   "issue_number": "2",
+   "name": "\"Oroka na Mushidomo\"",
+   "site_detail_url": "https://comicvine.gamespot.com/natsu-to-mushikago-2-oroka-na-mushidomo/4000-1198203/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177303,
+    "name": "Natsu to Mushikago"
+   }
+  },
+  {
+   "id": 1198204,
+   "issue_number": "1",
+   "name": "Henkyō no Shitei",
+   "site_detail_url": "https://comicvine.gamespot.com/cannon-master-1-henkyo-no-shitei/4000-1198204/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177889,
+    "name": "Cannon Master"
+   }
+  },
+  {
+   "id": 1198242,
+   "issue_number": "1",
+   "name": "Vol. 1",
+   "site_detail_url": "https://comicvine.gamespot.com/ghost-catchers-1-vol-1/4000-1198242/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177898,
+    "name": "Ghost Catchers!"
+   }
+  },
+  {
+   "id": 1198130,
+   "issue_number": "16",
+   "name": "Vol. 16",
+   "site_detail_url": "https://comicvine.gamespot.com/exorcist-wo-otosenai-16-vol-16/4000-1198130/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 151729,
+    "name": "Exorcist wo Otosenai"
+   }
+  },
+  {
+   "id": 1198143,
+   "issue_number": "4",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/aladdin-4/4000-1198143/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 174194,
+    "name": "Aladdin"
+   }
+  },
+  {
+   "id": 1198144,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/archie-in-hell-1/4000-1198144/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177870,
+    "name": "Archie in Hell"
+   }
+  },
+  {
+   "id": 1198145,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/avengers-1/4000-1198145/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177871,
+    "name": "Avengers"
+   }
+  },
+  {
+   "id": 1198148,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/blade-runner-tokyo-nexus-die-with-honor-1/4000-1198148/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177872,
+    "name": "Blade Runner: Tokyo Nexus: Die with Honor"
+   }
+  },
+  {
+   "id": 1198149,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/challenges-of-doom-doctor-strange-1/4000-1198149/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177873,
+    "name": "Challenges of Doom: Doctor Strange"
+   }
+  },
+  {
+   "id": 1198150,
+   "issue_number": "3",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/cult-de-sac-3/4000-1198150/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 175732,
+    "name": "Cult-de-Sac"
+   }
+  },
+  {
+   "id": 1198151,
+   "issue_number": "20",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/deadly-tales-of-the-gunslinger-20/4000-1198151/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 161700,
+    "name": "Deadly Tales of the Gunslinger"
+   }
+  },
+  {
+   "id": 1198152,
+   "issue_number": "2",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/the-demon-2/4000-1198152/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177363,
+    "name": "The Demon"
+   }
+  },
+  {
+   "id": 1198155,
+   "issue_number": "2",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/exquisite-corpses-fox-mask-killer-2/4000-1198155/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 176994,
+    "name": "Exquisite Corpses: Fox Mask Killer"
+   }
+  },
+  {
+   "id": 1198157,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/friendly-neighborhood-mary-jane-1/4000-1198157/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177876,
+    "name": "Friendly Neighborhood Mary Jane"
+   }
+  },
+  {
+   "id": 1198159,
+   "issue_number": "2",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/ghost-of-a-ghost-2/4000-1198159/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177140,
+    "name": "Ghost of a Ghost"
+   }
+  },
+  {
+   "id": 1198160,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/ghost-rider-kushala-1/4000-1198160/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177878,
+    "name": "Ghost Rider: Kushala"
+   }
+  },
+  {
+   "id": 1198162,
+   "issue_number": "14",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/godzilla-kai-sei-era-14/4000-1198162/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 165718,
+    "name": "Godzilla (Kai-Sei Era)"
+   }
+  },
+  {
+   "id": 1198163,
+   "issue_number": "4",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/the-greatest-american-hero-4/4000-1198163/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 175251,
+    "name": "The Greatest American Hero"
+   }
+  },
+  {
+   "id": 1198166,
+   "issue_number": "8",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/honor-and-curse-eternal-8/4000-1198166/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 171102,
+    "name": "Honor and Curse Eternal"
+   }
+  },
+  {
+   "id": 1198167,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/infernal-hulk-vs-spider-man-1/4000-1198167/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177879,
+    "name": "Infernal Hulk vs. Spider-Man"
+   }
+  },
+  {
+   "id": 1198170,
+   "issue_number": "5",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/land-of-never-5/4000-1198170/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 173109,
+    "name": "Land of Never"
+   }
+  },
+  {
+   "id": 1198171,
+   "issue_number": "4",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/the-last-starfighter-4/4000-1198171/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 173807,
+    "name": "The Last Starfighter"
+   }
+  },
+  {
+   "id": 1198172,
+   "issue_number": "7",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/the-lion-king-7/4000-1198172/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 168596,
+    "name": "The Lion King"
+   }
+  },
+  {
+   "id": 1198173,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/mad-science-division-1/4000-1198173/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177880,
+    "name": "Mad Science Division"
+   }
+  },
+  {
+   "id": 1198174,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/marvel-meowstrange-scales-1/4000-1198174/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177881,
+    "name": "Marvel Meow/Strange Scales"
+   }
+  },
+  {
+   "id": 1198176,
+   "issue_number": "4",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/masters-of-the-universe-legends-of-eternia-4/4000-1198176/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 175256,
+    "name": "Masters of the Universe: Legends of Eternia"
+   }
+  },
+  {
+   "id": 1198177,
+   "issue_number": "4",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/miles-morales-spider-man-4/4000-1198177/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 175739,
+    "name": "Miles Morales: Spider-Man"
+   }
+  },
+  {
+   "id": 1198180,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/no-one-escapes-the-dialectic-1/4000-1198180/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177882,
+    "name": "No One Escapes the Dialectic"
+   }
+  },
+  {
+   "id": 1198181,
+   "issue_number": "4",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/the-omega-book-4/4000-1198181/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 175533,
+    "name": "The Omega Book"
+   }
+  },
+  {
+   "id": 1198182,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/one-zero-zero-one-saves-the-world-1/4000-1198182/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177883,
+    "name": "One Zero Zero One Saves the World"
+   }
+  },
+  {
+   "id": 1198183,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/punisher-showdowns-wolverine-1/4000-1198183/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177884,
+    "name": "Punisher Showdowns: Wolverine"
+   }
+  },
+  {
+   "id": 1198184,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/red-sonja-barbarella-1/4000-1198184/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177885,
+    "name": "Red Sonja Barbarella"
+   }
+  },
+  {
+   "id": 1198187,
+   "issue_number": "2",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/any-given-smile-2/4000-1198187/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177148,
+    "name": "Any Given Smile"
+   }
+  },
+  {
+   "id": 1198188,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/spider-woman-1/4000-1198188/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177887,
+    "name": "Spider-Woman"
+   }
+  },
+  {
+   "id": 1198190,
+   "issue_number": "2",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/sunder-2/4000-1198190/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177265,
+    "name": "Sunder"
+   }
+  },
+  {
+   "id": 1198192,
+   "issue_number": "2",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/supernatural-dean-winchester-2/4000-1198192/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177376,
+    "name": "Supernatural: Dean Winchester"
+   }
+  },
+  {
+   "id": 1198193,
+   "issue_number": "2",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/supernatural-sam-winchester-2/4000-1198193/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177375,
+    "name": "Supernatural: Sam Winchester"
+   }
+  },
+  {
+   "id": 1198195,
+   "issue_number": "148",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/the-walking-dead-deluxe-148/4000-1198195/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 130977,
+    "name": "The Walking Dead Deluxe"
+   }
+  },
+  {
+   "id": 1198227,
+   "issue_number": "2507",
+   "name": "Prog 2507",
+   "site_detail_url": "https://comicvine.gamespot.com/2000-ad-2507-prog-2507/4000-1198227/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 19752,
+    "name": "2000 AD"
+   }
+  },
+  {
+   "id": 1198316,
+   "issue_number": "2",
+   "name": "Vol. 2",
+   "site_detail_url": "https://comicvine.gamespot.com/sekai-wo-tsunagi-tsukusu-internet-miko-2-vol-2/4000-1198316/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177909,
+    "name": "Sekai wo Tsunagi Tsukusu Internet Miko"
+   }
+  },
+  {
+   "id": 1198317,
+   "issue_number": "1",
+   "name": "Vol. 1",
+   "site_detail_url": "https://comicvine.gamespot.com/noise-ring-1-vol-1/4000-1198317/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177910,
+    "name": "Noise Ring"
+   }
+  },
+  {
+   "id": 1198319,
+   "issue_number": "1",
+   "name": "Vol. 1",
+   "site_detail_url": "https://comicvine.gamespot.com/boku-no-kanojo-wa-kessen-heiki-1-vol-1/4000-1198319/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177911,
+    "name": "Boku no Kanojo wa Kessen Heiki"
+   }
+  },
+  {
+   "id": 1198374,
+   "issue_number": "22",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/tomorrow-girl-22/4000-1198374/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 148633,
+    "name": "Tomorrow Girl"
+   }
+  },
+  {
+   "id": 1198294,
+   "issue_number": "21",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/spider-man-today-infinity-comic-21/4000-1198294/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 173236,
+    "name": "Spider-Man Today Infinity Comic"
+   }
+  },
+  {
+   "id": 1198451,
+   "issue_number": "247",
+   "name": "No. 12, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/young-ace-247-no-12-2026/4000-1198451/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 70830,
+    "name": "Young Ace"
+   }
+  },
+  {
+   "id": 1198452,
+   "issue_number": "202612",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/saikyo-jump-202612/4000-1198452/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 53686,
+    "name": "Saikyō Jump"
+   }
+  },
+  {
+   "id": 1198453,
+   "issue_number": "3976",
+   "name": "No. 49, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/weekly-shonen-magazine-3976-no-49-2026/4000-1198453/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 88991,
+    "name": "Weekly Shonen Magazine"
+   }
+  },
+  {
+   "id": 1198454,
+   "issue_number": "228",
+   "name": "No. 12, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/jump-sq-228-no-12-2026/4000-1198454/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 69493,
+    "name": "Jump SQ"
+   }
+  },
+  {
+   "id": 1198455,
+   "issue_number": "3979",
+   "name": "No. 49, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/weekly-shonen-sunday-3979-no-49-2026/4000-1198455/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 53817,
+    "name": "Weekly Shonen Sunday"
+   }
+  },
+  {
+   "id": 1198456,
+   "issue_number": "360",
+   "name": "No. 23, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/grand-jump-360-no-23-2026/4000-1198456/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 89031,
+    "name": "Grand Jump"
+   }
+  },
+  {
+   "id": 1198153,
+   "issue_number": "4",
+   "name": "Part Four",
+   "site_detail_url": "https://comicvine.gamespot.com/dnx-4-part-four/4000-1198153/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 176992,
+    "name": "DNX"
+   }
+  },
+  {
+   "id": 1198142,
+   "issue_number": "25",
+   "name": "Get Brainiac, Finale: A Walk in the Mind of a Madman",
+   "site_detail_url": "https://comicvine.gamespot.com/absolute-superman-25-get-brainiac-finale-a-walk-in/4000-1198142/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 160860,
+    "name": "Absolute Superman"
+   }
+  },
+  {
+   "id": 1198147,
+   "issue_number": "15",
+   "name": "The Assassination of Bruce Wayne, Part One",
+   "site_detail_url": "https://comicvine.gamespot.com/batman-15-the-assassination-of-bruce-wayne-part-on/4000-1198147/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 166619,
+    "name": "Batman"
+   }
+  },
+  {
+   "id": 1198196,
+   "issue_number": "29",
+   "name": "Aftershocks on the Riviera",
+   "site_detail_url": "https://comicvine.gamespot.com/wolverine-29-aftershocks-on-the-riviera/4000-1198196/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 159705,
+    "name": "Wolverine"
+   }
+  },
+  {
+   "id": 1198194,
+   "issue_number": "38",
+   "name": "Soul Deep, Part 2: In the Hands of a Wounded Child",
+   "site_detail_url": "https://comicvine.gamespot.com/uncanny-x-men-38-soul-deep-part-2-in-the-hands-of-/4000-1198194/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 159189,
+    "name": "Uncanny X-Men"
+   }
+  },
+  {
+   "id": 1198140,
+   "issue_number": "4",
+   "name": "The Yarn: Chapter Four",
+   "site_detail_url": "https://comicvine.gamespot.com/absolute-catwoman-4-the-yarn-chapter-four/4000-1198140/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 172741,
+    "name": "Absolute Catwoman"
+   }
+  },
+  {
+   "id": 1198168,
+   "issue_number": "11",
+   "name": "Fantastic vs. Invincible",
+   "site_detail_url": "https://comicvine.gamespot.com/iron-man-11-fantastic-vs-invincible/4000-1198168/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 170313,
+    "name": "Iron Man"
+   }
+  },
+  {
+   "id": 1198141,
+   "issue_number": "20",
+   "name": "Homecoming",
+   "site_detail_url": "https://comicvine.gamespot.com/absolute-green-lantern-20-homecoming/4000-1198141/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 163145,
+    "name": "Absolute Green Lantern"
+   }
+  },
+  {
+   "id": 1198247,
+   "issue_number": "4",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/ufo-robot-grendizer-4/4000-1198247/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 175542,
+    "name": "UFO Robot Grendizer"
+   }
+  },
+  {
+   "id": 1198179,
+   "issue_number": "20",
+   "name": "The Key",
+   "site_detail_url": "https://comicvine.gamespot.com/minor-arcana-20-the-key/4000-1198179/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 159637,
+    "name": "Minor Arcana"
+   }
+  },
+  {
+   "id": 1198154,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/dungeons-and-dragons-1/4000-1198154/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177874,
+    "name": "Dungeons & Dragons"
+   }
+  },
+  {
+   "id": 1198246,
+   "issue_number": "3",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/the-foundry-3/4000-1198246/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 175745,
+    "name": "The Foundry"
+   }
+  },
+  {
+   "id": 1198186,
+   "issue_number": "4",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/the-shaolin-cowboy-staying-ailive-4/4000-1198186/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 173813,
+    "name": "The Shaolin Cowboy: Staying A.I.Live"
+   }
+  },
+  {
+   "id": 1198146,
+   "issue_number": "25",
+   "name": "Father, Part 1 of 3",
+   "site_detail_url": "https://comicvine.gamespot.com/batgirl-25-father-part-1-of-3/4000-1198146/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 160861,
+    "name": "Batgirl"
+   }
+  },
+  {
+   "id": 1198158,
+   "issue_number": "1",
+   "name": "Chapter One: \"Dear Batman\"",
+   "site_detail_url": "https://comicvine.gamespot.com/gangs-of-gotham-1-chapter-one-dear-batman/4000-1198158/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177877,
+    "name": "Gangs of Gotham"
+   }
+  },
+  {
+   "id": 1198169,
+   "issue_number": "2",
+   "name": "Chapter 2: The Smell of Blood",
+   "site_detail_url": "https://comicvine.gamespot.com/jonah-hex-and-the-shadow-of-death-2-chapter-2-the-/4000-1198169/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177368,
+    "name": "Jonah Hex and the Shadow of Death"
+   }
+  },
+  {
+   "id": 1198191,
+   "issue_number": "3",
+   "name": "Chapter Three",
+   "site_detail_url": "https://comicvine.gamespot.com/superman-the-stranger-3-chapter-three/4000-1198191/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 176696,
+    "name": "Superman: The Stranger"
+   }
+  },
+  {
+   "id": 1198375,
+   "issue_number": "15",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/tmnt-journeys-15/4000-1198375/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 166323,
+    "name": "TMNT: Journeys"
+   }
+  },
+  {
+   "id": 1198164,
+   "issue_number": "3",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/hammerfist-3/4000-1198164/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 176391,
+    "name": "Hammerfist"
+   }
+  },
+  {
+   "id": 1198156,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/exquisite-corpses-lone-gunman-1/4000-1198156/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177875,
+    "name": "Exquisite Corpses: Lone Gunman"
+   }
+  },
+  {
+   "id": 1198161,
+   "issue_number": "2",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/gi-joe-a-real-american-herotomb-raider-2/4000-1198161/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177365,
+    "name": "G.I. Joe: A Real American Hero/Tomb Raider"
+   }
+  },
+  {
+   "id": 1198175,
+   "issue_number": "6",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/mask-6/4000-1198175/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 172754,
+    "name": "M.A.S.K."
+   }
+  },
+  {
+   "id": 1198245,
+   "issue_number": "3",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/tales-of-wonder-3/4000-1198245/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 176698,
+    "name": "Tales of Wonder"
+   }
+  },
+  {
+   "id": 1198185,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/rip-kirby-1/4000-1198185/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177886,
+    "name": "Rip Kirby"
+   }
+  },
+  {
+   "id": 1198178,
+   "issue_number": "5",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/mind-mgmt-new-and-improved-5/4000-1198178/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 173287,
+    "name": "Mind MGMT: New & Improved"
+   }
+  },
+  {
+   "id": 1198165,
+   "issue_number": "2",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/hawkmoon-the-mad-gods-amulet-2/4000-1198165/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177378,
+    "name": "Hawkmoon: The Mad God's Amulet"
+   }
+  },
+  {
+   "id": 1198457,
+   "issue_number": "370",
+   "name": "No. 12, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/monthly-comic-flapper-370-no-12-2026/4000-1198457/",
+   "store_date": "2026-11-05",
+   "volume": {
+    "id": 92720,
+    "name": "Monthly Comic Flapper"
+   }
+  },
+  {
+   "id": 1198458,
+   "issue_number": "1824",
+   "name": "No. 23, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/sho-comi-1824-no-23-2026/4000-1198458/",
+   "store_date": "2026-11-05",
+   "volume": {
+    "id": 97960,
+    "name": "Sho-Comi"
+   }
+  },
+  {
+   "id": 1198459,
+   "issue_number": "1282",
+   "name": "No. 23, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/hana-to-yume-1282-no-23-2026/4000-1198459/",
+   "store_date": "2026-11-05",
+   "volume": {
+    "id": 92703,
+    "name": "Hana to Yume"
+   }
+  },
+  {
+   "id": 1198460,
+   "issue_number": "2190",
+   "name": "No. 23, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/margaret-2190-no-23-2026/4000-1198460/",
+   "store_date": "2026-11-05",
+   "volume": {
+    "id": 88989,
+    "name": "Margaret"
+   }
+  },
+  {
+   "id": 1198461,
+   "issue_number": "1576",
+   "name": "No. 22, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/big-comic-original-1576-no-22-2026/4000-1198461/",
+   "store_date": "2026-11-05",
+   "volume": {
+    "id": 92916,
+    "name": "Big Comic Original"
+   }
+  },
+  {
+   "id": 1198462,
+   "issue_number": "2279",
+   "name": "No. 49, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/weekly-young-jump-2279-no-49-2026/4000-1198462/",
+   "store_date": "2026-11-05",
+   "volume": {
+    "id": 88805,
+    "name": "Weekly Young Jump"
+   }
+  },
+  {
+   "id": 1198463,
+   "issue_number": "2505",
+   "name": "No. 49, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/morning-2505-no-49-2026/4000-1198463/",
+   "store_date": "2026-11-05",
+   "volume": {
+    "id": 88341,
+    "name": "Morning"
+   }
+  },
+  {
+   "id": 1198464,
+   "issue_number": "2854",
+   "name": "No. 49, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/weekly-shonen-champion-2854-no-49-2026/4000-1198464/",
+   "store_date": "2026-11-05",
+   "volume": {
+    "id": 92725,
+    "name": "Weekly Shonen Champion"
+   }
+  },
+  {
+   "id": 1198373,
+   "issue_number": "20",
+   "name": "Vol. 20",
+   "site_detail_url": "https://comicvine.gamespot.com/radiant-20-vol-20/4000-1198373/",
+   "store_date": "2026-11-06",
+   "volume": {
+    "id": 177917,
+    "name": "Radiant"
+   }
+  },
+  {
+   "id": 1198589,
+   "issue_number": "44",
+   "name": "Le schtroumpf qui plantait la salsepareille",
+   "site_detail_url": "https://comicvine.gamespot.com/les-schtroumpfs-44-le-schtroumpf-qui-plantait-la-s/4000-1198589/",
+   "store_date": "2026-11-06",
+   "volume": {
+    "id": 71000,
+    "name": "Les Schtroumpfs"
+   }
+  }
+ ],
+ "version": "1.0"
+}

@@ -1,0 +1,263 @@
+{
+ "totalGames": 6,
+ "dates": [
+  {
+   "date": "2026-09-25",
+   "games": [
+    {
+     "gamePk": 824220,
+     "gameType": "R",
+     "season": "2026",
+     "gameDate": "2026-09-25T22:40:00Z",
+     "officialDate": "2026-09-25",
+     "status": {
+      "abstractGameState": "Final",
+      "codedGameState": "F",
+      "detailedState": "Final",
+      "statusCode": "F",
+      "startTimeTBD": false,
+      "abstractGameCode": "F"
+     },
+     "seriesDescription": "Regular Season",
+     "teams": {
+      "away": {
+       "score": 7,
+       "isWinner": false,
+       "team": {
+        "id": 134,
+        "name": "Pittsburgh Pirates",
+        "abbreviation": "PIT",
+        "teamName": "Pirates",
+        "locationName": "Pittsburgh"
+       }
+      },
+      "home": {
+       "score": 8,
+       "isWinner": true,
+       "team": {
+        "id": 116,
+        "name": "Detroit Tigers",
+        "abbreviation": "DET",
+        "teamName": "Tigers",
+        "locationName": "Detroit"
+       }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "date": "2026-09-26",
+   "games": [
+    {
+     "gamePk": 824219,
+     "gameType": "R",
+     "season": "2026",
+     "gameDate": "2026-09-26T17:10:00Z",
+     "officialDate": "2026-09-26",
+     "status": {
+      "abstractGameState": "Final",
+      "codedGameState": "F",
+      "detailedState": "Final",
+      "statusCode": "F",
+      "startTimeTBD": false,
+      "abstractGameCode": "F"
+     },
+     "seriesDescription": "Regular Season",
+     "teams": {
+      "away": {
+       "score": 3,
+       "isWinner": false,
+       "team": {
+        "id": 134,
+        "name": "Pittsburgh Pirates",
+        "abbreviation": "PIT",
+        "teamName": "Pirates",
+        "locationName": "Pittsburgh"
+       }
+      },
+      "home": {
+       "score": 4,
+       "isWinner": true,
+       "team": {
+        "id": 116,
+        "name": "Detroit Tigers",
+        "abbreviation": "DET",
+        "teamName": "Tigers",
+        "locationName": "Detroit"
+       }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "date": "2026-09-27",
+   "games": [
+    {
+     "gamePk": 824217,
+     "gameType": "R",
+     "season": "2026",
+     "gameDate": "2026-09-27T19:10:00Z",
+     "officialDate": "2026-09-27",
+     "status": {
+      "abstractGameState": "Final",
+      "codedGameState": "F",
+      "detailedState": "Final",
+      "statusCode": "F",
+      "startTimeTBD": false,
+      "abstractGameCode": "F"
+     },
+     "seriesDescription": "Regular Season",
+     "teams": {
+      "away": {
+       "score": 4,
+       "isWinner": true,
+       "team": {
+        "id": 134,
+        "name": "Pittsburgh Pirates",
+        "abbreviation": "PIT",
+        "teamName": "Pirates",
+        "locationName": "Pittsburgh"
+       }
+      },
+      "home": {
+       "score": 2,
+       "isWinner": false,
+       "team": {
+        "id": 116,
+        "name": "Detroit Tigers",
+        "abbreviation": "DET",
+        "teamName": "Tigers",
+        "locationName": "Detroit"
+       }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "date": "2027-03-25",
+   "games": [
+    {
+     "gamePk": 853719,
+     "gameType": "R",
+     "season": "2027",
+     "gameDate": "2027-03-25T07:33:00Z",
+     "officialDate": "2027-03-25",
+     "status": {
+      "abstractGameState": "Preview",
+      "codedGameState": "S",
+      "detailedState": "Scheduled",
+      "statusCode": "S",
+      "startTimeTBD": true,
+      "abstractGameCode": "P"
+     },
+     "seriesDescription": "Regular Season",
+     "teams": {
+      "away": {
+       "team": {
+        "id": 145,
+        "name": "Chicago White Sox",
+        "abbreviation": "CWS",
+        "teamName": "White Sox",
+        "locationName": "Chicago"
+       }
+      },
+      "home": {
+       "team": {
+        "id": 116,
+        "name": "Detroit Tigers",
+        "abbreviation": "DET",
+        "teamName": "Tigers",
+        "locationName": "Detroit"
+       }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "date": "2027-03-27",
+   "games": [
+    {
+     "gamePk": 853724,
+     "gameType": "R",
+     "season": "2027",
+     "gameDate": "2027-03-27T07:33:00Z",
+     "officialDate": "2027-03-27",
+     "status": {
+      "abstractGameState": "Preview",
+      "codedGameState": "S",
+      "detailedState": "Scheduled",
+      "statusCode": "S",
+      "startTimeTBD": true,
+      "abstractGameCode": "P"
+     },
+     "seriesDescription": "Regular Season",
+     "teams": {
+      "away": {
+       "team": {
+        "id": 145,
+        "name": "Chicago White Sox",
+        "abbreviation": "CWS",
+        "teamName": "White Sox",
+        "locationName": "Chicago"
+       }
+      },
+      "home": {
+       "team": {
+        "id": 116,
+        "name": "Detroit Tigers",
+        "abbreviation": "DET",
+        "teamName": "Tigers",
+        "locationName": "Detroit"
+       }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "date": "2027-03-28",
+   "games": [
+    {
+     "gamePk": 853713,
+     "gameType": "R",
+     "season": "2027",
+     "gameDate": "2027-03-28T07:33:00Z",
+     "officialDate": "2027-03-28",
+     "status": {
+      "abstractGameState": "Preview",
+      "codedGameState": "S",
+      "detailedState": "Scheduled",
+      "statusCode": "S",
+      "startTimeTBD": true,
+      "abstractGameCode": "P"
+     },
+     "seriesDescription": "Regular Season",
+     "teams": {
+      "away": {
+       "team": {
+        "id": 145,
+        "name": "Chicago White Sox",
+        "abbreviation": "CWS",
+        "teamName": "White Sox",
+        "locationName": "Chicago"
+       }
+      },
+      "home": {
+       "team": {
+        "id": 116,
+        "name": "Detroit Tigers",
+        "abbreviation": "DET",
+        "teamName": "Tigers",
+        "locationName": "Detroit"
+       }
+      }
+     }
+    }
+   ]
+  }
+ ]
+}

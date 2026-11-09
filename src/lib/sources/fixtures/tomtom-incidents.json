@@ -1,0 +1,821 @@
+{
+ "incidents": [
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22875263716023000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-10-05T19:41:30Z",
+    "endTime": null,
+    "from": "Ramblewood Court / Springview Drive",
+    "to": "Ross Lane",
+    "lengthInMeters": 360.086,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -83.1084341423,
+      42.6953964449
+     ],
+     [
+      -83.1080398576,
+      42.6967308434
+     ],
+     [
+      -83.1095123904,
+      42.6979699768
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22875263788023000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-10-05T18:46:00Z",
+    "endTime": null,
+    "from": "Terra Lane / Welland Drive",
+    "to": "Ramblewood Court / Springview Drive",
+    "lengthInMeters": 196.9141357419,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -83.1079258637,
+      42.6970607269
+     ],
+     [
+      -83.1084207313,
+      42.6962372776
+     ],
+     [
+      -83.1084341423,
+      42.6953964449
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22878149192031000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-10-05T18:23:00Z",
+    "endTime": null,
+    "from": "Runyon Road",
+    "to": "Tulberry Court",
+    "lengthInMeters": 315.284560626,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -83.101860048,
+      42.6965149242
+     ],
+     [
+      -83.1016374247,
+      42.6973142217
+     ],
+     [
+      -83.1003030257,
+      42.6983495662
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22878149324015000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-11-01T16:16:00Z",
+    "endTime": null,
+    "from": "Beaver Creek Drive",
+    "to": "Runyon Road",
+    "lengthInMeters": 179.5137147438,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -83.1001353876,
+      42.6950692014
+     ],
+     [
+      -83.1004626171,
+      42.6955841532
+     ],
+     [
+      -83.1005578356,
+      42.6966208818
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22878149252023000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-10-05T16:26:00Z",
+    "endTime": null,
+    "from": "Runyon Road",
+    "to": "Beaver Creek Drive",
+    "lengthInMeters": 180.6191655184,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -83.1007268147,
+      42.6966074523
+     ],
+     [
+      -83.1004626171,
+      42.6955841532
+     ],
+     [
+      -83.1001353876,
+      42.6950692014
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22878149252015000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-10-06T20:17:30Z",
+    "endTime": null,
+    "from": "Copper Circle",
+    "to": "Runyon Road",
+    "lengthInMeters": 85.7820836485,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -83.0977576094,
+      42.6976213094
+     ],
+     [
+      -83.0976771431,
+      42.6970902347
+     ],
+     [
+      -83.0976462977,
+      42.6968542342
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22878149316015000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-10-06T21:23:43Z",
+    "endTime": null,
+    "from": "Runyon Road",
+    "to": "Copper Circle",
+    "lengthInMeters": 86.1143123296,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -83.0974826829,
+      42.6968662468
+     ],
+     [
+      -83.0975510793,
+      42.6972914288
+     ],
+     [
+      -83.0975966768,
+      42.6976360939
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22878149292116000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-10-05T12:43:30Z",
+    "endTime": null,
+    "from": "Dequindre Road / 25 Mile Road",
+    "to": "Washington Road",
+    "lengthInMeters": 1372.561434608,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -83.0947870629,
+      42.6969937031
+     ],
+     [
+      -83.1034036593,
+      42.6963915327
+     ],
+     [
+      -83.1111136691,
+      42.6974952712
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22878149220116000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-10-05T12:43:00Z",
+    "endTime": null,
+    "from": "Washington Road",
+    "to": "Dequindre Road / 25 Mile Road",
+    "lengthInMeters": 1373.7138473,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -83.1111834066,
+      42.6972967882
+     ],
+     [
+      -83.1034036593,
+      42.6963915327
+     ],
+     [
+      -83.0947870629,
+      42.6969937031
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22872378556006000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-11-08T23:44:45Z",
+    "endTime": null,
+    "from": "Golf Course Drive",
+    "to": "Visitor Center",
+    "lengthInMeters": 4382.252042829,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -83.1044416742,
+      42.7263008516
+     ],
+     [
+      -83.0782257633,
+      42.7207486847
+     ],
+     [
+      -83.0723503845,
+      42.7111973172
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22878149608014000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-11-08T22:43:15Z",
+    "endTime": null,
+    "from": "Macomb",
+    "to": "Golf Course Drive",
+    "lengthInMeters": 3736.9377788285,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -83.0717844383,
+      42.7119107568
+     ],
+     [
+      -83.0752820389,
+      42.7220321059
+     ],
+     [
+      -83.0962582545,
+      42.7199963049
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22860837396020000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-07-30T19:19:00Z",
+    "endTime": null,
+    "from": "Park Road",
+    "to": "Mound Road",
+    "lengthInMeters": 166.0367874044,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -83.0721103267,
+      42.76364657
+     ],
+     [
+      -83.070356162,
+      42.7636801074
+     ],
+     [
+      -83.0700772123,
+      42.7636733999
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22860837468020000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-07-30T19:09:30Z",
+    "endTime": null,
+    "from": "Mound Road",
+    "to": "Park Road",
+    "lengthInMeters": 167.5768962302,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -83.0700772123,
+      42.7636733999
+     ],
+     [
+      -83.0704245584,
+      42.7636787536
+     ],
+     [
+      -83.0721291022,
+      42.7636452162
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22881034832012000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-11-09T00:13:45Z",
+    "endTime": null,
+    "from": "Shelby Road",
+    "to": "Shelby Road",
+    "lengthInMeters": 144.8007151832,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -83.0707464235,
+      42.7074824824
+     ],
+     [
+      -83.0699819939,
+      42.7074194117
+     ],
+     [
+      -83.0690043287,
+      42.7075669255
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22875264152014000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-11-09T00:28:45Z",
+    "endTime": null,
+    "from": "Macomb",
+    "to": "Oakgrove Drive",
+    "lengthInMeters": 1388.6659132917,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -83.0733897404,
+      42.7253768078
+     ],
+     [
+      -83.0660190301,
+      42.7283714801
+     ],
+     [
+      -83.0622974651,
+      42.7316531635
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22875264224014000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-11-09T00:49:15Z",
+    "endTime": null,
+    "from": "Oakgrove Drive",
+    "to": "Eastwood Drive",
+    "lengthInMeters": 1625.392993687,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -83.0622974651,
+      42.7316531635
+     ],
+     [
+      -83.0678845064,
+      42.7287242232
+     ],
+     [
+      -83.0744532363,
+      42.723397336
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22924315572156000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-09-22T14:07:00Z",
+    "endTime": null,
+    "from": "19 Mile Rd (Clinton River Rd)",
+    "to": "Canal Rd (Clinton River Rd)",
+    "lengthInMeters": 1872.1759967073,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -83.018832268,
+      42.6097682501
+     ],
+     [
+      -83.0222882943,
+      42.6144205578
+     ],
+     [
+      -83.0311275141,
+      42.6238498251
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22924316628116000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-07-09T11:34:00Z",
+    "endTime": null,
+    "from": "Romeo Plank Rd (24 Mile Rd)",
+    "to": "North Ave (24 Mile Rd)",
+    "lengthInMeters": 1432.2445832747,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -82.9261378066,
+      42.6870534171
+     ],
+     [
+      -82.9174246506,
+      42.6872988199
+     ],
+     [
+      -82.9086283461,
+      42.6875550039
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "TTI-92225e96-bfe5-477d-9e5f-3a66c19a66fd-TTR22924316700116000",
+    "iconCategory": "roadClosed",
+    "magnitudeOfDelay": "undefined",
+    "startTime": "2026-07-09T11:30:00Z",
+    "endTime": null,
+    "from": "North Ave (24 Mile Rd)",
+    "to": "Romeo Plank Rd (24 Mile Rd)",
+    "lengthInMeters": 1425.4419931175,
+    "delayInSeconds": null,
+    "roadNumbers": [],
+    "timeValidity": "present",
+    "probabilityOfOccurrence": "probable",
+    "numberOfReports": null,
+    "lastReportTime": null,
+    "events": [
+     {
+      "code": 401,
+      "description": "Closed",
+      "iconCategory": "roadClosed"
+     }
+    ]
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -82.9086283461,
+      42.6875550039
+     ],
+     [
+      -82.9174246506,
+      42.6872988199
+     ],
+     [
+      -82.9260546581,
+      42.6870560665
+     ]
+    ]
+   }
+  }
+ ]
+}

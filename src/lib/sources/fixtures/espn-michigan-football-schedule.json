@@ -1,0 +1,518 @@
+{
+ "timestamp": "2026-11-09T04:21:55Z",
+ "status": "success",
+ "season": {
+  "year": 2026,
+  "type": 2,
+  "name": "Regular Season",
+  "displayName": "2026",
+  "half": 1
+ },
+ "requestedSeason": {
+  "year": 2026,
+  "type": 2,
+  "name": "Regular Season",
+  "displayName": "2026"
+ },
+ "team": {
+  "id": "130",
+  "abbreviation": "MICH",
+  "location": "Michigan",
+  "name": "Wolverines",
+  "displayName": "Michigan Wolverines",
+  "recordSummary": "5-4",
+  "standingSummary": "11th in Big Ten"
+ },
+ "events": [
+  {
+   "id": "401858496",
+   "date": "2026-10-24T16:00Z",
+   "name": "Indiana Hoosiers at Michigan Wolverines",
+   "shortName": "IU @ MICH",
+   "season": {
+    "year": 2026,
+    "displayName": "2026"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401858496",
+     "date": "2026-10-24T16:00Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0:00",
+      "period": 5,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final/OT",
+       "shortDetail": "Final/OT",
+       "altDetail": "OT"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "Fox"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "130",
+       "homeAway": "home",
+       "winner": false,
+       "score": {
+        "value": 6.0,
+        "displayValue": "6"
+       },
+       "team": {
+        "id": "130",
+        "abbreviation": "MICH",
+        "displayName": "Michigan Wolverines",
+        "shortDisplayName": "Michigan",
+        "location": "Michigan"
+       }
+      },
+      {
+       "id": "84",
+       "homeAway": "away",
+       "winner": true,
+       "score": {
+        "value": 13.0,
+        "displayValue": "13"
+       },
+       "team": {
+        "id": "84",
+        "abbreviation": "IU",
+        "displayName": "Indiana Hoosiers",
+        "shortDisplayName": "Indiana",
+        "location": "Indiana"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401858507",
+   "date": "2026-10-31T16:30Z",
+   "name": "Michigan Wolverines at Rutgers Scarlet Knights",
+   "shortName": "MICH @ RUTG",
+   "season": {
+    "year": 2026,
+    "displayName": "2026"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401858507",
+     "date": "2026-10-31T16:30Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0:00",
+      "period": 4,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "BTN"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "164",
+       "homeAway": "home",
+       "winner": false,
+       "score": {
+        "value": 21.0,
+        "displayValue": "21"
+       },
+       "team": {
+        "id": "164",
+        "abbreviation": "RUTG",
+        "displayName": "Rutgers Scarlet Knights",
+        "shortDisplayName": "Rutgers",
+        "location": "Rutgers"
+       }
+      },
+      {
+       "id": "130",
+       "homeAway": "away",
+       "winner": true,
+       "score": {
+        "value": 28.0,
+        "displayValue": "28"
+       },
+       "team": {
+        "id": "130",
+        "abbreviation": "MICH",
+        "displayName": "Michigan Wolverines",
+        "shortDisplayName": "Michigan",
+        "location": "Michigan"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401858511",
+   "date": "2026-11-08T00:30Z",
+   "name": "Michigan State Spartans at Michigan Wolverines",
+   "shortName": "MSU @ MICH",
+   "season": {
+    "year": 2026,
+    "displayName": "2026"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401858511",
+     "date": "2026-11-08T00:30Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0:00",
+      "period": 4,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "4",
+        "shortName": "Streaming"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "Peacock"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "130",
+       "homeAway": "home",
+       "winner": false,
+       "score": {
+        "value": 6.0,
+        "displayValue": "6"
+       },
+       "team": {
+        "id": "130",
+        "abbreviation": "MICH",
+        "displayName": "Michigan Wolverines",
+        "shortDisplayName": "Michigan",
+        "location": "Michigan"
+       }
+      },
+      {
+       "id": "127",
+       "homeAway": "away",
+       "winner": true,
+       "score": {
+        "value": 15.0,
+        "displayValue": "15"
+       },
+       "team": {
+        "id": "127",
+        "abbreviation": "MSU",
+        "displayName": "Michigan State Spartans",
+        "shortDisplayName": "Michigan St",
+        "location": "Michigan State"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401858523",
+   "date": "2026-11-14T20:30Z",
+   "name": "Michigan Wolverines at Oregon Ducks",
+   "shortName": "MICH @ ORE",
+   "season": {
+    "year": 2026,
+    "displayName": "2026"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401858523",
+     "date": "2026-11-14T20:30Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, November 14th at 3:30 PM EST",
+       "shortDetail": "11/14 - 3:30 PM EST"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "FS1"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "2483",
+       "homeAway": "home",
+       "team": {
+        "id": "2483",
+        "abbreviation": "ORE",
+        "displayName": "Oregon Ducks",
+        "shortDisplayName": "Oregon",
+        "location": "Oregon"
+       }
+      },
+      {
+       "id": "130",
+       "homeAway": "away",
+       "team": {
+        "id": "130",
+        "abbreviation": "MICH",
+        "displayName": "Michigan Wolverines",
+        "shortDisplayName": "Michigan",
+        "location": "Michigan"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401858528",
+   "date": "2026-11-21T05:00Z",
+   "name": "UCLA Bruins at Michigan Wolverines",
+   "shortName": "UCLA @ MICH",
+   "season": {
+    "year": 2026,
+    "displayName": "2026"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": false,
+   "competitions": [
+    {
+     "id": "401858528",
+     "date": "2026-11-21T05:00Z",
+     "timeValid": false,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "11/21 - TBD",
+       "shortDetail": "TBD"
+      }
+     },
+     "broadcasts": [],
+     "competitors": [
+      {
+       "id": "130",
+       "homeAway": "home",
+       "team": {
+        "id": "130",
+        "abbreviation": "MICH",
+        "displayName": "Michigan Wolverines",
+        "shortDisplayName": "Michigan",
+        "location": "Michigan"
+       }
+      },
+      {
+       "id": "26",
+       "homeAway": "away",
+       "team": {
+        "id": "26",
+        "abbreviation": "UCLA",
+        "displayName": "UCLA Bruins",
+        "shortDisplayName": "UCLA",
+        "location": "UCLA"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401858540",
+   "date": "2026-11-28T17:00Z",
+   "name": "Michigan Wolverines at Ohio State Buckeyes",
+   "shortName": "MICH @ OSU",
+   "season": {
+    "year": 2026,
+    "displayName": "2026"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401858540",
+     "date": "2026-11-28T17:00Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, November 28th at 12:00 PM EST",
+       "shortDetail": "11/28 - 12:00 PM EST"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "Fox"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "194",
+       "homeAway": "home",
+       "team": {
+        "id": "194",
+        "abbreviation": "OSU",
+        "displayName": "Ohio State Buckeyes",
+        "shortDisplayName": "Ohio State",
+        "location": "Ohio State"
+       }
+      },
+      {
+       "id": "130",
+       "homeAway": "away",
+       "team": {
+        "id": "130",
+        "abbreviation": "MICH",
+        "displayName": "Michigan Wolverines",
+        "shortDisplayName": "Michigan",
+        "location": "Michigan"
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

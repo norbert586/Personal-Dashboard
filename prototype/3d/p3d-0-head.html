@@ -1,0 +1,69 @@
+<title>Ratiu Twp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+10&family=Pixelify+Sans:wght@400;600&display=swap">
+<style>
+/* One dark game look: the world fills the screen, controls float in bevelled panels like a 90s PC game. */
+:root {
+  color-scheme: dark;
+  --bg: #0b1220; --panel: #1c2846; --panel-hi: #3a4f80; --panel-lo: #0a1122; --outline: #04070f;
+  --ink: #ece6d6; --dim: #a3adc8; --maize: #f2c14e;
+  --display: 'Jersey 10', 'Pixelify Sans', ui-monospace, monospace;
+  --ui: 'Pixelify Sans', ui-monospace, 'Courier New', monospace;
+  --edge: 12px;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.4 var(--ui); overflow: hidden; }
+#world3d { position: fixed; left: 0; top: 0; display: block; image-rendering: pixelated; touch-action: none; outline: none; cursor: crosshair; }
+.hud { position: fixed; z-index: 2; }
+.bevel, .key { background: var(--panel); border: 2px solid var(--outline); box-shadow: inset 2px 2px 0 var(--panel-hi), inset -2px -2px 0 var(--panel-lo); }
+.key { color: var(--ink); font: 600 14px/1 var(--ui); padding: 9px 12px; min-height: 36px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+.key:hover { color: var(--maize); }
+.key:active { box-shadow: inset -2px -2px 0 var(--panel-hi), inset 2px 2px 0 var(--panel-lo); }
+.key:focus-visible, #world3d:focus-visible { outline: 3px solid var(--maize); outline-offset: 2px; }
+.key[aria-pressed='true'] { color: var(--maize); }
+.badge { top: calc(env(safe-area-inset-top, 0px) + var(--edge)); left: calc(env(safe-area-inset-left, 0px) + var(--edge)); display: flex; align-items: baseline; gap: 10px; padding: 6px 12px; }
+.badge b { font: 26px/1 var(--display); color: var(--maize); letter-spacing: 0.04em; }
+.badge span { color: var(--dim); font-size: 13px; }
+.tools { top: calc(env(safe-area-inset-top, 0px) + var(--edge)); right: calc(env(safe-area-inset-right, 0px) + var(--edge)); display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; max-width: min(520px, 62vw); }
+#compass { top: calc(env(safe-area-inset-top, 0px) + var(--edge) + 50px); right: calc(env(safe-area-inset-right, 0px) + var(--edge)); width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; }
+#compass i { display: block; width: 24px; height: 24px; position: relative; }
+#compass i::before { content: ''; position: absolute; left: 7px; top: 7px; border: 5px solid transparent; border-bottom: 9px solid var(--maize); border-top: 0; }
+#compass i b { position: absolute; left: 0; right: 0; top: -9px; text-align: center; font: 12px/1 var(--ui); color: var(--ink); }
+#prompt { left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 54px); font-size: 15px; max-width: calc(100vw - 32px); }
+#prompt .k { color: var(--bg); background: var(--maize); padding: 3px 7px; }
+#hint { left: 0; right: 0; bottom: 0; padding: 8px max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 8px) max(16px, env(safe-area-inset-left, 0px)); background: rgba(4, 7, 15, 0.82); color: var(--dim); font-size: 13px; text-align: center; }
+.win { left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(440px, calc(100vw - 32px)); max-height: min(72vh, 620px); display: flex; flex-direction: column; background: var(--panel); border: 2px solid var(--outline); box-shadow: inset 2px 2px 0 var(--panel-hi), inset -2px -2px 0 var(--panel-lo), 0 12px 40px rgba(0, 0, 0, 0.55); z-index: 4; }
+.win header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 8px 8px 16px; background: var(--panel-lo); }
+.win h2 { margin: 0; font: 26px/1 var(--display); color: var(--maize); text-wrap: balance; }
+#info-body { padding: 4px 16px 16px; overflow: auto; }
+#info-body .dim, .dim { color: var(--dim); }
+#info-body dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; margin: 12px 0; }
+#info-body dt { color: var(--dim); }
+#info-body dd { margin: 0; }
+#info-body ul { padding-left: 18px; margin: 10px 0; display: grid; gap: 8px; }
+#loading { inset: 0; display: grid; place-items: center; background: var(--bg); font: 32px/1.2 var(--display); color: var(--maize); z-index: 5; padding: 16px; text-align: center; }
+@media (max-width: 640px) {
+  .badge span { display: none; }
+  .tools .wide { display: none; }
+  #hint { font-size: 12px; }
+  .win { top: auto; bottom: 0; transform: translateX(-50%); width: 100vw; max-height: 70vh; padding-bottom: env(safe-area-inset-bottom, 0px); }
+}
+</style>
+<canvas id="world3d" tabindex="0" aria-label="Ratiu Twp in 3D. Walk with the arrow keys or WASD; press F at a door."></canvas>
+<header class="hud badge bevel"><b>RATIU TWP</b><span>3D feel test</span></header>
+<nav class="hud tools" aria-label="Controls">
+  <button class="key" id="b-left" type="button" aria-label="Turn camera left">&#8634;</button>
+  <button class="key" id="b-right" type="button" aria-label="Turn camera right">&#8635;</button>
+  <button class="key" id="b-out" type="button" aria-label="Zoom out">&minus;</button>
+  <button class="key" id="b-in" type="button" aria-label="Zoom in">+</button>
+  <button class="key" id="b-bike" type="button" aria-pressed="false">Bike</button>
+  <button class="key" id="b-time" type="button">Real time</button>
+</nav>
+<div id="compass" class="hud bevel" aria-hidden="true"><i><b>N</b></i></div>
+<button id="prompt" class="hud key" type="button" hidden><span class="k">F</span><span id="prompt-text"></span></button>
+<footer id="hint" class="hud">WASD walks along the streets. Click anywhere to walk there, or click a building to go in. Shift runs, B rides the bike, Q/E or drag turns the camera, N for night.</footer>
+<section id="info" class="hud win" role="dialog" aria-labelledby="info-title" hidden><header><h2 id="info-title"></h2><button id="info-close" class="key" type="button">Close</button></header><div id="info-body"></div></section>
+<div id="loading" class="hud">Building Ratiu Twp&hellip;</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>

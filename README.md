@@ -1,50 +1,58 @@
-# React + TypeScript + Vite
+# Ratiu Twp
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+My personal site as a small 3D pixel-art town you can walk, run and bike around. Every building
+is one of my projects, and the morning update (weather, scores, comics, showtimes and more) lives
+in town and in a Today panel. Loosely based on Romeo and Washington Township, Michigan.
 
-Currently, two official plugins are available:
+**Status:** the Astro app serves the Today panel: the morning feeds on real data, good on a phone.
+The town exists as prototypes in `prototype/` until it's ported. The plan is in
+[`docs/SPEC.md`](docs/SPEC.md) and [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Built with Astro 7, TypeScript and three.js.
 
-## Expanding the ESLint configuration
+## Prototypes
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```sh
+prototype/build.sh     # writes prototype/dist/town-2d.html and ratiu-twp-3d.html
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Open either file in a browser. The 3D one loads three.js from a CDN.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## Run the app
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```sh
+npm install
+cp .env.example .env   # then add the free keys for movies, traffic and comics
+npm run dev            # http://localhost:4321
 ```
+
+Without a key, that feed shows its saved sample and says which key to add. `FEEDS=sample npm run
+dev` runs every feed from saved samples, with no network.
+
+Production build, gated to loopback, LAN and Tailscale addresses until the `public` mode lands
+(ADR-011):
+
+```sh
+npm run build
+HOST=0.0.0.0 PORT=4321 node --env-file=.env dist/server/entry.mjs
+```
+
+`--env-file` loads `ACCESS_MODE` and the feed keys; the built server doesn't read `.env` by
+itself.
+
+## Check it
+
+```sh
+npx playwright install chromium   # once
+npm run verify                    # format, types, unit, build, e2e + accessibility
+```
+
+## Docs
+
+| File                                     | Answers                     |
+| ---------------------------------------- | --------------------------- |
+| [`CLAUDE.md`](CLAUDE.md)                 | How to work in this repo    |
+| [`docs/SPEC.md`](docs/SPEC.md)           | What we're building and why |
+| [`docs/DESIGN.md`](docs/DESIGN.md)       | How it looks and why        |
+| [`docs/DECISIONS.md`](docs/DECISIONS.md) | Why things are this way     |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md)     | What's next                 |

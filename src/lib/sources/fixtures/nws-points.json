@@ -1,0 +1,112 @@
+{
+    "@context": [
+        "https://geojson.org/geojson-ld/geojson-context.jsonld",
+        {
+            "@version": "1.1",
+            "wx": "https://api.weather.gov/ontology#",
+            "s": "https://schema.org/",
+            "geo": "http://www.opengis.net/ont/geosparql#",
+            "unit": "http://codes.wmo.int/common/unit/",
+            "@vocab": "https://api.weather.gov/ontology#",
+            "geometry": {
+                "@id": "s:GeoCoordinates",
+                "@type": "geo:wktLiteral"
+            },
+            "city": "s:addressLocality",
+            "state": "s:addressRegion",
+            "distance": {
+                "@id": "s:Distance",
+                "@type": "s:QuantitativeValue"
+            },
+            "bearing": {
+                "@type": "s:QuantitativeValue"
+            },
+            "value": {
+                "@id": "s:value"
+            },
+            "unitCode": {
+                "@id": "s:unitCode",
+                "@type": "@id"
+            },
+            "forecastOffice": {
+                "@type": "@id"
+            },
+            "forecastGridData": {
+                "@type": "@id"
+            },
+            "publicZone": {
+                "@type": "@id"
+            },
+            "county": {
+                "@type": "@id"
+            }
+        }
+    ],
+    "id": "https://api.weather.gov/points/42.72,-83.03",
+    "type": "Feature",
+    "geometry": {
+        "type": "Point",
+        "coordinates": [
+            -83.03,
+            42.72
+        ]
+    },
+    "properties": {
+        "@id": "https://api.weather.gov/points/42.72,-83.03",
+        "@type": "wx:Point",
+        "cwa": "DTX",
+        "type": "land",
+        "forecastOffice": "https://api.weather.gov/offices/DTX",
+        "gridId": "DTX",
+        "gridX": 65,
+        "gridY": 52,
+        "forecast": "https://api.weather.gov/gridpoints/DTX/65,52/forecast",
+        "forecastHourly": "https://api.weather.gov/gridpoints/DTX/65,52/forecast/hourly",
+        "forecastGridData": "https://api.weather.gov/gridpoints/DTX/65,52",
+        "observationStations": "https://api.weather.gov/gridpoints/DTX/65,52/stations",
+        "relativeLocation": {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -83.1591955,
+                    42.6634835
+                ]
+            },
+            "properties": {
+                "city": "Rochester Hills",
+                "state": "MI",
+                "distance": {
+                    "unitCode": "wmoUnit:m",
+                    "value": 5417.058403779
+                },
+                "bearing": {
+                    "unitCode": "wmoUnit:degree_(angle)",
+                    "value": 59
+                }
+            }
+        },
+        "forecastZone": "https://api.weather.gov/zones/forecast/MIZ070",
+        "county": "https://api.weather.gov/zones/county/MIC099",
+        "fireWeatherZone": "https://api.weather.gov/zones/fire/MIZ070",
+        "timeZone": "America/Detroit",
+        "radarStation": "KDTX",
+        "astronomicalData": {
+            "sunrise": "2026-11-08T07:15:15-05:00",
+            "sunset": "2026-11-08T17:16:29-05:00",
+            "transit": "2026-11-08T12:15:52-05:00",
+            "civilTwilightBegin": "2026-11-08T06:45:28-05:00",
+            "civilTwilightEnd": "2026-11-08T17:46:16-05:00",
+            "nauticalTwilightBegin": "2026-11-08T06:11:43-05:00",
+            "nauticalTwilightEnd": "2026-11-08T18:20:01-05:00",
+            "astronomicalTwilightBegin": "2026-11-08T05:38:37-05:00",
+            "astronomicalTwilightEnd": "2026-11-08T18:53:07-05:00"
+        },
+        "nwr": {
+            "transmitter": "KEC63",
+            "sameCode": "026099",
+            "areaBroadcast": "https://api.weather.gov/radio/KEC63/broadcast",
+            "pointBroadcast": "https://api.weather.gov/points/42.72,-83.03/radio"
+        }
+    }
+}

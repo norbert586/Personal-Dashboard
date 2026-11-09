@@ -1,0 +1,92 @@
+{
+ "team": {
+  "id": "6",
+  "abbreviation": "DET",
+  "location": "Detroit",
+  "name": "Tigers",
+  "displayName": "Detroit Tigers",
+  "record": {
+   "items": [
+    {
+     "description": "Overall Record",
+     "type": "total",
+     "summary": "76-86"
+    },
+    {
+     "description": "Home Record",
+     "type": "home",
+     "summary": "42-39"
+    },
+    {
+     "description": "Away Record",
+     "type": "road",
+     "summary": "34-47"
+    }
+   ]
+  },
+  "nextEvent": [
+   {
+    "id": "401917885",
+    "date": "2027-02-19T05:00Z",
+    "name": "Philadelphia Phillies at Detroit Tigers",
+    "shortName": "PHI @ DET",
+    "season": {
+     "displayName": "2027",
+     "year": 2027
+    },
+    "seasonType": {
+     "abbreviation": "pre",
+     "id": "1",
+     "name": "Spring Training",
+     "type": 1
+    },
+    "timeValid": false,
+    "competitions": [
+     {
+      "id": "401917885",
+      "date": "2027-02-19T05:00Z",
+      "timeValid": false,
+      "neutralSite": false,
+      "status": {
+       "period": 1,
+       "type": {
+        "completed": false,
+        "description": "Scheduled",
+        "detail": "TBD",
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "shortDetail": "TBD",
+        "state": "pre"
+       }
+      },
+      "broadcasts": [],
+      "competitors": [
+       {
+        "id": "6",
+        "homeAway": "home",
+        "team": {
+         "id": "6",
+         "abbreviation": "DET",
+         "displayName": "Detroit Tigers",
+         "shortDisplayName": "Tigers",
+         "location": "Detroit"
+        }
+       },
+       {
+        "id": "22",
+        "homeAway": "away",
+        "team": {
+         "id": "22",
+         "abbreviation": "PHI",
+         "displayName": "Philadelphia Phillies",
+         "shortDisplayName": "Phillies",
+         "location": "Philadelphia"
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

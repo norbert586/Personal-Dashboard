@@ -1,0 +1,100 @@
+{
+ "team": {
+  "id": "130",
+  "abbreviation": "MICH",
+  "location": "Michigan",
+  "name": "Wolverines",
+  "displayName": "Michigan Wolverines",
+  "standingSummary": "1st in Big Ten",
+  "record": {
+   "items": [
+    {
+     "description": "Overall Record",
+     "type": "total",
+     "summary": "1-1"
+    }
+   ]
+  },
+  "nextEvent": [
+   {
+    "id": "401909524",
+    "date": "2026-11-12T00:00Z",
+    "name": "Marquette Golden Eagles at Michigan Wolverines",
+    "shortName": "MARQ @ MICH",
+    "season": {
+     "displayName": "2026-27",
+     "year": 2027
+    },
+    "seasonType": {
+     "abbreviation": "reg",
+     "id": "2",
+     "name": "Regular Season",
+     "type": 2
+    },
+    "timeValid": true,
+    "competitions": [
+     {
+      "id": "401909524",
+      "date": "2026-11-12T00:00Z",
+      "timeValid": true,
+      "neutralSite": false,
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0:00",
+       "period": 0,
+       "type": {
+        "completed": false,
+        "description": "Scheduled",
+        "detail": "Wed, November 11th at 7:00 PM EST",
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "shortDetail": "11/11 - 7:00 PM EST",
+        "state": "pre"
+       }
+      },
+      "broadcasts": [
+       {
+        "type": {
+         "id": "1",
+         "shortName": "TV"
+        },
+        "market": {
+         "id": "1",
+         "type": "National"
+        },
+        "media": {
+         "shortName": "FS1"
+        },
+        "region": "us"
+       }
+      ],
+      "competitors": [
+       {
+        "id": "130",
+        "homeAway": "home",
+        "team": {
+         "id": "130",
+         "abbreviation": "MICH",
+         "displayName": "Michigan Wolverines",
+         "shortDisplayName": "Michigan",
+         "location": "Michigan"
+        }
+       },
+       {
+        "id": "269",
+        "homeAway": "away",
+        "team": {
+         "id": "269",
+         "abbreviation": "MARQ",
+         "displayName": "Marquette Golden Eagles",
+         "shortDisplayName": "Marquette",
+         "location": "Marquette"
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

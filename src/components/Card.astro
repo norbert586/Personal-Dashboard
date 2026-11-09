@@ -1,0 +1,85 @@
+---
+/**
+ * One feed on the Today panel: a bevelled panel with its title, where its data came from, and
+ * why it's offline or partly missing. A failing feed still gets its card (docs/SPEC.md, Data rules).
+ */
+import Provenance from './Provenance.astro';
+import type { Reading } from '../lib/readings.ts';
+
+interface Props {
+  /** Unique on the page; names the card's landmark. */
+  id: string;
+  title: string;
+  reading: Reading<unknown>;
+  /** Spans two columns on wide screens. */
+  wide?: boolean;
+}
+
+const { id, title, reading, wide = false } = Astro.props;
+---
+
+<section class:list={['card', { wide }]} aria-labelledby={`${id}-title`}>
+  <header class="head">
+    <h2 id={`${id}-title`}>{title}</h2>
+    <Provenance reading={reading} />
+  </header>
+  <div class="body">
+    <slot />
+  </div>
+  {reading.detail && (
+    <p class:list={['detail', reading.provenance]}>
+      <span class="visually-hidden">Note: </span>
+      {reading.detail}
+    </p>
+  )}
+</section>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+    padding: var(--space-3) var(--space-4) var(--space-4);
+    background: var(--panel);
+    border: 2px solid var(--outline);
+    box-shadow: var(--bevel-up);
+  }
+
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-1) var(--space-3);
+  }
+
+  h2 {
+    font-size: var(--size-28);
+    color: var(--maize);
+  }
+
+  .body {
+    min-width: 0;
+  }
+
+  .detail {
+    margin-block-start: auto;
+    padding: var(--space-2) var(--space-3);
+    background: var(--panel-lo);
+    box-shadow: var(--bevel-down);
+    font-size: var(--size-14);
+    color: var(--ink-dim);
+  }
+
+  .detail.offline {
+    color: var(--offline);
+  }
+
+  /* Where the grid reaches three columns. */
+  @media (min-width: 66rem) {
+    .wide {
+      grid-column: span 2;
+    }
+  }
+</style>

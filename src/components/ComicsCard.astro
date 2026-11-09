@@ -1,0 +1,95 @@
+---
+import Card from './Card.astro';
+import { readingNow, type Reading } from '../lib/readings.ts';
+import type { Comics } from '../lib/sources/comics.ts';
+import { formatCalendarDate } from '../lib/time.ts';
+import { site } from '../site.config.ts';
+
+interface Props {
+  reading: Reading<Comics>;
+  now: Date;
+  /** Books to list for each publisher. */
+  perPublisher?: number;
+}
+
+const { reading, now, perPublisher = 5 } = Astro.props;
+const at = readingNow(reading, now);
+const { week, current, groups } = reading.data;
+const total = groups.reduce((sum, group) => sum + group.comics.length, 0);
+const publishers = site.comics.map((publisher) => publisher.name);
+const named = `${publishers.slice(0, -1).join(', ')} or ${publishers.at(-1)}`;
+---
+
+<Card id="comics" title="New comics" reading={reading}>
+  {week.from !== '' && reading.provenance !== 'offline' && (
+    <p class="week">
+      {!current && "Comic Vine hasn't listed this week's books yet. "}
+      Week of {formatCalendarDate(week.from, at)}: {total} {total === 1 ? 'book' : 'books'}
+    </p>
+  )}
+  {groups.map((group) => (
+    <div class="group">
+      <h3>
+        {group.publisher} <span class="count">{group.comics.length}</span>
+      </h3>
+      <ul class="books">
+        {group.comics.slice(0, perPublisher).map((comic) => (
+          <li>
+            <a href={comic.url}>{comic.title}</a>
+            {comic.name && <span class="dim"> {comic.name}</span>}
+          </li>
+        ))}
+      </ul>
+      {group.comics.length > perPublisher && (
+        <p class="more">and {group.comics.length - perPublisher} more</p>
+      )}
+    </div>
+  ))}
+  {groups.length === 0 && reading.provenance !== 'offline' && (
+    <p>No new books from {named} this week.</p>
+  )}
+</Card>
+
+<style>
+  .week {
+    margin-block-end: var(--space-2);
+    color: var(--ink-dim);
+    font-size: var(--size-14);
+  }
+
+  .group + .group {
+    margin-block-start: var(--space-3);
+  }
+
+  h3 {
+    font-size: var(--size-24);
+    color: var(--maize);
+  }
+
+  .count {
+    font-family: var(--font-ui);
+    font-size: var(--size-14);
+    color: var(--ink-dim);
+  }
+
+  .books {
+    display: grid;
+    gap: var(--space-1);
+    line-height: 1.3;
+  }
+
+  .books a {
+    text-decoration: none;
+  }
+
+  .books a:hover,
+  .books a:focus-visible {
+    text-decoration: underline;
+  }
+
+  .more {
+    margin-block-start: var(--space-1);
+    font-size: var(--size-14);
+    color: var(--ink-dim);
+  }
+</style>

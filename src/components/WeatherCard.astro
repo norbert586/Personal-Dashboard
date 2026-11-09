@@ -1,0 +1,177 @@
+---
+import Card from './Card.astro';
+import SkyIcon from './SkyIcon.astro';
+import { readingNow, type Reading } from '../lib/readings.ts';
+import type { Weather } from '../lib/sources/weather.ts';
+import { formatTime, isoDate } from '../lib/time.ts';
+
+interface Props {
+  reading: Reading<Weather>;
+  now: Date;
+}
+
+const { reading, now } = Astro.props;
+const today = isoDate(readingNow(reading, now));
+const { now: current, periods, days } = reading.data;
+
+const wind =
+  current?.windMph === undefined
+    ? undefined
+    : current.windMph === 0
+      ? 'Calm'
+      : `Wind ${current.windFrom ? `${current.windFrom.point} ` : ''}${current.windMph} mph`;
+// The strip shows daytime forecasts; tonight is already in words above it.
+const week = days.filter((day) => day.highF !== undefined).slice(0, 7);
+const dayLabel = (day: Weather['days'][number]) => (day.date === today ? 'Today' : day.weekday);
+---
+
+<Card id="weather" title="Weather" reading={reading}>
+  {current && (
+    <div class="now">
+      <SkyIcon sky={current.sky} size={56} />
+      <p class="temp">
+        {current.tempF ?? '–'}
+        <span class="unit">°F</span>
+      </p>
+      <div class="conditions">
+        <p>{current.text}</p>
+        {wind && <p class="dim">{wind}</p>}
+        <p class="dim station">
+          {current.station},{' '}
+          <time datetime={current.observedAt.toISOString()}>{formatTime(current.observedAt)}</time>
+        </p>
+      </div>
+    </div>
+  )}
+  {periods.length > 0 && (
+    <ul class="periods">
+      {periods.slice(0, 2).map((period) => (
+        <li>
+          <span class="period-name">{period.name}:</span> {period.text},{' '}
+          {period.isDaytime ? 'high' : 'low'} {period.tempF}°
+        </li>
+      ))}
+    </ul>
+  )}
+  {week.length > 0 && (
+    <ol class="days" aria-label="This week">
+      {week.map((day) => (
+        <li class="day">
+          <span class="name">{dayLabel(day)}</span>
+          <SkyIcon sky={day.sky} size={24} />
+          <span class="visually-hidden">{day.text},</span>
+          <span class="temps">
+            {day.highF !== undefined && (
+              <span class="high">
+                <span class="visually-hidden">high </span>
+                {day.highF}°
+              </span>
+            )}
+            {day.lowF !== undefined && (
+              <span class="low">
+                <span class="visually-hidden">low </span>
+                {day.lowF}°
+              </span>
+            )}
+          </span>
+          {day.precipChance !== undefined && day.precipChance >= 30 && (
+            <span class="precip">
+              <span class="visually-hidden">chance of rain or snow </span>
+              {day.precipChance}%
+            </span>
+          )}
+        </li>
+      ))}
+    </ol>
+  )}
+</Card>
+
+<style>
+  .now {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+  }
+
+  .temp {
+    font-family: var(--font-display);
+    font-size: var(--size-48);
+    line-height: 1;
+  }
+
+  .unit {
+    font-size: 0.5em;
+    vertical-align: 0.7em;
+    color: var(--ink-dim);
+  }
+
+  .conditions {
+    flex: 1 1 12rem;
+    min-width: 0;
+    line-height: 1.3;
+  }
+
+  .station {
+    font-size: var(--size-14);
+  }
+
+  .periods {
+    display: grid;
+    gap: var(--space-1);
+    margin-block: var(--space-3);
+    font-size: var(--size-14);
+  }
+
+  .period-name {
+    color: var(--maize);
+  }
+
+  .days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: var(--space-1);
+  }
+
+  .day {
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: var(--space-1);
+    min-width: 0;
+    padding: var(--space-2) 2px;
+    background: var(--panel-lo);
+    box-shadow: var(--bevel-down);
+    font-size: var(--size-14);
+    line-height: 1.1;
+    text-align: center;
+  }
+
+  .name {
+    font-size: var(--size-12);
+    color: var(--ink-dim);
+  }
+
+  .temps {
+    display: grid;
+  }
+
+  .low {
+    color: var(--ink-dim);
+  }
+
+  .precip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: var(--size-12);
+    color: var(--ink-dim);
+  }
+
+  .precip::before {
+    content: '';
+    width: 3px;
+    height: 5px;
+    background: var(--rain);
+  }
+</style>
