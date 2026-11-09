@@ -67,7 +67,8 @@ npm run format       # prettier --write .
 - CSS: tokens in `src/styles/tokens.css`, one dark look (ADR-022); component styles scoped in
   `.astro` files. **No inline `style=""` attributes, no `define:vars`, no `<script is:inline>`**:
   the CSP blocks all three. Put dynamic geometry in SVG attributes, use classes for discrete
-  states, use bundled `<script>` tags, and prefer server rendering.
+  states, use bundled `<script>` tags, and prefer server rendering. Bundled scripts may still set
+  `element.style.*` (the CSP doesn't cover the CSSOM); never write a `style` attribute.
 - Accessibility floor is WCAG 2.2 AA: semantic HTML, visible focus, `prefers-reduced-motion`
   respected, colour is never the only signal (pair it with a label or shape).
 - Security: the access gate (`src/middleware.ts` → `src/lib/access.ts`) fails closed in
@@ -92,3 +93,6 @@ npm run format       # prettier --write .
 - `prototype/` holds the throwaway 2D and 3D prototypes the MVP ports from (ADR-013).
   `prototype/build.sh` assembles them into `prototype/dist/`. They're excluded from formatting
   and type checks. Port from them; don't add features there.
+- Headless Chromium in Claude cloud sandboxes renders WebGL (software), so the town's e2e smoke
+  test and screenshots run there. To compare against the prototypes, open
+  `prototype/dist/*.html` over `file://`; the 3D one loads three.js from cdn.jsdelivr.net.
