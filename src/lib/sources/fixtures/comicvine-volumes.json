@@ -2,67 +2,805 @@
  "error": "OK",
  "limit": 100,
  "offset": 0,
- "number_of_page_results": 7,
- "number_of_total_results": 7,
+ "number_of_page_results": 100,
+ "number_of_total_results": 100,
  "status_code": 1,
  "results": [
   {
-   "id": 190001,
-   "name": "Ace of Wings",
+   "id": 4937,
+   "name": "Spawn",
    "publisher": {
-    "api_detail_url": "https://comicvine.gamespot.com/api/publisher/4010-10/",
-    "id": 10,
-    "name": "DC Comics"
-   }
-  },
-  {
-   "id": 190002,
-   "name": "Night Desk",
-   "publisher": {
-    "api_detail_url": "https://comicvine.gamespot.com/api/publisher/4010-10/",
-    "id": 10,
-    "name": "DC Comics"
-   }
-  },
-  {
-   "id": 190003,
-   "name": "Lake Effect",
-   "publisher": {
-    "api_detail_url": "https://comicvine.gamespot.com/api/publisher/4010-513/",
     "id": 513,
     "name": "Image"
    }
   },
   {
-   "id": 190004,
-   "name": "Sector Nine",
+   "id": 19752,
+   "name": "2000 AD",
    "publisher": {
-    "api_detail_url": "https://comicvine.gamespot.com/api/publisher/4010-513/",
+    "id": 2019,
+    "name": "Rebellion"
+   }
+  },
+  {
+   "id": 43519,
+   "name": "Weekly Shonen Jump",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 43929,
+   "name": "Weekly Playboy",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 51003,
+   "name": "Dengeki Maoh",
+   "publisher": {
+    "id": 2824,
+    "name": "ASCII Media Works"
+   }
+  },
+  {
+   "id": 53686,
+   "name": "Saikyō Jump",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 53817,
+   "name": "Weekly Shonen Sunday",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 66973,
+   "name": "Monthly Comic Alive",
+   "publisher": {
+    "id": 3169,
+    "name": "Media Factory"
+   }
+  },
+  {
+   "id": 67361,
+   "name": "Big Comic Spirits",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 69493,
+   "name": "Jump SQ",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 70570,
+   "name": "Monthly Comic Zero-Sum",
+   "publisher": {
+    "id": 2832,
+    "name": "Ichijinsha"
+   }
+  },
+  {
+   "id": 70830,
+   "name": "Young Ace",
+   "publisher": {
+    "id": 1961,
+    "name": "Kadokawa Shoten"
+   }
+  },
+  {
+   "id": 71000,
+   "name": "Les Schtroumpfs",
+   "publisher": {
+    "id": 2368,
+    "name": "Dupuis"
+   }
+  },
+  {
+   "id": 85776,
+   "name": "Monstress",
+   "publisher": {
     "id": 513,
     "name": "Image"
    }
   },
   {
-   "id": 190005,
-   "name": "Pine Barrens",
+   "id": 88341,
+   "name": "Morning",
    "publisher": {
-    "api_detail_url": "https://comicvine.gamespot.com/api/publisher/4010-31/",
+    "id": 2259,
+    "name": "Kodansha"
+   }
+  },
+  {
+   "id": 88347,
+   "name": "Nakayoshi",
+   "publisher": {
+    "id": 2259,
+    "name": "Kodansha"
+   }
+  },
+  {
+   "id": 88617,
+   "name": "Ribon",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 88805,
+   "name": "Weekly Young Jump",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 88835,
+   "name": "Cocohana",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 88989,
+   "name": "Margaret",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 88991,
+   "name": "Weekly Shonen Magazine",
+   "publisher": {
+    "id": 2259,
+    "name": "Kodansha"
+   }
+  },
+  {
+   "id": 89031,
+   "name": "Grand Jump",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 92260,
+   "name": "Weekly Young Magazine",
+   "publisher": {
+    "id": 2259,
+    "name": "Kodansha"
+   }
+  },
+  {
+   "id": 92328,
+   "name": "Shonen Jump Giga",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 92695,
+   "name": "Monthly Comic Rex",
+   "publisher": {
+    "id": 2832,
+    "name": "Ichijinsha"
+   }
+  },
+  {
+   "id": 92696,
+   "name": "Young King",
+   "publisher": {
+    "id": 2814,
+    "name": "Shōnen Gahōsha"
+   }
+  },
+  {
+   "id": 92697,
+   "name": "Young King OURs",
+   "publisher": {
+    "id": 2814,
+    "name": "Shōnen Gahōsha"
+   }
+  },
+  {
+   "id": 92699,
+   "name": "Monthly Shonen Ace",
+   "publisher": {
+    "id": 1961,
+    "name": "Kadokawa Shoten"
+   }
+  },
+  {
+   "id": 92702,
+   "name": "Melody",
+   "publisher": {
+    "id": 2303,
+    "name": "Hakusensha"
+   }
+  },
+  {
+   "id": 92703,
+   "name": "Hana to Yume",
+   "publisher": {
+    "id": 2303,
+    "name": "Hakusensha"
+   }
+  },
+  {
+   "id": 92720,
+   "name": "Monthly Comic Flapper",
+   "publisher": {
+    "id": 3169,
+    "name": "Media Factory"
+   }
+  },
+  {
+   "id": 92724,
+   "name": "Young Champion",
+   "publisher": {
+    "id": 1977,
+    "name": "Akita Shoten"
+   }
+  },
+  {
+   "id": 92725,
+   "name": "Weekly Shonen Champion",
+   "publisher": {
+    "id": 1977,
+    "name": "Akita Shoten"
+   }
+  },
+  {
+   "id": 92798,
+   "name": "Dengeki Daioh",
+   "publisher": {
+    "id": 2824,
+    "name": "ASCII Media Works"
+   }
+  },
+  {
+   "id": 92824,
+   "name": "Comic Zenon",
+   "publisher": {
+    "id": 91,
+    "name": "Coamix"
+   }
+  },
+  {
+   "id": 92902,
+   "name": "Monthly Flowers",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 92903,
+   "name": "Ciao",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 92909,
+   "name": "Monthly! Spirits",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 92916,
+   "name": "Big Comic Original",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 92940,
+   "name": "Be ・ Love",
+   "publisher": {
+    "id": 2259,
+    "name": "Kodansha"
+   }
+  },
+  {
+   "id": 93693,
+   "name": "Mogura no Uta",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 93704,
+   "name": "Kenkō de Bunka Tekina Saitei Gendono Seikatsu",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 96826,
+   "name": "Bōkyaku no Sachiko",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 97784,
+   "name": "Gundam Ace",
+   "publisher": {
+    "id": 1961,
+    "name": "Kadokawa Shoten"
+   }
+  },
+  {
+   "id": 97792,
+   "name": "Monthly Shonen Sirius",
+   "publisher": {
+    "id": 2259,
+    "name": "Kodansha"
+   }
+  },
+  {
+   "id": 97960,
+   "name": "Sho-Comi",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 100145,
+   "name": "Wings",
+   "publisher": {
+    "id": 6325,
+    "name": "Shinshokan"
+   }
+  },
+  {
+   "id": 102413,
+   "name": "Tsuribaka Nisshi",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 103178,
+   "name": "Bessatsu Young Champion",
+   "publisher": {
+    "id": 1977,
+    "name": "Akita Shoten"
+   }
+  },
+  {
+   "id": 104699,
+   "name": "Manga Time Kirara Carat",
+   "publisher": {
+    "id": 3602,
+    "name": "Houbunsha"
+   }
+  },
+  {
+   "id": 104989,
+   "name": "for Mrs.",
+   "publisher": {
+    "id": 1977,
+    "name": "Akita Shoten"
+   }
+  },
+  {
+   "id": 105452,
+   "name": "Kindai Mahjong",
+   "publisher": {
+    "id": 3496,
+    "name": "Takeshobo"
+   }
+  },
+  {
+   "id": 105589,
+   "name": "The Hana to Yume",
+   "publisher": {
+    "id": 2303,
+    "name": "Hakusensha"
+   }
+  },
+  {
+   "id": 105867,
+   "name": "Comic Ran",
+   "publisher": {
+    "id": 4273,
+    "name": "Leed Publishing Co., Ltd."
+   }
+  },
+  {
+   "id": 106150,
+   "name": "Elegance Eve",
+   "publisher": {
+    "id": 1977,
+    "name": "Akita Shoten"
+   }
+  },
+  {
+   "id": 107973,
+   "name": "Manga Time Original",
+   "publisher": {
+    "id": 3602,
+    "name": "Houbunsha"
+   }
+  },
+  {
+   "id": 107974,
+   "name": "Manga Home",
+   "publisher": {
+    "id": 3602,
+    "name": "Houbunsha"
+   }
+  },
+  {
+   "id": 109575,
+   "name": "Sonic the Hedgehog",
+   "publisher": {
+    "id": 1190,
+    "name": "IDW Publishing"
+   }
+  },
+  {
+   "id": 109865,
+   "name": "Jump SQ. Rise",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 117321,
+   "name": "Mato Seihei no Slave",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 119963,
+   "name": "Spy×Family",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 130577,
+   "name": "Comic Cune",
+   "publisher": {
+    "id": 3169,
+    "name": "Media Factory"
+   }
+  },
+  {
+   "id": 130664,
+   "name": "Grand Jump Mucha",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 130740,
+   "name": "The Department of Truth",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 130841,
+   "name": "Young King Bull",
+   "publisher": {
+    "id": 2814,
+    "name": "Shōnen Gahōsha"
+   }
+  },
+  {
+   "id": 130977,
+   "name": "The Walking Dead Deluxe",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 134718,
+   "name": "Harley Quinn",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 135095,
+   "name": "Sakamoto Days",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 138036,
+   "name": "Dandadan",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 141163,
+   "name": "The Scorched",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 141597,
+   "name": "Comic Heaven",
+   "publisher": {
+    "id": 3744,
+    "name": "Nihon Bungeisha"
+   }
+  },
+  {
+   "id": 143431,
+   "name": "Poison Ivy",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 147157,
+   "name": "Jumbo Max",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 147399,
+   "name": "Manga Action",
+   "publisher": {
+    "id": 2384,
+    "name": "Futabasha Publishers Ltd."
+   }
+  },
+  {
+   "id": 147521,
+   "name": "Jour",
+   "publisher": {
+    "id": 2384,
+    "name": "Futabasha Publishers Ltd."
+   }
+  },
+  {
+   "id": 148476,
+   "name": "Superman",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 148633,
+   "name": "Tomorrow Girl",
+   "publisher": {
+    "id": 488,
+    "name": "Antarctic Press"
+   }
+  },
+  {
+   "id": 148973,
+   "name": "Aliens Epic Collection: The Original Years",
+   "publisher": {
     "id": 31,
     "name": "Marvel"
    }
   },
   {
-   "id": 190006,
-   "name": "Copperline Tales",
+   "id": 150292,
+   "name": "Sumi ni Gori",
    "publisher": {
-    "api_detail_url": "https://comicvine.gamespot.com/api/publisher/4010-99999/",
-    "id": 99999,
-    "name": "Copperline"
+    "id": 2781,
+    "name": "Shogakukan"
    }
   },
   {
-   "id": 123,
-   "name": "Not asked for",
+   "id": 151301,
+   "name": "Void Rivals",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 151729,
+   "name": "Exorcist wo Otosenai",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 152857,
+   "name": "Conan the Barbarian",
+   "publisher": {
+    "id": 4212,
+    "name": "Titan Comics"
+   }
+  },
+  {
+   "id": 153909,
+   "name": "Nue no Onmyōji",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 154518,
+   "name": "Bellatrix",
+   "publisher": {
+    "id": 2030,
+    "name": "Dargaud"
+   }
+  },
+  {
+   "id": 155038,
+   "name": "Maru Sankaku Shikaku",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 155935,
+   "name": "Kuso Onna ni Sachiare",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 155936,
+   "name": "Ramen Akaneko",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 157089,
+   "name": "Blue Giant Momentum",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 157090,
+   "name": "Bubble-Zamurai",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 157432,
+   "name": "Feral",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 158722,
+   "name": "Akanabe-Sensei wa Tereshirazu",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 158814,
+   "name": "X-Men",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 159189,
+   "name": "Uncanny X-Men",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 159637,
+   "name": "Minor Arcana",
+   "publisher": {
+    "id": 1868,
+    "name": "Boom! Studios"
+   }
+  },
+  {
+   "id": 159705,
+   "name": "Wolverine",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 160181,
+   "name": "Kokuhō",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 160294,
+   "name": "Absolute Batman",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 160511,
+   "name": "Absolute Wonder Woman",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 160860,
+   "name": "Absolute Superman",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 160861,
+   "name": "Batgirl",
    "publisher": {
     "id": 10,
     "name": "DC Comics"

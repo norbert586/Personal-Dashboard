@@ -1,13 +1,14 @@
 /**
  * This week's new comics from DC, Image and Marvel, from Comic Vine (a free key, ADR-015).
  *
- * Issues don't name their publisher, so the week's issues are listed by store date first, then
- * their volumes are looked up in batches for the publisher. Comic Vine only takes its key in the
- * URL, so the key lives in the URL here (error messages never include URLs).
+ * Issues don't name their publisher, so the issues are listed by store date first, then their
+ * volumes are looked up in batches for the publisher (filter=id:a|b|c: not in Comic Vine's docs,
+ * but checked live on 2026-11-09, so only volumes that were asked for count). Comic Vine only takes
+ * its key in the URL, so the key lives in the URL here (error messages never include URLs).
  *
- * Not yet checked against the live API: the cloud sandbox has no key for it, and the batched
- * volume lookup (filter=id:a|b|c) isn't in Comic Vine's documentation. So only volumes that were
- * asked for count, and if publishers can't be told apart, every book shows, with a note.
+ * Comic Vine's community lists books around release day, so early in the week it often has none
+ * yet. Two weeks are read at once, and last week's books show, saying so, until this week's arrive.
+ * Requests go one after another: Comic Vine blocks clients that ask many times a second.
  */
 import type { Fetcher, Upstream } from '../fetcher.ts';
 import { field, list, num, str } from '../json.ts';
@@ -29,6 +30,8 @@ export interface Comic {
 export interface Comics {
   /** Monday to Sunday of the week shown. */
   week: { from: string; to: string };
+  /** False while Comic Vine has nothing from this week, so last week's books are shown. */
+  current: boolean;
   /** One group per publisher in site.config.ts, or one "All publishers" group as a fallback. */
   groups: Array<{ publisher: string; comics: Comic[] }>;
 }
@@ -37,7 +40,8 @@ type Publisher = (typeof site.comics)[number];
 
 const API = 'https://comicvine.gamespot.com/api';
 const HOUR = 60 * 60_000;
-/** Comic Vine's page size, and the most pages to read in one week. */
+const WEEK = 7 * 24 * HOUR;
+/** Comic Vine's page size, and the most pages to read for two weeks. */
 const PAGE = 100;
 const MAX_PAGES = 5;
 
@@ -56,28 +60,30 @@ export function comics(
 ): Source<Comics> {
   return {
     name: 'Comic Vine',
-    empty: { week: { from: '', to: '' }, groups: [] },
+    empty: { week: { from: '', to: '' }, current: true, groups: [] },
     unconfigured: !key?.trim()
       ? "Add COMIC_VINE_API_KEY to .env to show this week's comics."
       : undefined,
     async load({ fetcher, now, problem }) {
-      const week = weekOf(now);
+      const thisWeek = weekOf(now);
+      const lastWeek = weekOf(new Date(now.getTime() - WEEK));
       const ask = (path: string, query: string, ttl: number, sample: string): Upstream => ({
         name: 'Comic Vine',
         url: `${API}${path}?api_key=${encodeURIComponent(key ?? '')}&format=json&${query}`,
         ttl,
         sample,
         keyed: true,
+        timeoutMs: 20_000, // its issues endpoint takes about 5 s a page
       });
 
-      // This week's issues, page by page (Comic Vine answers at most 100 at a time).
+      // Last week's and this week's issues, page by page (Comic Vine answers 100 at a time).
       const issues: unknown[] = [];
       for (let page = 0; page < MAX_PAGES; page++) {
         const offset = page * PAGE;
         const answer = await fetcher.json(
           ask(
             '/issues/',
-            `filter=store_date:${week.from}|${week.to}` +
+            `filter=store_date:${lastWeek.from}|${thisWeek.to}` +
               '&field_list=id,name,issue_number,volume,store_date,site_detail_url' +
               `&sort=store_date:asc&limit=${PAGE}&offset=${offset}`,
             6 * HOUR,
@@ -93,7 +99,7 @@ export function comics(
       let publisherOf: Map<number, number> | undefined;
       try {
         publisherOf = await lookUpPublishers(
-          [...new Set(parsed.map((issue) => issue.volumeId))],
+          [...new Set(parsed.map((issue) => issue.volumeId))].sort((a, b) => a - b),
           fetcher,
           (query, sample) => ask('/volumes/', query, 24 * HOUR, sample),
         );
@@ -102,7 +108,15 @@ export function comics(
           `Couldn't tell the publishers apart, so every publisher's books are listed: ${error instanceof Error ? error.message : error}`,
         );
       }
-      return { week, groups: groupByPublisher(parsed, publisherOf, publishers) };
+      const groupsFor = (week: { from: string; to: string }) =>
+        groupByPublisher(
+          parsed.filter((issue) => issue.storeDate >= week.from && issue.storeDate <= week.to),
+          publisherOf,
+          publishers,
+        );
+      const current = groupsFor(thisWeek);
+      if (current.length > 0) return { week: thisWeek, current: true, groups: current };
+      return { week: lastWeek, current: false, groups: groupsFor(lastWeek) };
     },
   };
 }

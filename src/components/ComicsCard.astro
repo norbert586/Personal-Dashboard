@@ -14,7 +14,7 @@ interface Props {
 
 const { reading, now, perPublisher = 5 } = Astro.props;
 const at = readingNow(reading, now);
-const { week, groups } = reading.data;
+const { week, current, groups } = reading.data;
 const total = groups.reduce((sum, group) => sum + group.comics.length, 0);
 const publishers = site.comics.map((publisher) => publisher.name);
 const named = `${publishers.slice(0, -1).join(', ')} or ${publishers.at(-1)}`;
@@ -23,6 +23,7 @@ const named = `${publishers.slice(0, -1).join(', ')} or ${publishers.at(-1)}`;
 <Card id="comics" title="New comics" reading={reading}>
   {week.from !== '' && reading.provenance !== 'offline' && (
     <p class="week">
+      {!current && "Comic Vine hasn't listed this week's books yet. "}
       Week of {formatCalendarDate(week.from, at)}: {total} {total === 1 ? 'book' : 'books'}
     </p>
   )}

@@ -1,0 +1,1111 @@
+{
+ "error": "OK",
+ "limit": 100,
+ "offset": 100,
+ "number_of_page_results": 100,
+ "number_of_total_results": 294,
+ "status_code": 1,
+ "results": [
+  {
+   "id": 1197949,
+   "issue_number": "296",
+   "name": "No. 12, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/monthly-comic-zero-sum-296-no-12-2026/4000-1197949/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 70570,
+    "name": "Monthly Comic Zero-Sum"
+   }
+  },
+  {
+   "id": 1197950,
+   "issue_number": "254",
+   "name": "No. 12, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/manga-time-kirara-carat-254-no-12-2026/4000-1197950/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 104699,
+    "name": "Manga Time Kirara Carat"
+   }
+  },
+  {
+   "id": 1197951,
+   "issue_number": "432",
+   "name": "No. 12, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/wings-432-no-12-2026/4000-1197951/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 100145,
+    "name": "Wings"
+   }
+  },
+  {
+   "id": 1197952,
+   "issue_number": "227",
+   "name": "No. 12, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/melody-227-no-12-2026/4000-1197952/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 92702,
+    "name": "Melody"
+   }
+  },
+  {
+   "id": 1197953,
+   "issue_number": "3975",
+   "name": "No. 48, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/weekly-shonen-magazine-3975-no-48-2026/4000-1197953/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 88991,
+    "name": "Weekly Shonen Magazine"
+   }
+  },
+  {
+   "id": 1197954,
+   "issue_number": "356",
+   "name": "No. 12, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/monthly-flowers-356-no-12-2026/4000-1197954/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 92902,
+    "name": "Monthly Flowers"
+   }
+  },
+  {
+   "id": 1197955,
+   "issue_number": "180",
+   "name": "No. 12, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/cocohana-180-no-12-2026/4000-1197955/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 88835,
+    "name": "Cocohana"
+   }
+  },
+  {
+   "id": 1197956,
+   "issue_number": "3978",
+   "name": "No. 48, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/weekly-shonen-sunday-3978-no-48-2026/4000-1197956/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 53817,
+    "name": "Weekly Shonen Sunday"
+   }
+  },
+  {
+   "id": 1197957,
+   "issue_number": "202611",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/grand-jump-mucha-202611/4000-1197957/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 130664,
+    "name": "Grand Jump Mucha"
+   }
+  },
+  {
+   "id": 1197560,
+   "issue_number": "67",
+   "name": "A Chaos Carol",
+   "site_detail_url": "https://comicvine.gamespot.com/harley-quinn-67-a-chaos-carol/4000-1197560/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 134718,
+    "name": "Harley Quinn"
+   }
+  },
+  {
+   "id": 1197531,
+   "issue_number": "1",
+   "name": "Chapter One; Chapter Two: Harbinger",
+   "site_detail_url": "https://comicvine.gamespot.com/dc-all-in-saga-darkseid-vs-the-world-1-chapter-one/4000-1197531/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 177712,
+    "name": "DC All In Saga: Darkseid vs. the World"
+   }
+  },
+  {
+   "id": 1197598,
+   "issue_number": "43",
+   "name": "Night Shift, Part One",
+   "site_detail_url": "https://comicvine.gamespot.com/superman-43-night-shift-part-one/4000-1197598/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 148476,
+    "name": "Superman"
+   }
+  },
+  {
+   "id": 1197619,
+   "issue_number": "7",
+   "name": "Blood of the Coven",
+   "site_detail_url": "https://comicvine.gamespot.com/zatanna-7-blood-of-the-coven/4000-1197619/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 171700,
+    "name": "Zatanna"
+   }
+  },
+  {
+   "id": 1197511,
+   "issue_number": "25",
+   "name": "Heretic, Part 3 of 5",
+   "site_detail_url": "https://comicvine.gamespot.com/absolute-wonder-woman-25-heretic-part-3-of-5/4000-1197511/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 160511,
+    "name": "Absolute Wonder Woman"
+   }
+  },
+  {
+   "id": 1197525,
+   "issue_number": "3",
+   "name": " Part 3: Toodles Dreambird",
+   "site_detail_url": "https://comicvine.gamespot.com/black-tower-the-raven-conspiracy-3-part-3-toodles-/4000-1197525/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 176383,
+    "name": "Black Tower: The Raven Conspiracy"
+   }
+  },
+  {
+   "id": 1197602,
+   "issue_number": "13",
+   "name": "Chapter Thirteen: The New Management",
+   "site_detail_url": "https://comicvine.gamespot.com/teenage-mutant-ninja-turtles-shredder-13-chapter-t/4000-1197602/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 166458,
+    "name": "Teenage Mutant Ninja Turtles: Shredder"
+   }
+  },
+  {
+   "id": 1197528,
+   "issue_number": "2",
+   "name": "A Couple of Bad Bananas",
+   "site_detail_url": "https://comicvine.gamespot.com/crimes-against-nature-2-a-couple-of-bad-bananas/4000-1197528/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 177135,
+    "name": "Crimes Against Nature"
+   }
+  },
+  {
+   "id": 1197537,
+   "issue_number": "39",
+   "name": "Chapter 24: My Country 'Tis of Thee; Deviation X: The Life & Times of Martin Barker",
+   "site_detail_url": "https://comicvine.gamespot.com/the-department-of-truth-39-chapter-24-my-country-t/4000-1197537/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 130740,
+    "name": "The Department of Truth"
+   }
+  },
+  {
+   "id": 1197543,
+   "issue_number": "27",
+   "name": "Chapter 27: Territorial",
+   "site_detail_url": "https://comicvine.gamespot.com/feral-27-chapter-27-territorial/4000-1197543/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 157432,
+    "name": "Feral"
+   }
+  },
+  {
+   "id": 1197544,
+   "issue_number": "11",
+   "name": "Stage 11: Revelation",
+   "site_detail_url": "https://comicvine.gamespot.com/final-boss-11-stage-11-revelation/4000-1197544/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 168594,
+    "name": "Final Boss"
+   }
+  },
+  {
+   "id": 1197545,
+   "issue_number": "5",
+   "name": "Chapter Five: Showdown",
+   "site_detail_url": "https://comicvine.gamespot.com/fireborn-5-chapter-five-showdown/4000-1197545/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 171508,
+    "name": "Fireborn"
+   }
+  },
+  {
+   "id": 1197570,
+   "issue_number": "13",
+   "name": "Chapter Thirteen: Showdown",
+   "site_detail_url": "https://comicvine.gamespot.com/lost-fantasy-13-chapter-thirteen-showdown/4000-1197570/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 164032,
+    "name": "Lost Fantasy"
+   }
+  },
+  {
+   "id": 1197604,
+   "issue_number": "2",
+   "name": "Part 2: Joe Bob & Wilson Go to War",
+   "site_detail_url": "https://comicvine.gamespot.com/that-texas-blood-hell-comes-to-allison-ranch-2-par/4000-1197604/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 177151,
+    "name": "That Texas Blood: Hell Comes to Allison Ranch"
+   }
+  },
+  {
+   "id": 1197603,
+   "issue_number": "4",
+   "name": "Sacrilege",
+   "site_detail_url": "https://comicvine.gamespot.com/terminal-4-sacrilege/4000-1197603/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 175072,
+    "name": "Terminal"
+   }
+  },
+  {
+   "id": 1197614,
+   "issue_number": "1",
+   "name": "Chapter One: Elise",
+   "site_detail_url": "https://comicvine.gamespot.com/universal-monsters-the-bride-of-frankenstein-lives/4000-1197614/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 177734,
+    "name": "Universal Monsters: The Bride of Frankenstein Lives"
+   }
+  },
+  {
+   "id": 1197569,
+   "issue_number": "3",
+   "name": "The Wolf-Man",
+   "site_detail_url": "https://comicvine.gamespot.com/lazarus-order-3-the-wolf-man/4000-1197569/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 176112,
+    "name": "Lazarus Order"
+   }
+  },
+  {
+   "id": 1197518,
+   "issue_number": "2",
+   "name": "Life and How to Live it!; Jughead's Journal, Part 2; Get to Know... The Lovely Homes of Riverdale!",
+   "site_detail_url": "https://comicvine.gamespot.com/archie-2-life-and-how-to-live-it-jugheads-journal-/4000-1197518/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 176680,
+    "name": "Archie"
+   }
+  },
+  {
+   "id": 1197527,
+   "issue_number": "36",
+   "name": "Cursed Shores Beyond, Part IV: A Glimpse Beyond",
+   "site_detail_url": "https://comicvine.gamespot.com/conan-the-barbarian-36-cursed-shores-beyond-part-i/4000-1197527/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 152857,
+    "name": "Conan the Barbarian"
+   }
+  },
+  {
+   "id": 1197589,
+   "issue_number": "4",
+   "name": "Valley of Death",
+   "site_detail_url": "https://comicvine.gamespot.com/solomon-kane-the-lion-errant-4-valley-of-death/4000-1197589/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 175065,
+    "name": "Solomon Kane: The Lion Errant"
+   }
+  },
+  {
+   "id": 1197529,
+   "issue_number": "8",
+   "name": "City Without Fear, Part 1",
+   "site_detail_url": "https://comicvine.gamespot.com/daredevil-8-city-without-fear-part-1/4000-1197529/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 171255,
+    "name": "Daredevil"
+   }
+  },
+  {
+   "id": 1197542,
+   "issue_number": "18",
+   "name": "Magneto's Body",
+   "site_detail_url": "https://comicvine.gamespot.com/fantastic-four-18-magnetos-body/4000-1197542/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 165358,
+    "name": "Fantastic Four"
+   }
+  },
+  {
+   "id": 1197584,
+   "issue_number": "4",
+   "name": "Unmasked",
+   "site_detail_url": "https://comicvine.gamespot.com/punisher-vs-spider-man-4-unmasked/4000-1197584/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 174676,
+    "name": "Punisher vs. Spider-Man"
+   }
+  },
+  {
+   "id": 1197583,
+   "issue_number": "9",
+   "name": "Part 4 of 4",
+   "site_detail_url": "https://comicvine.gamespot.com/the-punisher-9-part-4-of-4/4000-1197583/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 170671,
+    "name": "The Punisher"
+   }
+  },
+  {
+   "id": 1197609,
+   "issue_number": "802",
+   "name": "Fire From Heven",
+   "site_detail_url": "https://comicvine.gamespot.com/thor-802-fire-from-heven/4000-1197609/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 166460,
+    "name": "Thor"
+   }
+  },
+  {
+   "id": 1197523,
+   "issue_number": "5",
+   "name": "Time After time, Part 5",
+   "site_detail_url": "https://comicvine.gamespot.com/bishop-5-time-after-time-part-5/4000-1197523/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 172749,
+    "name": "Bishop"
+   }
+  },
+  {
+   "id": 1197596,
+   "issue_number": "4",
+   "name": "Chapter 4: The Gathering Storm",
+   "site_detail_url": "https://comicvine.gamespot.com/star-wars-the-book-of-boba-fett-4-chapter-4-the-ga/4000-1197596/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 176913,
+    "name": "Star Wars: The Book of Boba Fett"
+   }
+  },
+  {
+   "id": 1197514,
+   "issue_number": "2",
+   "name": "Belles of Hell, Part 2",
+   "site_detail_url": "https://comicvine.gamespot.com/alien-vs-x-men-2-belles-of-hell-part-2/4000-1197514/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 177251,
+    "name": "Alien vs. X-Men"
+   }
+  },
+  {
+   "id": 1197595,
+   "issue_number": "1",
+   "name": "Vader's Deal",
+   "site_detail_url": "https://comicvine.gamespot.com/star-wars-rogue-one-darth-vader-1-vaders-deal/4000-1197595/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 177731,
+    "name": "Star Wars: Rogue One - Darth Vader"
+   }
+  },
+  {
+   "id": 1197593,
+   "issue_number": "3",
+   "name": "Chapter Three: Abandon Hope",
+   "site_detail_url": "https://comicvine.gamespot.com/spider-manhulk-fire-and-brimstone-3-chapter-three-/4000-1197593/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 176116,
+    "name": "Spider-Man/Hulk: Fire and Brimstone"
+   }
+  },
+  {
+   "id": 1197522,
+   "issue_number": "3",
+   "name": "They Paved Paradise and Put Up a Plutarkian Parking Lot",
+   "site_detail_url": "https://comicvine.gamespot.com/biker-mice-from-mars-scorch-3-they-paved-paradise-/4000-1197522/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 175731,
+    "name": "Biker Mice from Mars: Scorch"
+   }
+  },
+  {
+   "id": 1197643,
+   "issue_number": "2506",
+   "name": "Prog 2506",
+   "site_detail_url": "https://comicvine.gamespot.com/2000-ad-2506-prog-2506/4000-1197643/",
+   "store_date": "2026-10-28",
+   "volume": {
+    "id": 19752,
+    "name": "2000 AD"
+   }
+  },
+  {
+   "id": 1197971,
+   "issue_number": "2278",
+   "name": "No. 48, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/weekly-young-jump-2278-no-48-2026/4000-1197971/",
+   "store_date": "2026-10-29",
+   "volume": {
+    "id": 88805,
+    "name": "Weekly Young Jump"
+   }
+  },
+  {
+   "id": 1197972,
+   "issue_number": "2504",
+   "name": "No. 48, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/morning-2504-no-48-2026/4000-1197972/",
+   "store_date": "2026-10-29",
+   "volume": {
+    "id": 88341,
+    "name": "Morning"
+   }
+  },
+  {
+   "id": 1197973,
+   "issue_number": "2853",
+   "name": "No. 48, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/weekly-shonen-champion-2853-no-48-2026/4000-1197973/",
+   "store_date": "2026-10-29",
+   "volume": {
+    "id": 92725,
+    "name": "Weekly Shonen Champion"
+   }
+  },
+  {
+   "id": 1197974,
+   "issue_number": "35",
+   "name": "2026 Autumn",
+   "site_detail_url": "https://comicvine.gamespot.com/jump-sq-rise-35-2026-autumn/4000-1197974/",
+   "store_date": "2026-10-29",
+   "volume": {
+    "id": 109865,
+    "name": "Jump SQ. Rise"
+   }
+  },
+  {
+   "id": 1197875,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/zhoushu-huizhan-modulo-1/4000-1197875/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 177828,
+    "name": "Zhòushù Huízhàn: Modulo"
+   }
+  },
+  {
+   "id": 1197850,
+   "issue_number": "4",
+   "name": "Épisode 4",
+   "site_detail_url": "https://comicvine.gamespot.com/bellatrix-4-episode-4/4000-1197850/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 154518,
+    "name": "Bellatrix"
+   }
+  },
+  {
+   "id": 1198025,
+   "issue_number": "202612",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/be-love-202612/4000-1198025/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 92940,
+    "name": "Be ・ Love"
+   }
+  },
+  {
+   "id": 1198027,
+   "issue_number": "108",
+   "name": "Vol. 108",
+   "site_detail_url": "https://comicvine.gamespot.com/comic-heaven-108-vol-108/4000-1198027/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 141597,
+    "name": "Comic Heaven"
+   }
+  },
+  {
+   "id": 1198028,
+   "issue_number": "1051",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/kindai-mahjong-1051/4000-1198028/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 105452,
+    "name": "Kindai Mahjong"
+   }
+  },
+  {
+   "id": 1198030,
+   "issue_number": "395",
+   "name": "No. 12, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/young-king-ours-395-no-12-2026/4000-1198030/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 92697,
+    "name": "Young King OURs"
+   }
+  },
+  {
+   "id": 1198032,
+   "issue_number": "49",
+   "name": "2026 Autumn",
+   "site_detail_url": "https://comicvine.gamespot.com/shonen-jump-giga-49-2026-autumn/4000-1198032/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 92328,
+    "name": "Shonen Jump Giga"
+   }
+  },
+  {
+   "id": 1198038,
+   "issue_number": "2",
+   "name": "Vol. 2",
+   "site_detail_url": "https://comicvine.gamespot.com/sonna-koto-kaite-iindesuka-2-vol-2/4000-1198038/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 171718,
+    "name": "Sonna Koto, Kaite Iindesuka!?"
+   }
+  },
+  {
+   "id": 1198039,
+   "issue_number": "11",
+   "name": "Vol. 11",
+   "site_detail_url": "https://comicvine.gamespot.com/sumi-ni-gori-11-vol-11/4000-1198039/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 150292,
+    "name": "Sumi ni Gori"
+   }
+  },
+  {
+   "id": 1198040,
+   "issue_number": "2",
+   "name": "Vol. 2",
+   "site_detail_url": "https://comicvine.gamespot.com/kyokaisen-no-imuko-san-2-vol-2/4000-1198040/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 168115,
+    "name": "Kyōkaisen no Imuko-san"
+   }
+  },
+  {
+   "id": 1198041,
+   "issue_number": "3",
+   "name": "Vol. 3",
+   "site_detail_url": "https://comicvine.gamespot.com/kishimojin-3-vol-3/4000-1198041/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 171719,
+    "name": "Kishimojin"
+   }
+  },
+  {
+   "id": 1198043,
+   "issue_number": "14",
+   "name": "Vol. 14",
+   "site_detail_url": "https://comicvine.gamespot.com/kenko-de-bunka-tekina-saitei-gendono-seikatsu-14-v/4000-1198043/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 93704,
+    "name": "Kenkō de Bunka Tekina Saitei Gendono Seikatsu"
+   }
+  },
+  {
+   "id": 1198044,
+   "issue_number": "2",
+   "name": "Vol. 2",
+   "site_detail_url": "https://comicvine.gamespot.com/nui-no-shikijitsu-2-vol-2/4000-1198044/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 173765,
+    "name": "Nui no Shikijitsu"
+   }
+  },
+  {
+   "id": 1198045,
+   "issue_number": "9",
+   "name": "Vol. 9",
+   "site_detail_url": "https://comicvine.gamespot.com/bubble-zamurai-9-vol-9/4000-1198045/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 157090,
+    "name": "Bubble-Zamurai"
+   }
+  },
+  {
+   "id": 1198046,
+   "issue_number": "2",
+   "name": "Vol. 2",
+   "site_detail_url": "https://comicvine.gamespot.com/hi-shikai-sento-ironrecce-2-vol-2/4000-1198046/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 172240,
+    "name": "Hi-Shikai Sentō: Ironrecce"
+   }
+  },
+  {
+   "id": 1198048,
+   "issue_number": "27",
+   "name": "Vol. 27",
+   "site_detail_url": "https://comicvine.gamespot.com/bokyaku-no-sachiko-27-vol-27/4000-1198048/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 96826,
+    "name": "Bōkyaku no Sachiko"
+   }
+  },
+  {
+   "id": 1198049,
+   "issue_number": "7",
+   "name": "Vol. 7",
+   "site_detail_url": "https://comicvine.gamespot.com/maru-sankaku-shikaku-7-vol-7/4000-1198049/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 155038,
+    "name": "Maru Sankaku Shikaku"
+   }
+  },
+  {
+   "id": 1198052,
+   "issue_number": "2",
+   "name": "Vol. 2",
+   "site_detail_url": "https://comicvine.gamespot.com/po-san-2-vol-2/4000-1198052/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 177852,
+    "name": "Pō-san"
+   }
+  },
+  {
+   "id": 1198053,
+   "issue_number": "6",
+   "name": "Vol. 6",
+   "site_detail_url": "https://comicvine.gamespot.com/kokuho-6-vol-6/4000-1198053/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 160181,
+    "name": "Kokuhō"
+   }
+  },
+  {
+   "id": 1198054,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/mamatte-sabasaba-shiteru-kara-1/4000-1198054/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 177853,
+    "name": "Mamatte Sabasaba Shiteru Kara"
+   }
+  },
+  {
+   "id": 1198055,
+   "issue_number": "4",
+   "name": "Vol. 4",
+   "site_detail_url": "https://comicvine.gamespot.com/bakenokawa-no-hitobake-4-vol-4/4000-1198055/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 166080,
+    "name": "Bakenokawa no Hitobake"
+   }
+  },
+  {
+   "id": 1198056,
+   "issue_number": "1",
+   "name": "Vol. 1",
+   "site_detail_url": "https://comicvine.gamespot.com/danyu-kaigo-kare-wa-southern-cross-takagi-1-vol-1/4000-1198056/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 177854,
+    "name": "Danyū Kaigo: Kare wa Southern-Cross Takagi"
+   }
+  },
+  {
+   "id": 1198057,
+   "issue_number": "2",
+   "name": "Vol. 2",
+   "site_detail_url": "https://comicvine.gamespot.com/manazashi-tamako-no-jiyukenkyu-2-vol-2/4000-1198057/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 172241,
+    "name": "Manazashi Tamako no Jiyukenkyū"
+   }
+  },
+  {
+   "id": 1198058,
+   "issue_number": "1",
+   "name": "Vol. 1",
+   "site_detail_url": "https://comicvine.gamespot.com/suiken-japan-1-vol-1/4000-1198058/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 177855,
+    "name": "Suiken Japan"
+   }
+  },
+  {
+   "id": 1198059,
+   "issue_number": "2",
+   "name": "弐",
+   "site_detail_url": "https://comicvine.gamespot.com/sabu-to-ichi-torimono-hikae-kanzenban-2-er/4000-1198059/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 177248,
+    "name": "Sabu to Ichi Torimono Hikae: Kanzenban"
+   }
+  },
+  {
+   "id": 1198060,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/sakanoboru-ishi-1/4000-1198060/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 177856,
+    "name": "Sakanoboru Ishi"
+   }
+  },
+  {
+   "id": 1198061,
+   "issue_number": "2",
+   "name": "Vol. 2",
+   "site_detail_url": "https://comicvine.gamespot.com/zatoichi-monogatari-noir-2-vol-2/4000-1198061/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 177249,
+    "name": "Zatōichi Monogatari Noir"
+   }
+  },
+  {
+   "id": 1198062,
+   "issue_number": "17",
+   "name": "Vol. 17",
+   "site_detail_url": "https://comicvine.gamespot.com/jumbo-max-17-vol-17/4000-1198062/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 147157,
+    "name": "Jumbo Max"
+   }
+  },
+  {
+   "id": 1198063,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/nanbanjin-1/4000-1198063/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 177857,
+    "name": "Nanbanjin"
+   }
+  },
+  {
+   "id": 1198042,
+   "issue_number": "119",
+   "name": "Hamasaki Densuke no Henshin no Maki",
+   "site_detail_url": "https://comicvine.gamespot.com/tsuribaka-nisshi-119-hamasaki-densuke-no-henshin-n/4000-1198042/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 102413,
+    "name": "Tsuribaka Nisshi"
+   }
+  },
+  {
+   "id": 1198050,
+   "issue_number": "97",
+   "name": "Vol. 97",
+   "site_detail_url": "https://comicvine.gamespot.com/mogura-no-uta-97-vol-97/4000-1198050/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 93693,
+    "name": "Mogura no Uta"
+   }
+  },
+  {
+   "id": 1198047,
+   "issue_number": "9",
+   "name": "Volume 9",
+   "site_detail_url": "https://comicvine.gamespot.com/blue-giant-momentum-9-volume-9/4000-1198047/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 157089,
+    "name": "Blue Giant Momentum"
+   }
+  },
+  {
+   "id": 1198381,
+   "issue_number": "1",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/fanaticism-1/4000-1198381/",
+   "store_date": "2026-10-30",
+   "volume": {
+    "id": 177918,
+    "name": "Fanaticism"
+   }
+  },
+  {
+   "id": 1198007,
+   "issue_number": "2863",
+   "name": "No. 49, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/weekly-shonen-jump-2863-no-49-2026/4000-1198007/",
+   "store_date": "2026-11-02",
+   "volume": {
+    "id": 43519,
+    "name": "Weekly Shonen Jump"
+   }
+  },
+  {
+   "id": 1198426,
+   "issue_number": "1316",
+   "name": "No. 12, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/bessatsu-young-champion-1316-no-12-2026/4000-1198426/",
+   "store_date": "2026-11-02",
+   "volume": {
+    "id": 103178,
+    "name": "Bessatsu Young Champion"
+   }
+  },
+  {
+   "id": 1198425,
+   "issue_number": "2473",
+   "name": "No. 49, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/big-comic-spirits-2473-no-49-2026/4000-1198425/",
+   "store_date": "2026-11-02",
+   "volume": {
+    "id": 67361,
+    "name": "Big Comic Spirits"
+   }
+  },
+  {
+   "id": 1198424,
+   "issue_number": "127",
+   "name": "No. 23, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/young-king-bull-127-no-23-2026/4000-1198424/",
+   "store_date": "2026-11-02",
+   "volume": {
+    "id": 130841,
+    "name": "Young King Bull"
+   }
+  },
+  {
+   "id": 1198415,
+   "issue_number": "202612",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/for-mrs-202612/4000-1198415/",
+   "store_date": "2026-11-02",
+   "volume": {
+    "id": 104989,
+    "name": "for Mrs."
+   }
+  },
+  {
+   "id": 1198423,
+   "issue_number": "2607",
+   "name": "No. 49, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/weekly-young-magazine-2607-no-49-2026/4000-1198423/",
+   "store_date": "2026-11-02",
+   "volume": {
+    "id": 92260,
+    "name": "Weekly Young Magazine"
+   }
+  },
+  {
+   "id": 1198421,
+   "issue_number": "761",
+   "name": "No. 22, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/manga-action-761-no-22-2026/4000-1198421/",
+   "store_date": "2026-11-02",
+   "volume": {
+    "id": 147399,
+    "name": "Manga Action"
+   }
+  },
+  {
+   "id": 1198420,
+   "issue_number": "202612",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/ribon-202612/4000-1198420/",
+   "store_date": "2026-11-02",
+   "volume": {
+    "id": 88617,
+    "name": "Ribon"
+   }
+  },
+  {
+   "id": 1198419,
+   "issue_number": "202612",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/nakayoshi-202612/4000-1198419/",
+   "store_date": "2026-11-02",
+   "volume": {
+    "id": 88347,
+    "name": "Nakayoshi"
+   }
+  },
+  {
+   "id": 1198418,
+   "issue_number": "862",
+   "name": "No. 12, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/ciao-862-no-12-2026/4000-1198418/",
+   "store_date": "2026-11-02",
+   "volume": {
+    "id": 92903,
+    "name": "Ciao"
+   }
+  },
+  {
+   "id": 1198417,
+   "issue_number": "469",
+   "name": "No. 12, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/manga-home-469-no-12-2026/4000-1198417/",
+   "store_date": "2026-11-02",
+   "volume": {
+    "id": 107974,
+    "name": "Manga Home"
+   }
+  },
+  {
+   "id": 1198416,
+   "issue_number": "798",
+   "name": "No. 12, 2026",
+   "site_detail_url": "https://comicvine.gamespot.com/jour-798-no-12-2026/4000-1198416/",
+   "store_date": "2026-11-02",
+   "volume": {
+    "id": 147521,
+    "name": "Jour"
+   }
+  },
+  {
+   "id": 1198077,
+   "issue_number": "17",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/peter-parker-spider-man-queens-finest-infinity-com/4000-1198077/",
+   "store_date": "2026-11-03",
+   "volume": {
+    "id": 173273,
+    "name": "Peter Parker Spider-Man: Queens' Finest Infinity Comic"
+   }
+  },
+  {
+   "id": 1198127,
+   "issue_number": "22",
+   "name": "Vol. 22",
+   "site_detail_url": "https://comicvine.gamespot.com/mato-seihei-no-slave-22-vol-22/4000-1198127/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 117321,
+    "name": "Mato Seihei no Slave"
+   }
+  },
+  {
+   "id": 1198128,
+   "issue_number": "18",
+   "name": "Vol. 18",
+   "site_detail_url": "https://comicvine.gamespot.com/spyxfamily-18-vol-18/4000-1198128/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 119963,
+    "name": "Spy×Family"
+   }
+  },
+  {
+   "id": 1198129,
+   "issue_number": "26",
+   "name": "Volume 26",
+   "site_detail_url": "https://comicvine.gamespot.com/dandadan-26-volume-26/4000-1198129/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 138036,
+    "name": "Dandadan"
+   }
+  },
+  {
+   "id": 1198131,
+   "issue_number": "16",
+   "name": "Vol. 16",
+   "site_detail_url": "https://comicvine.gamespot.com/ramen-akaneko-16-vol-16/4000-1198131/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 155936,
+    "name": "Ramen Akaneko"
+   }
+  },
+  {
+   "id": 1198132,
+   "issue_number": "12",
+   "name": "Vol. 12",
+   "site_detail_url": "https://comicvine.gamespot.com/kuso-onna-ni-sachiare-12-vol-12/4000-1198132/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 155935,
+    "name": "Kuso Onna ni Sachiare"
+   }
+  },
+  {
+   "id": 1198133,
+   "issue_number": "6",
+   "name": "Vol. 6",
+   "site_detail_url": "https://comicvine.gamespot.com/akanabe-sensei-wa-tereshirazu-6-vol-6/4000-1198133/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 158722,
+    "name": "Akanabe-Sensei wa Tereshirazu"
+   }
+  },
+  {
+   "id": 1198165,
+   "issue_number": "2",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/hawkmoon-the-mad-gods-amulet-2/4000-1198165/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 177378,
+    "name": "Hawkmoon: The Mad God's Amulet"
+   }
+  },
+  {
+   "id": 1198375,
+   "issue_number": "15",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/tmnt-journeys-15/4000-1198375/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 166323,
+    "name": "TMNT: Journeys"
+   }
+  },
+  {
+   "id": 1198374,
+   "issue_number": "22",
+   "name": null,
+   "site_detail_url": "https://comicvine.gamespot.com/tomorrow-girl-22/4000-1198374/",
+   "store_date": "2026-11-04",
+   "volume": {
+    "id": 148633,
+    "name": "Tomorrow Girl"
+   }
+  }
+ ],
+ "version": "1.0"
+}

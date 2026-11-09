@@ -319,3 +319,18 @@ and a half (ADR-021), and after that the card is offline with the reason. If Com
 publishers apart, every book shows, with a note.
 Consequences: a long Comic Vine outage empties the comic shop window. Revisit if Comic Vine proves
 unreliable.
+
+## ADR-026: Slow feeds never hold up the page
+
+**Accepted · 2026-11-09**
+Context: the live Comic Vine check found it takes about five seconds a page, so refreshing comics
+held the whole Today page for 10 to 15 seconds every six hours. It also showed that Comic Vine's
+community lists a week's books around release day, so on a Monday it has none.
+Decision: an answer past its freshness time but within six of them, the window ADR-021 already
+trusts during outages, is served at once while a fresh one loads in the background. Older answers
+still make the request wait. Slow upstreams get their own timeout (Comic Vine: 20 seconds), and
+answers nobody asks for are kept three days instead of one, so a once-a-day visit finds them.
+Comics read two weeks and show last week's books, saying so, until this week's arrive.
+Consequences: only the first load after a restart waits for every feed. A reading can be up to six
+freshness times old without a note; its time shows its age. Fast-changing feeds have short windows
+(live scores 12 minutes, aircraft 3), so after a quiet spell they still wait for fresh data.

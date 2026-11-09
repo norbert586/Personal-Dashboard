@@ -72,9 +72,9 @@ test('reads the saved samples as they were when captured', async ({ page }) => {
   await expect(traffic).toContainText('12 closures on side streets not shown.');
 
   const comics = page.getByRole('region', { name: 'New comics' });
-  await expect(comics).toContainText('Week of Nov 2: 6 books');
+  await expect(comics).toContainText('Week of Nov 2: 32 books');
   await expect(comics.getByRole('heading', { name: /^DC/ })).toBeVisible();
-  await expect(comics).toContainText('Ace of Wings #12');
+  await expect(comics).toContainText('Batman #15');
 
   const movies = page.getByRole('region', { name: 'Movies' });
   await expect(movies.getByRole('listitem').first()).toContainText('Wildwood');

@@ -28,8 +28,8 @@ Feeds come first: they're useful on their own, and the town reads them later.
        news (local, tech, national, world), area traffic, flights overhead and GitHub activity, from
        the sources in ADR-015 and ADR-017. Free keys (Comic Vine, TMDB, TomTom) live in `.env`. One
        cached JSON endpoint serves them all (`/api/feeds.json`, ADR-021).
-   - [ ] Check comics against the live Comic Vine API once a session has the key: its sample is
-         built from the docs, and the batched volume lookup isn't documented (ADR-025).
+   - [x] Check comics against the live Comic Vine API. The batched volume lookup works; Comic Vine
+         lists books around release day, so last week's show until this week's arrive (ADR-026).
 2. [x] **Today panel.** The morning update as an HTML page on real data, good on a phone. It's the
        home page until the town lands (ADR-022).
 3. [ ] **Town island in Astro.** Port the 3D engine from `prototype/3d/` to TypeScript in

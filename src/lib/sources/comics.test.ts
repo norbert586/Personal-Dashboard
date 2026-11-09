@@ -24,21 +24,37 @@ describe('comics: the week', () => {
   });
 });
 
-describe('comics: saved sample', () => {
+describe('comics: saved sample (real Comic Vine answers for 26 October to 8 November)', () => {
   it("groups the week's DC, Image and Marvel books, leaving other publishers out", async () => {
     const ctx = context(fixtures, NOW);
     const data = await comics('key').load(ctx);
     assert.deepEqual(data.week, { from: '2026-11-02', to: '2026-11-08' });
-    assert.deepEqual(titles(data.groups), [
-      ['DC', ['Ace of Wings #11', 'Ace of Wings #12', 'Night Desk #27']],
-      ['Image', ['Lake Effect #3', 'Sector Nine #1']],
-      ['Marvel', ['Pine Barrens #1']],
-    ]);
-    assert.equal(data.groups[1]?.comics[1]?.name, 'Boot Sequence');
+    assert.equal(data.current, true);
+    assert.deepEqual(
+      data.groups.map((group) => [group.publisher, group.comics.length]),
+      [
+        ['DC', 9],
+        ['Image', 8],
+        ['Marvel', 15],
+      ],
+    );
+    const dc = data.groups[0]?.comics ?? [];
+    assert.ok(dc.some((comic) => comic.title === 'Batman #15'));
+    assert.deepEqual(
+      dc.find((comic) => comic.title === 'Absolute Superman #25'),
+      {
+        id: dc.find((comic) => comic.title === 'Absolute Superman #25')?.id,
+        title: 'Absolute Superman #25',
+        name: 'Get Brainiac, Finale: A Walk in the Mind of a Madman',
+        storeDate: '2026-11-04',
+        url: dc.find((comic) => comic.title === 'Absolute Superman #25')?.url,
+      },
+    );
+    assert.ok(data.groups[2]?.comics.some((comic) => comic.title === 'Uncanny X-Men #38'));
     assert.deepEqual(ctx.problems, []);
   });
 
-  it('asks for the week by store date, and for the volumes it needs, with the key', async () => {
+  it('asks for two weeks by store date, then their volumes in sorted batches, with the key', async () => {
     const asked: Upstream[] = [];
     const recording: Fetcher = {
       json: (upstream) => {
@@ -48,15 +64,25 @@ describe('comics: saved sample', () => {
       text: fixtures.text,
     };
     await comics('cv-key').load(context(recording, NOW));
-    const [issues, volumes] = asked.map((upstream) => new URL(upstream.url));
-    assert.equal(asked.length, 2);
-    assert.equal(issues?.pathname, '/api/issues/');
-    assert.equal(issues?.searchParams.get('api_key'), 'cv-key');
-    assert.equal(issues?.searchParams.get('filter'), 'store_date:2026-11-02|2026-11-08');
-    assert.equal(volumes?.pathname, '/api/volumes/');
-    assert.equal(
-      volumes?.searchParams.get('filter'),
-      'id:190001|190002|190003|190004|190005|190006',
+    const urls = asked.map((upstream) => new URL(upstream.url));
+    assert.deepEqual(
+      urls.map((url) => [url.pathname, url.searchParams.get('offset')]),
+      [
+        ['/api/issues/', '0'],
+        ['/api/issues/', '100'],
+        ['/api/issues/', '200'],
+        ['/api/volumes/', null],
+        ['/api/volumes/', null],
+        ['/api/volumes/', null],
+      ],
+    );
+    assert.equal(urls[0]?.searchParams.get('api_key'), 'cv-key');
+    assert.equal(urls[0]?.searchParams.get('filter'), 'store_date:2026-10-26|2026-11-08');
+    const firstBatch = (urls[3]?.searchParams.get('filter') ?? '').replace('id:', '').split('|');
+    assert.equal(firstBatch.length, 100);
+    assert.deepEqual(
+      firstBatch,
+      [...firstBatch].sort((a, b) => Number(a) - Number(b)),
     );
     assert.ok(asked.every((upstream) => upstream.keyed));
   });
@@ -117,6 +143,38 @@ describe('comics: paging and fallbacks', () => {
       assert.equal(ctx.problems.length, 1);
       assert.match(ctx.problems[0] ?? '', /^Couldn't tell the publishers apart/);
     }
+  });
+
+  it("shows last week's books, and says so, while Comic Vine has none from this week", async () => {
+    const issues = {
+      status_code: 1,
+      number_of_total_results: 2,
+      results: [
+        {
+          id: 1,
+          issue_number: '1',
+          store_date: '2026-10-28',
+          volume: { id: 500, name: 'Last Week' },
+        },
+        { id: 2, issue_number: '1', store_date: '2026-11-06', volume: { id: 600, name: 'Manga' } },
+      ],
+    };
+    const volumes = {
+      status_code: 1,
+      results: [
+        { id: 500, publisher: { id: 10 } },
+        { id: 600, publisher: { id: 1 } }, // not one of ours
+      ],
+    };
+    const fetcher: Fetcher = {
+      json: async (upstream) =>
+        new URL(upstream.url).pathname === '/api/volumes/' ? volumes : issues,
+      text: async () => '',
+    };
+    const data = await comics('key').load(context(fetcher, NOW));
+    assert.deepEqual(data.week, { from: '2026-10-26', to: '2026-11-01' });
+    assert.equal(data.current, false);
+    assert.deepEqual(titles(data.groups), [['DC', ['Last Week #1']]]);
   });
 
   it('is offline when Comic Vine reports an error in its own status code', async () => {

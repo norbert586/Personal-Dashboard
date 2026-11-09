@@ -1,0 +1,411 @@
+{
+ "error": "OK",
+ "limit": 100,
+ "offset": 0,
+ "number_of_page_results": 50,
+ "number_of_total_results": 50,
+ "status_code": 1,
+ "results": [
+  {
+   "id": 177709,
+   "name": "Afterlife with Archie Deluxe Edition",
+   "publisher": {
+    "id": 682,
+    "name": "Oni Press"
+   }
+  },
+  {
+   "id": 177710,
+   "name": "Batman: Bad Seeds - Gotham General",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 177711,
+   "name": "Batman: Bad Seeds - Sunrise",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 177712,
+   "name": "DC All In Saga: Darkseid vs. the World",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 177723,
+   "name": "Marvel Fanfare No. 2 Facsimile Edition",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 177724,
+   "name": "Marvel's Mightiest Monsters",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 177725,
+   "name": "Welcome to Twilight: Villains and Vignettes",
+   "publisher": {
+    "id": 364,
+    "name": "Dark Horse Comics"
+   }
+  },
+  {
+   "id": 177726,
+   "name": "Moon Knight Epic Collection: The Resurrection War",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 177727,
+   "name": "Pathfinder/Vampirella: Blade of Darkness",
+   "publisher": {
+    "id": 1859,
+    "name": "Dynamite Entertainment"
+   }
+  },
+  {
+   "id": 177728,
+   "name": "Pooh Bear Adventures: Owl's New House",
+   "publisher": {
+    "id": 2436,
+    "name": "Keenspot Entertainment"
+   }
+  },
+  {
+   "id": 177729,
+   "name": "Satanic Panic",
+   "publisher": {
+    "id": 7385,
+    "name": "Mad Cave Studios"
+   }
+  },
+  {
+   "id": 177730,
+   "name": "Scream! Halloween Special 2026",
+   "publisher": {
+    "id": 2019,
+    "name": "Rebellion"
+   }
+  },
+  {
+   "id": 177731,
+   "name": "Star Wars: Rogue One - Darth Vader",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 177732,
+   "name": "Superman: The Wedding Album 30th Anniversary Special",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 177733,
+   "name": "The Peril of the Brutal Dark: An Ezra Cain Mystery",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 177734,
+   "name": "Universal Monsters: The Bride of Frankenstein Lives",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 177735,
+   "name": "Witchblade: Samhain Special",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 177736,
+   "name": "Zenescope Zombie Pinup Special 2026",
+   "publisher": {
+    "id": 1986,
+    "name": "Zenescope Entertainment"
+   }
+  },
+  {
+   "id": 177828,
+   "name": "Zhòushù Huízhàn: Modulo",
+   "publisher": {
+    "id": 4310,
+    "name": "Tong Li Publishing Co."
+   }
+  },
+  {
+   "id": 177852,
+   "name": "Pō-san",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 177853,
+   "name": "Mamatte Sabasaba Shiteru Kara",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 177854,
+   "name": "Danyū Kaigo: Kare wa Southern-Cross Takagi",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 177855,
+   "name": "Suiken Japan",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 177856,
+   "name": "Sakanoboru Ishi",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 177857,
+   "name": "Nanbanjin",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 177870,
+   "name": "Archie in Hell",
+   "publisher": {
+    "id": 682,
+    "name": "Oni Press"
+   }
+  },
+  {
+   "id": 177871,
+   "name": "Avengers",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 177872,
+   "name": "Blade Runner: Tokyo Nexus: Die with Honor",
+   "publisher": {
+    "id": 4212,
+    "name": "Titan Comics"
+   }
+  },
+  {
+   "id": 177873,
+   "name": "Challenges of Doom: Doctor Strange",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 177874,
+   "name": "Dungeons & Dragons",
+   "publisher": {
+    "id": 364,
+    "name": "Dark Horse Comics"
+   }
+  },
+  {
+   "id": 177875,
+   "name": "Exquisite Corpses: Lone Gunman",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 177876,
+   "name": "Friendly Neighborhood Mary Jane",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 177877,
+   "name": "Gangs of Gotham",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 177878,
+   "name": "Ghost Rider: Kushala",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 177879,
+   "name": "Infernal Hulk vs. Spider-Man",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 177880,
+   "name": "Mad Science Division",
+   "publisher": {
+    "id": 11649,
+    "name": "Ignition Press"
+   }
+  },
+  {
+   "id": 177881,
+   "name": "Marvel Meow/Strange Scales",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 177882,
+   "name": "No One Escapes the Dialectic",
+   "publisher": {
+    "id": 1868,
+    "name": "Boom! Studios"
+   }
+  },
+  {
+   "id": 177883,
+   "name": "One Zero Zero One Saves the World",
+   "publisher": {
+    "id": 7801,
+    "name": "Vault Comics"
+   }
+  },
+  {
+   "id": 177884,
+   "name": "Punisher Showdowns: Wolverine",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 177885,
+   "name": "Red Sonja Barbarella",
+   "publisher": {
+    "id": 1859,
+    "name": "Dynamite Entertainment"
+   }
+  },
+  {
+   "id": 177886,
+   "name": "Rip Kirby",
+   "publisher": {
+    "id": 7385,
+    "name": "Mad Cave Studios"
+   }
+  },
+  {
+   "id": 177887,
+   "name": "Spider-Woman",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 177889,
+   "name": "Cannon Master",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 177898,
+   "name": "Ghost Catchers!",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 177909,
+   "name": "Sekai wo Tsunagi Tsukusu Internet Miko",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 177910,
+   "name": "Noise Ring",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 177911,
+   "name": "Boku no Kanojo wa Kessen Heiki",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 177917,
+   "name": "Radiant",
+   "publisher": {
+    "id": 2544,
+    "name": "Edizioni BD"
+   }
+  },
+  {
+   "id": 177918,
+   "name": "Fanaticism",
+   "publisher": {
+    "id": 747,
+    "name": "Magic Press"
+   }
+  }
+ ],
+ "version": "1.0"
+}

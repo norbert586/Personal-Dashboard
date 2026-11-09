@@ -1,0 +1,811 @@
+{
+ "error": "OK",
+ "limit": 100,
+ "offset": 0,
+ "number_of_page_results": 100,
+ "number_of_total_results": 100,
+ "status_code": 1,
+ "results": [
+  {
+   "id": 161311,
+   "name": "Justice League Unlimited",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 161700,
+   "name": "Deadly Tales of the Gunslinger",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 161891,
+   "name": "Shinobigoto",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 163145,
+   "name": "Absolute Green Lantern",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 163325,
+   "name": "The Amazing Spider-Man",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 164032,
+   "name": "Lost Fantasy",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 165028,
+   "name": "The Umbrella Academy: Plan B",
+   "publisher": {
+    "id": 364,
+    "name": "Dark Horse Comics"
+   }
+  },
+  {
+   "id": 165358,
+   "name": "Fantastic Four",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 165688,
+   "name": "Tsumugi no Mahō",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 165718,
+   "name": "Godzilla (Kai-Sei Era)",
+   "publisher": {
+    "id": 1190,
+    "name": "IDW Publishing"
+   }
+  },
+  {
+   "id": 166080,
+   "name": "Bakenokawa no Hitobake",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 166323,
+   "name": "TMNT: Journeys",
+   "publisher": {
+    "id": 1190,
+    "name": "IDW Publishing"
+   }
+  },
+  {
+   "id": 166458,
+   "name": "Teenage Mutant Ninja Turtles: Shredder",
+   "publisher": {
+    "id": 1190,
+    "name": "IDW Publishing"
+   }
+  },
+  {
+   "id": 166460,
+   "name": "Thor",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 166619,
+   "name": "Batman",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 168115,
+   "name": "Kyōkaisen no Imuko-san",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 168588,
+   "name": "Absolute Wonder Woman",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 168594,
+   "name": "Final Boss",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 168596,
+   "name": "The Lion King",
+   "publisher": {
+    "id": 1859,
+    "name": "Dynamite Entertainment"
+   }
+  },
+  {
+   "id": 169560,
+   "name": "Arcadia",
+   "publisher": {
+    "id": 11649,
+    "name": "Ignition Press"
+   }
+  },
+  {
+   "id": 170313,
+   "name": "Iron Man",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 170671,
+   "name": "The Punisher",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 171102,
+   "name": "Honor and Curse Eternal",
+   "publisher": {
+    "id": 7385,
+    "name": "Mad Cave Studios"
+   }
+  },
+  {
+   "id": 171255,
+   "name": "Daredevil",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 171508,
+   "name": "Fireborn",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 171700,
+   "name": "Zatanna",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 171718,
+   "name": "Sonna Koto, Kaite Iindesuka!?",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 171719,
+   "name": "Kishimojin",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 171923,
+   "name": "Showdown",
+   "publisher": {
+    "id": 11649,
+    "name": "Ignition Press"
+   }
+  },
+  {
+   "id": 172123,
+   "name": "Superman: Father of Tomorrow",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 172240,
+   "name": "Hi-Shikai Sentō: Ironrecce",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 172241,
+   "name": "Manazashi Tamako no Jiyukenkyū",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 172461,
+   "name": "Mighty Morphin Power Rangers",
+   "publisher": {
+    "id": 1868,
+    "name": "Boom! Studios"
+   }
+  },
+  {
+   "id": 172509,
+   "name": "Under Doctor",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 172538,
+   "name": "Nishitokyo Metal Brothers",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 172570,
+   "name": "Akuryō Kazoku",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 172741,
+   "name": "Absolute Catwoman",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 172749,
+   "name": "Bishop",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 172754,
+   "name": "M.A.S.K.",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 172760,
+   "name": "Tankers vs Ancient Aliens",
+   "publisher": {
+    "id": 10122,
+    "name": "Bad Idea Comics"
+   }
+  },
+  {
+   "id": 173109,
+   "name": "Land of Never",
+   "publisher": {
+    "id": 7385,
+    "name": "Mad Cave Studios"
+   }
+  },
+  {
+   "id": 173236,
+   "name": "Spider-Man Today Infinity Comic",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 173273,
+   "name": "Peter Parker Spider-Man: Queens' Finest Infinity Comic",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 173287,
+   "name": "Mind MGMT: New & Improved",
+   "publisher": {
+    "id": 682,
+    "name": "Oni Press"
+   }
+  },
+  {
+   "id": 173765,
+   "name": "Nui no Shikijitsu",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 173797,
+   "name": "Beast of Boriken",
+   "publisher": {
+    "id": 364,
+    "name": "Dark Horse Comics"
+   }
+  },
+  {
+   "id": 173807,
+   "name": "The Last Starfighter",
+   "publisher": {
+    "id": 7385,
+    "name": "Mad Cave Studios"
+   }
+  },
+  {
+   "id": 173813,
+   "name": "The Shaolin Cowboy: Staying A.I.Live",
+   "publisher": {
+    "id": 364,
+    "name": "Dark Horse Comics"
+   }
+  },
+  {
+   "id": 173817,
+   "name": "The Dogsitter",
+   "publisher": {
+    "id": 11649,
+    "name": "Ignition Press"
+   }
+  },
+  {
+   "id": 174194,
+   "name": "Aladdin",
+   "publisher": {
+    "id": 1859,
+    "name": "Dynamite Entertainment"
+   }
+  },
+  {
+   "id": 174211,
+   "name": "The Rocketeer: Infiltrator",
+   "publisher": {
+    "id": 1190,
+    "name": "IDW Publishing"
+   }
+  },
+  {
+   "id": 174643,
+   "name": "Mister Nemo",
+   "publisher": {
+    "id": 7385,
+    "name": "Mad Cave Studios"
+   }
+  },
+  {
+   "id": 174647,
+   "name": "Super Mondo Mega Mutts",
+   "publisher": {
+    "id": 682,
+    "name": "Oni Press"
+   }
+  },
+  {
+   "id": 174676,
+   "name": "Punisher vs. Spider-Man",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 175065,
+   "name": "Solomon Kane: The Lion Errant",
+   "publisher": {
+    "id": 4212,
+    "name": "Titan Comics"
+   }
+  },
+  {
+   "id": 175072,
+   "name": "Terminal",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 175251,
+   "name": "The Greatest American Hero",
+   "publisher": {
+    "id": 11592,
+    "name": "Amp Comics"
+   }
+  },
+  {
+   "id": 175256,
+   "name": "Masters of the Universe: Legends of Eternia",
+   "publisher": {
+    "id": 1337,
+    "name": "Tokyopop"
+   }
+  },
+  {
+   "id": 175258,
+   "name": "Predator vs. the Planet of the Apes",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 175530,
+   "name": "He-Man and the Masters of the Universe: Genesis",
+   "publisher": {
+    "id": 364,
+    "name": "Dark Horse Comics"
+   }
+  },
+  {
+   "id": 175533,
+   "name": "The Omega Book",
+   "publisher": {
+    "id": 7385,
+    "name": "Mad Cave Studios"
+   }
+  },
+  {
+   "id": 175542,
+   "name": "UFO Robot Grendizer",
+   "publisher": {
+    "id": 4212,
+    "name": "Titan Comics"
+   }
+  },
+  {
+   "id": 175731,
+   "name": "Biker Mice from Mars: Scorch",
+   "publisher": {
+    "id": 682,
+    "name": "Oni Press"
+   }
+  },
+  {
+   "id": 175732,
+   "name": "Cult-de-Sac",
+   "publisher": {
+    "id": 11649,
+    "name": "Ignition Press"
+   }
+  },
+  {
+   "id": 175739,
+   "name": "Miles Morales: Spider-Man",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 175745,
+   "name": "The Foundry",
+   "publisher": {
+    "id": 364,
+    "name": "Dark Horse Comics"
+   }
+  },
+  {
+   "id": 176112,
+   "name": "Lazarus Order",
+   "publisher": {
+    "id": 7385,
+    "name": "Mad Cave Studios"
+   }
+  },
+  {
+   "id": 176116,
+   "name": "Spider-Man/Hulk: Fire and Brimstone",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 176383,
+   "name": "Black Tower: The Raven Conspiracy",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 176391,
+   "name": "Hammerfist",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 176408,
+   "name": "This Land is Old and Dark",
+   "publisher": {
+    "id": 11406,
+    "name": "Invader Comics"
+   }
+  },
+  {
+   "id": 176409,
+   "name": "Tomb of Apocalypse",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 176680,
+   "name": "Archie",
+   "publisher": {
+    "id": 682,
+    "name": "Oni Press"
+   }
+  },
+  {
+   "id": 176682,
+   "name": "Black Panther/Namor: Doomed",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 176696,
+   "name": "Superman: The Stranger",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 176698,
+   "name": "Tales of Wonder",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 176762,
+   "name": "Roku no Okashi na Ie",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 176913,
+   "name": "Star Wars: The Book of Boba Fett",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 176917,
+   "name": "Thundercats Cheetara",
+   "publisher": {
+    "id": 1859,
+    "name": "Dynamite Entertainment"
+   }
+  },
+  {
+   "id": 176918,
+   "name": "Valentine Bluffs Massacre: Iron Heart",
+   "publisher": {
+    "id": 7369,
+    "name": "American Mythology Productions"
+   }
+  },
+  {
+   "id": 176992,
+   "name": "DNX",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 176994,
+   "name": "Exquisite Corpses: Fox Mask Killer",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 177012,
+   "name": "The Big Shakedown",
+   "publisher": {
+    "id": 364,
+    "name": "Dark Horse Comics"
+   }
+  },
+  {
+   "id": 177135,
+   "name": "Crimes Against Nature",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 177140,
+   "name": "Ghost of a Ghost",
+   "publisher": {
+    "id": 364,
+    "name": "Dark Horse Comics"
+   }
+  },
+  {
+   "id": 177148,
+   "name": "Any Given Smile",
+   "publisher": {
+    "id": 1190,
+    "name": "IDW Publishing"
+   }
+  },
+  {
+   "id": 177151,
+   "name": "That Texas Blood: Hell Comes to Allison Ranch",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 177248,
+   "name": "Sabu to Ichi Torimono Hikae: Kanzenban",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 177249,
+   "name": "Zatōichi Monogatari Noir",
+   "publisher": {
+    "id": 2781,
+    "name": "Shogakukan"
+   }
+  },
+  {
+   "id": 177251,
+   "name": "Alien vs. X-Men",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 177265,
+   "name": "Sunder",
+   "publisher": {
+    "id": 7385,
+    "name": "Mad Cave Studios"
+   }
+  },
+  {
+   "id": 177268,
+   "name": "The Amazing Venom",
+   "publisher": {
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 177303,
+   "name": "Natsu to Mushikago",
+   "publisher": {
+    "id": 1867,
+    "name": "Shueisha"
+   }
+  },
+  {
+   "id": 177363,
+   "name": "The Demon",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 177365,
+   "name": "G.I. Joe: A Real American Hero/Tomb Raider",
+   "publisher": {
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 177368,
+   "name": "Jonah Hex and the Shadow of Death",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 177374,
+   "name": "Star Trek: Holo-Ween II",
+   "publisher": {
+    "id": 1190,
+    "name": "IDW Publishing"
+   }
+  },
+  {
+   "id": 177375,
+   "name": "Supernatural: Sam Winchester",
+   "publisher": {
+    "id": 1859,
+    "name": "Dynamite Entertainment"
+   }
+  },
+  {
+   "id": 177376,
+   "name": "Supernatural: Dean Winchester",
+   "publisher": {
+    "id": 1859,
+    "name": "Dynamite Entertainment"
+   }
+  },
+  {
+   "id": 177378,
+   "name": "Hawkmoon: The Mad God's Amulet",
+   "publisher": {
+    "id": 4212,
+    "name": "Titan Comics"
+   }
+  }
+ ],
+ "version": "1.0"
+}
