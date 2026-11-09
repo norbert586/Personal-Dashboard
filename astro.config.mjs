@@ -36,6 +36,14 @@ export default defineConfig({
         values: ['private-network'],
         optional: true,
       }),
+      // Where feeds come from (src/lib/feeds.ts): `live` asks the real APIs; `sample` answers
+      // from the saved samples in src/lib/sources/fixtures/ with no network (tests, demos).
+      FEEDS: envField.enum({
+        context: 'server',
+        access: 'secret',
+        values: ['live', 'sample'],
+        default: 'live',
+      }),
     },
   },
 

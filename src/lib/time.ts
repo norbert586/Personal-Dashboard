@@ -124,6 +124,13 @@ export function formatLongDate(date: Date): string {
   }).format(date);
 }
 
+/** "Mon" (or "Monday"), in the zone. */
+export function formatWeekday(date: Date, width: 'short' | 'long' = 'short'): string {
+  return new Intl.DateTimeFormat(site.locale, { timeZone: site.timeZone, weekday: width }).format(
+    date,
+  );
+}
+
 export function formatShortDate(date: Date): string {
   return new Intl.DateTimeFormat(site.locale, {
     timeZone: site.timeZone,

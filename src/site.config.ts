@@ -1,5 +1,5 @@
 /**
- * Non-secret settings for the console. Secrets never go here: they belong in `.env`
+ * Non-secret settings for the site. Secrets never go here: they belong in `.env`
  * and `astro.config.mjs` → `env.schema`.
  */
 export interface SiteConfig {
@@ -11,6 +11,10 @@ export interface SiteConfig {
   hourCycle: 'h23' | 'h12';
   locale: string;
   github: { user: string };
+  /** The real place the town is based on. Weather is forecast for this point. */
+  place: { name: string; lat: number; lon: number };
+  /** How the server introduces itself to the APIs it asks (some refuse anonymous clients). */
+  userAgent: string;
 }
 
 export const site: SiteConfig = {
@@ -20,9 +24,12 @@ export const site: SiteConfig = {
     name: 'Personal console',
     revision: '0.1',
   },
-  // Defaulted from your commit timestamps (UTC−5). Change if you're elsewhere.
-  timeZone: 'America/New_York',
+  // The town's real zone (Macomb County, Michigan).
+  timeZone: 'America/Detroit',
   hourCycle: 'h23',
   locale: 'en-US',
   github: { user: 'norbert586' },
+  // About 26 Mile and Van Dyke, the middle of the real grid (docs/SPEC.md, The map).
+  place: { name: 'Washington Twp', lat: 42.72, lon: -83.03 },
+  userAgent: 'RatiuTwp/0.1 (+https://github.com/norbert586/Personal-Dashboard)',
 };

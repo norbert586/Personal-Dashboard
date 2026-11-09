@@ -252,3 +252,19 @@ real brand or logo.
 Consequences: the zone is far denser than the main grid, so block grouping and instancing matter
 from the start. Once the site is public, it shows where Norbert works; that's his call. The
 pizzeria's location lives in the place data, so moving or renaming it is one edit.
+
+## ADR-021: Feeds share one in-process cache and can answer from saved samples
+
+**Accepted · 2026-11-09**
+Context: the Today panel and the town both read the feeds. The free APIs have quotas (TomTom allows
+about 2,500 requests a day), some answers are large (an ESPN schedule is up to 1.3 MB per team), and
+tests mustn't depend on the network.
+Decision: every request goes through one cache in the server process, keyed by URL, with a
+freshness time per upstream, from 30 seconds for aircraft to a day for the weather grid lookup.
+Requests that arrive together share one fetch, a failure is remembered for a minute, and a failed
+refresh falls back to the last good answer for up to six freshness times, with the reason shown.
+`FEEDS=sample` answers every feed from saved samples, real responses captured on 2026-11-09, which
+the parser tests use too. A feed whose free key is missing shows its saved sample, labelled as
+sample, and says which key to add.
+Consequences: no database and no background jobs; a restart empties the cache. Each reading says
+when its data was fetched. The saved samples ship inside the server build.
