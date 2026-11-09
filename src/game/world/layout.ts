@@ -46,7 +46,7 @@ import {
   walkP,
   type GroundPaint,
 } from './ground.ts';
-import { M, palette, type MatName, type Season } from './materials.ts';
+import { M, palette, type MatName, type RGB, type Season } from './materials.ts';
 import { hash } from './noise.ts';
 import { PLACE } from './places.ts';
 
@@ -90,6 +90,7 @@ export function buildWorld({ season, northbound = true }: Options): World {
     lights: [],
     chimneys: [],
     stacks: [],
+    fixtures: [],
     turbines: [],
   };
   building(W);
@@ -201,17 +202,23 @@ export function buildWorld({ season, northbound = true }: Options): World {
   for (let y = 2.5; y < 12.6; y += 0.8) g(23.02, y, 23.06, y + 0.4, paint('paintW', 1));
   g(22.8, 12.1, 23.3, 13.0, asphP);
   // edge, threshold, taxiway and approach lights, as small fixtures on the ground
-  const dot = (x: number, y: number, t: number) =>
+  const EDGE: RGB = [1, 0.96, 0.82];
+  const TAXI: RGB = [0.3, 0.5, 1];
+  const THRESHOLD: RGB = [0.35, 1, 0.5];
+  const dot = (x: number, y: number, t: number, c?: RGB) => {
     g(x - 0.03, y - 0.03, x + 0.03, y + 0.03, () => t);
+    if (c) W.fixtures.push({ x, y, c });
+  };
   for (let x = 2.2; x <= 25.2; x += 0.75) {
-    dot(x, 13.0, M.rwyL);
-    dot(x, 14.4, M.rwyL);
+    dot(x, 13.0, M.rwyL, EDGE);
+    dot(x, 14.4, M.rwyL, EDGE);
     if ((x * 4) % 3 === 0) light(x, 13.0, 1, 18, [255, 240, 200], 0.55);
   }
-  for (let y = 13.05; y < 14.4; y += 0.2) for (const tx of [2.2, 25.2]) dot(tx, y, M.thrG);
+  for (let y = 13.05; y < 14.4; y += 0.2)
+    for (const tx of [2.2, 25.2]) dot(tx, y, M.thrG, THRESHOLD);
   for (let x = 2.8; x < 22.4; x += 1) {
-    dot(x, 11.4, M.twyL);
-    dot(x, 12.1, M.twyL);
+    dot(x, 11.4, M.twyL, TAXI);
+    dot(x, 12.1, M.twyL, TAXI);
   }
   for (let k = 0; k < 5; k++) dot(northbound ? 25.9 + k * 0.6 : 1.5 - k * 0.6, 13.7, M.rwyL);
   // the railway along the north edge

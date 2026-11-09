@@ -18,15 +18,21 @@ import {
   LineSegments,
   Mesh,
   MeshLambertMaterial,
+  AdditiveBlending,
+  CanvasTexture,
+  Fog,
+  MeshBasicMaterial,
   NearestFilter,
   Object3D,
+  Points,
+  PointsMaterial,
   RGBAFormat,
   Scene,
   type Material,
 } from 'three';
 import { PXU } from './pixels.ts';
-import { ATLAS, ZPX } from './world/atlas.ts';
-import type { World } from './world/builders.ts';
+import { ATLAS, V, ZPX } from './world/atlas.ts';
+import type { Light, World } from './world/builders.ts';
 import { farP, screenX, screenY } from './world/ground.ts';
 import type { RGB } from './world/materials.ts';
 import { hash } from './world/noise.ts';
@@ -39,7 +45,16 @@ export interface Town {
   hits: Mesh[];
   /** Materials whose emissive night layer fades in after dark. */
   lit: MeshLambertMaterial[];
+  /** Halos and light pools: their opacity is the night's strength. */
+  glows: Material[];
+  /** Halos drawn as screen-space points, lifted toward the camera so nearby walls don't clip them. */
+  halos: Object3D[];
+  /** The runway's crisp light dots, faint by day. */
+  dots: PointsMaterial;
 }
+
+/** How far the camera sits from what it looks at, in tiles; fog starts a little past it. */
+export const CAM_DISTANCE = 90;
 
 const rgbN = (c: RGB) => new Color(c[0] / 255, c[1] / 255, c[2] / 255);
 
@@ -262,12 +277,162 @@ function wires(scene: Scene, world: World): void {
   scene.add(new LineSegments(g, new LineBasicMaterial({ color: 0x23262c })));
 }
 
+// ---- Night glows: lamp halos (points sized in screen pixels) and pools of light on the ground ----
+let glowTex: CanvasTexture | null = null;
+function glowTexture(): CanvasTexture {
+  if (glowTex) return glowTex;
+  const c = document.createElement('canvas');
+  c.width = c.height = 64;
+  const g = c.getContext('2d');
+  if (g) {
+    const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    gr.addColorStop(0, 'rgba(255,255,255,1)');
+    gr.addColorStop(0.22, 'rgba(255,255,255,0.42)');
+    gr.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = gr;
+    g.fillRect(0, 0, 64, 64);
+  }
+  glowTex = new CanvasTexture(c);
+  return glowTex;
+}
+
+/** An additive point cloud of halos `size` low-res pixels across. */
+export function glowPoints(
+  scene: Scene,
+  list: Light[],
+  size: number,
+): Points<BufferGeometry, PointsMaterial> {
+  const pos: number[] = [];
+  const col: number[] = [];
+  for (const L of list) {
+    pos.push(...V(L.x, L.y, L.z));
+    col.push((L.c[0] / 255) * L.a, (L.c[1] / 255) * L.a, (L.c[2] / 255) * L.a);
+  }
+  const g = new BufferGeometry();
+  g.setAttribute('position', new Float32BufferAttribute(pos, 3));
+  g.setAttribute('color', new Float32BufferAttribute(col, 3));
+  const m = new PointsMaterial({
+    size,
+    map: glowTexture(),
+    vertexColors: true,
+    transparent: true,
+    depthWrite: false,
+    blending: AdditiveBlending,
+    opacity: 0,
+    sizeAttenuation: false,
+    fog: false,
+  });
+  const p = new Points(g, m);
+  p.frustumCulled = false;
+  scene.add(p);
+  return p;
+}
+
+function glows(scene: Scene, world: World): Pick<Town, 'glows' | 'halos' | 'dots'> {
+  const mats: Material[] = [];
+  const halos: Object3D[] = [];
+  const buckets = new Map<number, Light[]>();
+  for (const L of world.lights) {
+    const s = Math.max(12, Math.min(108, Math.round((L.r * 1.5) / 12) * 12));
+    buckets.set(s, [...(buckets.get(s) ?? []), L]);
+  }
+  for (const [size, list] of buckets) {
+    const p = glowPoints(scene, list, size);
+    mats.push(p.material);
+    halos.push(p);
+  }
+  // pools of light on the ground under each lamp
+  const pos: number[] = [];
+  const col: number[] = [];
+  const uv: number[] = [];
+  for (const L of world.lights) {
+    const R = (L.r * 0.75) / PXU;
+    const k = L.a * 0.55;
+    const c = [(L.c[0] / 255) * k, (L.c[1] / 255) * k, (L.c[2] / 255) * k];
+    for (const [a, b, u, v] of [
+      [L.x - R, L.y + R, 0, 1],
+      [L.x + R, L.y + R, 1, 1],
+      [L.x + R, L.y - R, 1, 0],
+      [L.x - R, L.y + R, 0, 1],
+      [L.x + R, L.y - R, 1, 0],
+      [L.x - R, L.y - R, 0, 0],
+    ] as const) {
+      pos.push(a, 0.004, b);
+      col.push(...c);
+      uv.push(u, v);
+    }
+  }
+  const g = new BufferGeometry();
+  g.setAttribute('position', new Float32BufferAttribute(pos, 3));
+  g.setAttribute('color', new Float32BufferAttribute(col, 3));
+  g.setAttribute('uv', new Float32BufferAttribute(uv, 2));
+  const pool = new MeshBasicMaterial({
+    map: glowTexture(),
+    vertexColors: true,
+    transparent: true,
+    depthWrite: false,
+    blending: AdditiveBlending,
+    opacity: 0,
+    fog: false,
+  });
+  scene.add(new Mesh(g, pool));
+  mats.push(pool);
+  // runway, taxiway and threshold lights: crisp dots, with a small halo at night
+  const dpos: number[] = [];
+  const dcol: number[] = [];
+  for (const f of world.fixtures) {
+    dpos.push(...V(f.x, f.y, 1.5));
+    dcol.push(...f.c);
+  }
+  const dg = new BufferGeometry();
+  dg.setAttribute('position', new Float32BufferAttribute(dpos, 3));
+  dg.setAttribute('color', new Float32BufferAttribute(dcol, 3));
+  const dots = new PointsMaterial({
+    size: 2,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.3,
+    sizeAttenuation: false,
+    fog: false,
+  });
+  scene.add(new Points(dg, dots));
+  const halo = glowPoints(
+    scene,
+    world.fixtures.map((f) => ({
+      x: f.x,
+      y: f.y,
+      z: 1.5,
+      r: 0,
+      c: [f.c[0] * 255, f.c[1] * 255, f.c[2] * 255],
+      a: 0.5,
+    })),
+    14,
+  );
+  mats.push(halo.material);
+  halos.push(halo);
+  return { glows: mats, halos, dots };
+}
+
 export function buildTown(world: World): Town {
   const scene = new Scene();
   scene.background = new Color(0x8899aa);
   const hemi = new HemisphereLight(0xffffff, 0x888888, 1);
   const sun = new DirectionalLight(0xffffff, 1);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  Object.assign(sun.shadow.camera, {
+    left: -16,
+    right: 16,
+    top: 16,
+    bottom: -16,
+    near: 1,
+    far: 260,
+  });
+  sun.shadow.bias = -0.0006;
+  sun.shadow.normalBias = 0.02;
   scene.add(hemi, sun, sun.target);
+  // Fog only touches the far edges of the world.
+  scene.fog = new Fog(0x8899aa, CAM_DISTANCE + 14, CAM_DISTANCE + 62);
   const hits: Mesh[] = [];
   const lit: MeshLambertMaterial[] = [];
   for (const p of world.atlas.pages) {
@@ -283,5 +448,5 @@ export function buildTown(world: World): Town {
   groundTextures(scene, world);
   trees(scene, world);
   wires(scene, world);
-  return { scene, hemi, sun, hits, lit };
+  return { scene, hemi, sun, hits, lit, ...glows(scene, world) };
 }

@@ -62,3 +62,16 @@ test('the town page passes axe', async ({ page }) => {
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations).toEqual([]);
 });
+
+test('N and the time button step through real time, midday, dusk and night', async ({ page }) => {
+  await page.goto('/town');
+  await expect(page.locator('html')).toHaveAttribute('data-town', 'ready', { timeout: 20_000 });
+  const button = page.getByRole('button', { name: 'Real time' });
+  await button.click();
+  await expect(page.getByRole('button', { name: 'Midday' })).toBeVisible();
+  await page.locator('#world').focus();
+  await page.keyboard.press('n');
+  await expect(page.locator('html')).toHaveAttribute('data-time', 'dusk');
+  await page.keyboard.press('n');
+  await expect(page.getByRole('button', { name: 'Night' })).toBeVisible();
+});

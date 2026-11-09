@@ -87,3 +87,18 @@ export function todayAt(hour: number, now = new Date()): Date {
   const m = Number(parts.find((p) => p.type === 'minute')?.value ?? 0);
   return new Date(now.getTime() + (hour - (h + m / 60)) * 3_600_000);
 }
+
+/** Time of day: the real clock, or a preset hour today (the feel test's N key). */
+export type TimeOfDay = 'auto' | 'day' | 'dusk' | 'night';
+export const TIMES: ReadonlyArray<{ id: TimeOfDay; label: string; hour: number }> = [
+  { id: 'auto', label: 'Real time', hour: -1 },
+  { id: 'day', label: 'Midday', hour: 12.5 },
+  { id: 'dusk', label: 'Dusk', hour: 17.0 },
+  { id: 'night', label: 'Night', hour: 22.5 },
+];
+
+/** The moment the town is lit for. */
+export function simDate(time: TimeOfDay, now = new Date()): Date {
+  const preset = TIMES.find((t) => t.id === time);
+  return !preset || preset.hour < 0 ? now : todayAt(preset.hour, now);
+}

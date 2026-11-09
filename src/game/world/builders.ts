@@ -70,6 +70,8 @@ export interface World {
   lights: Light[];
   chimneys: Array<[number, number, number]>;
   stacks: Array<[number, number, number]>;
+  /** Runway, taxiway and threshold lights on the ground: crisp dots that glow at night (0–1 colour). */
+  fixtures: Array<{ x: number; y: number; c: RGB }>;
   /** Wind turbine hubs [x, y, z px]; the scene spins their rotors. */
   turbines: Array<[number, number, number]>;
 }

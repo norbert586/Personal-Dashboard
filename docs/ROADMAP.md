@@ -56,7 +56,7 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
          building and prop builders (`p3d-2-build.js`, `p3d-2b-build.js`), and the town data,
          texture painters and layout they reuse from `prototype/2d/` (the shared parts in
          `build.sh`). The default view matches the feel test.
-   - [ ] Light and time (`p3d-3-scene.js`, and `applyLight` in `p3d-5-player.js`): the orthographic
+   - [x] Light and time (`p3d-3-scene.js`, and `applyLight` in `p3d-5-player.js`): the orthographic
          camera, the sky light and the real sun for Macomb County, hard shadows, fog at the edges,
          and the night layer of lit windows, neon, lamps and halos.
    - [ ] You (`p3d-4-bodies.js`, `p3d-5-player.js`): walk, run with Shift, and bike with B, with a

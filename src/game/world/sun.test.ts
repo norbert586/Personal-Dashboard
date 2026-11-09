@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { lighting, sunPos, todayAt } from './sun.ts';
+import { lighting, simDate, sunPos, todayAt } from './sun.ts';
 
 // Reference values for Washington Twp (42.72 N, 83.03 W) from NOAA's solar calculator.
 test('the sun is due south and low at solar noon in November', () => {
@@ -29,4 +29,12 @@ test('day and night follow the sun, and cloud dims it', () => {
 test('today at an hour is that hour in Michigan', () => {
   const t = todayAt(12.5, new Date('2026-11-09T15:00:00Z')); // 10:00 in Detroit
   assert.equal(t.toISOString(), '2026-11-09T17:30:00.000Z');
+});
+
+test('time presets light the town at their hour, and real time is now', () => {
+  const now = new Date('2026-11-09T15:00:00Z');
+  assert.equal(simDate('auto', now), now);
+  assert.equal(simDate('night', now).toISOString(), '2026-11-10T03:30:00.000Z');
+  assert.ok(lighting(simDate('night', now)).night > 0.99);
+  assert.ok(lighting(simDate('day', now)).day > 0.99);
 });

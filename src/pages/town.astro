@@ -17,15 +17,23 @@ import Page from '../layouts/Page.astro';
       tabindex="0"
       role="application"
       aria-roledescription="town"
-      aria-label="Ratiu Twp, the town. Press plus or minus to zoom."
+      aria-label="Ratiu Twp, the town. N changes the time of day; plus and minus zoom."
     ></canvas>
   </main>
   <header class="hud badge">
     <h1>Ratiu Twp</h1>
   </header>
+  <nav class="hud tools" aria-label="Controls">
+    <button class="key" id="b-time" type="button" aria-keyshortcuts="N" aria-describedby="time-tip">
+      Real time
+    </button>
+    <span id="time-tip" class="visually-hidden">
+      Changes the time of day
+    </span>
+  </nav>
   <footer id="help" class="hud hint">
     <p>
-      Press + or − to zoom, or scroll. <a href="/">Today</a> has the morning update.
+      N changes the time of day; + and − zoom. <a href="/">Today</a> has the morning update.
     </p>
   </footer>
   <div id="loading" class="hud cover" role="status">
@@ -91,6 +99,16 @@ import Page from '../layouts/Page.astro';
     color: var(--maize);
   }
 
+  .tools {
+    inset-block-start: calc(env(safe-area-inset-top, 0px) + var(--space-3));
+    inset-inline-end: calc(env(safe-area-inset-right, 0px) + var(--space-3));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    max-width: min(520px, 62vw);
+  }
+
   .hint {
     inset-inline: 0;
     inset-block-end: 0;
@@ -147,6 +165,12 @@ import Page from '../layouts/Page.astro';
     color: var(--ink);
     font-weight: 600;
     text-decoration: none;
+  }
+
+  button.key {
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
   }
 
   .key:hover {

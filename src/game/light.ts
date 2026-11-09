@@ -11,9 +11,21 @@ import type { Lighting } from './world/sun.ts';
 const LEGACY = Math.PI;
 const toSun = new Vector3();
 
-/** Light the town for a moment, with the sun's shadow box centred on (x, z). */
-export function applyLight(town: Town, L: Lighting, x: number, z: number): void {
+export interface View {
+  /** What the camera looks at, in grid tiles. */
+  x: number;
+  z: number;
+  /** The larger side of the view, in tiles. */
+  span: number;
+  /** Unit vector from the target toward the camera. */
+  toCamera: Vector3;
+}
+
+/** Light the town for a moment: sky, sun and shadows, and the night layer fading in after dark. */
+export function applyLight(town: Town, L: Lighting, view: View): void {
   const { hemi, sun, scene } = town;
+  const { x, z } = view;
+  const night = nightK(L.night);
   hemi.intensity = 0.86 * LEGACY;
   hemi.color.setRGB(L.sky[0], L.sky[1], L.sky[2]);
   hemi.groundColor.setRGB(L.sky[0] * 0.45, L.sky[1] * 0.45, L.sky[2] * 0.45);
@@ -27,10 +39,24 @@ export function applyLight(town: Town, L: Lighting, x: number, z: number): void 
   toSun.set(L.d[0], Math.max(0.05, L.d[2]), L.d[1]).normalize();
   sun.target.position.set(x, 0, z);
   sun.position.copy(sun.target.position).addScaledVector(toSun, 120);
+  const half = Math.max(12, Math.min(34, view.span * 0.8));
+  const box = sun.shadow.camera;
+  if (box.right !== half) {
+    Object.assign(box, { left: -half, right: half, top: half, bottom: -half });
+    box.updateProjectionMatrix();
+  }
   const bg = mix3(
     [0.05, 0.07, 0.13],
     [L.sky[0] * 0.9 + 0.06, L.sky[1] * 0.9 + 0.06, L.sky[2] * 0.9 + 0.06],
-    1 - nightK(L.night),
+    1 - night,
   );
-  if (scene.background instanceof Color) scene.background.setRGB(bg[0], bg[1], bg[2]);
+  if (scene.background instanceof Color) {
+    scene.background.setRGB(bg[0], bg[1], bg[2]);
+    scene.fog?.color.copy(scene.background);
+  }
+  // Windows, neon and lamps take over as the sun goes down.
+  for (const m of town.lit) m.emissiveIntensity = night;
+  for (const m of town.glows) m.opacity = night;
+  town.dots.opacity = 0.25 + 0.75 * night;
+  for (const o of town.halos) o.position.copy(view.toCamera).multiplyScalar(0.8);
 }
