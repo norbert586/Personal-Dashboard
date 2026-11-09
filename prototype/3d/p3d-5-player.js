@@ -32,18 +32,24 @@ function move(dx, dy, r, bike) {
   if (!blocked(ME.x + dx, ME.y + dy, r)) { ME.x += dx; ME.y += dy; return; }
   if (Math.abs(dx) > 1e-6 && !blocked(ME.x + dx, ME.y, r)) { ME.x += dx; if (bike) ME.speed *= 0.96; return; }
   if (Math.abs(dy) > 1e-6 && !blocked(ME.x, ME.y + dy, r)) { ME.y += dy; if (bike) ME.speed *= 0.96; return; }
-  if (bike) ME.speed *= 0.3; ME.target = null;
+  if (bike) ME.speed *= 0.3;
 }
 function updatePlayer(dt) {
   let ix = 0, iy = 0;
   if (KEYS.has('KeyW') || KEYS.has('ArrowUp')) iy++; if (KEYS.has('KeyS') || KEYS.has('ArrowDown')) iy--;
   if (KEYS.has('KeyD') || KEYS.has('ArrowRight')) ix++; if (KEYS.has('KeyA') || KEYS.has('ArrowLeft')) ix--;
-  let dx = Math.sin(YAW) * ix - Math.cos(YAW) * iy, dy = -Math.cos(YAW) * ix - Math.sin(YAW) * iy;
-  if (ix || iy) ME.target = null;
-  else if (ME.target) { const tx = ME.target[0] - ME.x, ty = ME.target[1] - ME.y, d = Math.hypot(tx, ty); if (d < (ME.mode === 'bike' ? 0.3 : 0.08)) ME.target = null; else { dx = tx / d; dy = ty / d; } }
+  // Keys follow the streets: turn the input 45° and use the nearest classic isometric view, so one key walks along a street.
+  const q = Math.round((YAW - Math.PI / 4) / (Math.PI / 2)) * (Math.PI / 2) + Math.PI / 4, rx = (ix - iy) * Math.SQRT1_2, ry = (ix + iy) * Math.SQRT1_2;
+  let dx = Math.sin(q) * rx - Math.cos(q) * ry, dy = -Math.cos(q) * rx - Math.sin(q) * ry, auto = false;
+  if (ix || iy) { ME.path = null; ME.enterId = 0; }
+  else if (ME.path && ME.path.length) {
+    const ex = ME.path[0][0] - ME.x, ey = ME.path[0][1] - ME.y, d = Math.hypot(ex, ey);
+    if (d < (ME.mode === 'bike' ? 0.22 : 0.07)) { ME.path.shift(); if (!ME.path.length) { ME.path = null; if (ME.enterId) { const id = ME.enterId; ME.enterId = 0; enterBuilding(id); return; } } }
+    else { dx = ex / d; dy = ey / d; auto = true; }
+  }
   const m = Math.hypot(dx, dy); if (m > 0) { dx /= m; dy /= m; }
   if (ME.mode === 'walk') {
-    const run = KEYS.has('ShiftLeft') || KEYS.has('ShiftRight'), want = m > 0 ? (run ? 2.3 : 1.15) : 0;
+    const run = KEYS.has('ShiftLeft') || KEYS.has('ShiftRight') || (auto && pathLeft() > 5), want = m > 0 ? (run ? 2.3 : 1.15) : 0;
     ME.speed += (want - ME.speed) * Math.min(1, dt * 10); if (m > 0) { ME.fx = dx; ME.fy = dy; }
     move(ME.fx * ME.speed * dt, ME.fy * ME.speed * dt, 0.09);
     ME.phase += dt * (run ? 11 : 7.5) * Math.min(1.2, ME.speed / 1.15);
@@ -112,4 +118,4 @@ function openInfo(id) {
   if (p.feed === 'sports') body += `<ul>${m.sports.map(([t, l, n]) => `<li><b>${esc(t)}</b> ${l ? `${l[0]} ${l[1]} ${l[2]}` : ''}<br><span class="dim">${esc(n)}</span></li>`).join('')}</ul><p class="dim">Sample scores.</p>`;
   $3('#info-title').textContent = p.place || p.title; $3('#info-body').innerHTML = body; $3('#info').hidden = false; KEYS.clear(); $3('#info-close').focus();
 }
-const closeInfo = () => { $3('#info').hidden = true; cv3.focus(); };
+const closeInfo = () => { $3('#info').hidden = true; if (INSIDE) { INSIDE = null; meFig.g.visible = true; meBike.g.visible = ME.mode === 'bike'; } cv3.focus(); };

@@ -19,36 +19,32 @@ check in one sitting.
       prompts and night lighting
 - [x] Direction locked: SPEC, DESIGN, DECISIONS (ADR-009 to 013) and this roadmap rewritten
 
-## M1: MVP ← you are here
+## M1: MVP, running locally ← you are here
 
-1. [ ] **Town island in Astro.** three.js from npm (pinned), the 3D engine ported from `prototype/`
-       to TypeScript in `src/game/`, replacing the console page. An e2e smoke test: the canvas boots
-       with no console errors.
-2. [ ] **The big world** (ADR-016). A build script turns OpenStreetMap data for 23 to 29 Mile and
-       Mound to Romeo Plank into typed world data. Seeded rules place houses and shops along the real
-       streets, and landmarks are placed by hand: the Town Hall, the cinema, Main Street, the
-       airfield and the project buildings. Sections stream in by the square mile. Add the park with
-       a small lake, the library, tennis courts and dog park, then tune tiles per mile by biking it.
-3. [ ] **You.** Walk, run, bike, click or tap to walk, collisions, silhouette, camera rotate and zoom.
-       Your device remembers where you were.
-4. [ ] **Projects.** Door prompt and window per building, plus a real page at `/projects/<slug>`
-       from `src/content/projects/`. Screenshots and demo links for Overhead, Tetris Plus and
-       Crossbell Vending.
-5. [ ] **Coding activity.** GitHub pushes and new repos drive fireworks and the crane on the empty
-       lot.
-6. [ ] **Today panel.** One key away, good on a phone, every feed on sample data with provenance.
-7. [ ] **Real feeds, one at a time:** weather, scores, comics, movies, flights overhead, news
-       (local, tech, national, world), traffic, from the sources in ADR-015 and ADR-017. Each gets
-       a parser unit test and an offline state.
-8. [ ] **Town Hall to-dos and calendar** (ADR-014): storage, passkey sign-in for Norbert only,
-       add, tick and delete from a phone. Everyone else can read.
-9. [ ] **The town shows the feeds.** Marquee, comic shop window, sports bar sign, real aircraft in
-       the sky, the forecast's weather and seasons.
-10. [ ] **Music and sound.** On by default after the first key press; tracks by place and time.
-11. [ ] **DOS mode, passport stamps and a handful of secrets.**
-12. [ ] **Polish.** Performance (fewer draw calls, phones), an accessibility pass, `public` gate
-        mode and `PRIVATE_FEEDS`.
-13. [ ] **Launch.** Pick hosting (new ADR), deploy, check it from a phone off Wi-Fi.
+Feeds come first: they're useful on their own, and the town reads them later.
+
+1. [ ] **Feeds, server side.** One source per feed in `src/lib/sources/`, each a `Reading<T>` with a
+       parser unit test on a saved sample and an offline state. Weather, scores, comics, movies,
+       news (local, tech, national, world), area traffic, flights overhead and GitHub activity, from
+       the sources in ADR-015 and ADR-017. Free keys (Comic Vine, TMDB, TomTom) live in `.env`. One
+       cached JSON endpoint serves them all.
+2. [ ] **Today panel.** The morning update as an HTML page on real data, good on a phone. It's the
+       home page until the town lands.
+3. [ ] **Town island in Astro.** Port the 3D engine from `prototype/3d/` to TypeScript in
+       `src/game/`, including what the prototype learned: street-aligned keys, click-to-walk with A*,
+       going inside, flyovers. An e2e smoke test: the canvas boots with no console errors.
+4. [ ] **The town shows the feeds.** Marquee, comic shop window, sports bar sign, real aircraft from
+       ADS-B, the forecast's weather and seasons.
+5. [ ] **Town Hall.** To-dos and calendar stored locally (SQLite), editable from this machine.
+6. [ ] **Projects.** Building windows and real pages at `/projects/<slug>`, screenshots and demo
+       links for the star projects. GitHub pushes drive fireworks; new repos drive the crane.
+7. [ ] **The big world** (ADR-016). OpenStreetMap data to typed world data, seeded houses along the
+       real streets, landmarks by hand, streaming by the square mile, then tune tiles per mile.
+8. [ ] **Music and sound.** On by default after the first key press; tracks by place and time.
+9. [ ] **DOS mode, passport stamps and a handful of secrets.**
+10. [ ] **Polish.** Performance (draw calls, phones), accessibility, saved position.
+11. [ ] **Going public.** Hosting (new ADR), the `public` gate mode, `PRIVATE_FEEDS`, passkey
+        sign-in for the Town Hall (ADR-014), deploy, and a check from a phone off Wi-Fi.
 
 ## M2: After launch
 

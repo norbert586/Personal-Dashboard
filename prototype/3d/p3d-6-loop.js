@@ -12,7 +12,7 @@ addEventListener('keydown', (e) => {
   if (e.repeat) { KEYS.add(k); return; }
   KEYS.add(k);
   if (k === 'KeyB') setBike(ME.mode !== 'bike');
-  else if (k === 'KeyF' || k === 'Enter') { if (NEAR) openInfo(NEAR.id); }
+  else if (k === 'KeyF' || k === 'Enter') { if (NEAR) enterBuilding(NEAR.id); }
   else if (k === 'KeyN') cycleTime();
   else if (k === 'Space' && ME.mode === 'bike') bell();
   else if (e.key === '+' || e.key === '=') zoom3(1); else if (e.key === '-') zoom3(-1);
@@ -22,14 +22,14 @@ addEventListener('blur', () => KEYS.clear());
 let drag = null;
 cv3.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, y: e.clientY, moved: false, yaw: YAW_T }; cv3.setPointerCapture(e.pointerId); });
 cv3.addEventListener('pointermove', (e) => { if (!drag) return; const dx = e.clientX - drag.x; if (Math.abs(dx) + Math.abs(e.clientY - drag.y) > 8) drag.moved = true; if (drag.moved) YAW_T = drag.yaw + dx * 0.008; });
-cv3.addEventListener('pointerup', (e) => { if (drag && !drag.moved) { const g = groundAt(e.clientX, e.clientY); if (g) ME.target = g; } drag = null; });
+cv3.addEventListener('pointerup', (e) => { if (drag && !drag.moved) clickAt(e.clientX, e.clientY); drag = null; });
 cv3.addEventListener('wheel', (e) => { e.preventDefault(); zoom3(e.deltaY < 0 ? 1 : -1); }, { passive: false });
 $3('#b-left').addEventListener('click', () => (YAW_T -= Math.PI / 4)); $3('#b-right').addEventListener('click', () => (YAW_T += Math.PI / 4));
 $3('#b-in').addEventListener('click', () => zoom3(1)); $3('#b-out').addEventListener('click', () => zoom3(-1));
 $3('#b-bike').addEventListener('click', () => setBike(ME.mode !== 'bike')); $3('#b-time').addEventListener('click', cycleTime);
-$3('#prompt').addEventListener('click', () => NEAR && openInfo(NEAR.id)); $3('#info-close').addEventListener('click', closeInfo);
+$3('#prompt').addEventListener('click', () => NEAR && enterBuilding(NEAR.id)); $3('#info-close').addEventListener('click', closeInfo);
 addEventListener('resize', resize3);
-if (touch) { $3('#hint').textContent = 'Tap to walk. Drag to turn the camera. Ride with Bike.'; $3('#prompt .k').textContent = 'Tap'; }
+if (touch) { $3('#hint').textContent = 'Tap anywhere to walk there, or tap a building to go in. Drag to turn the camera.'; $3('#prompt .k').textContent = 'Tap'; }
 
 // ---- Loop ----
 let last3 = performance.now();
@@ -39,7 +39,7 @@ function frame3(now) {
     LS = lighting(simDate(), weatherNow());
     if (S.detail !== 'off') updateActors(dt);
     if ($3('#info').hidden) updatePlayer(dt);
-    updateCamera(dt); syncMe(); syncPeople(now / 1000); syncVehicles(now / 1000); applyLight();
+    updateCamera(dt); syncMe(); syncPeople(now / 1000); syncVehicles(now / 1000); updateSky3(dt, nightK(LS)); updatePathMarks(now / 1000); applyLight();
     dynGeo.setDrawRange(0, dynN); dynGeo.attributes.position.needsUpdate = true; dynGeo.attributes.color.needsUpdate = true;
     updatePrompt(); renderer.render(scene, camera);
   }
@@ -50,7 +50,7 @@ function start3() {
   applySeason(seasonNow()); cacheTokens();
   buildWorld();
   buildStatic(); buildGround(); buildTrees(); buildGlows(); buildWires();
-  setupActors(); makePeople(); makeVehicles();
+  setupActors(); makePeople(); makeVehicles(); makeSkyTraffic(); buildNav(); assignDoorIds();
   scene.fog.near = CAMD + 14; scene.fog.far = CAMD + 62;
   LS = lighting(simDate(), weatherNow()); resize3();
   $3('#loading').hidden = true; cv3.focus();

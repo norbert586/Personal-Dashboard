@@ -207,3 +207,15 @@ Decision:
   on the area's main roads, which needs no personal information. A personal drive waits for
   Norbert's answer.
   Consequences: a third free key for `.env`. Headlines only, never full articles.
+
+## ADR-018: The MVP runs locally first
+
+**Accepted · 2026-11-09**
+Context: Norbert: "MVP is local anyways for now." He wants the feeds working before anything is
+deployed.
+Decision: build and run the MVP on his computer and home network. The gate's `private-network`
+mode already limits a production build to loopback, LAN and Tailscale. No hosting choice, public
+deploy or sign-in until the going-public step. While local, the Town Hall can be edited from his
+own machine without a login. Free API keys live in a local `.env`.
+Consequences: feeds come first in the roadmap. Hosting and passkey sign-in (ADR-014) move to
+the going-public step. Every source must work from a home internet connection.

@@ -17,7 +17,7 @@ function meshFrom(pos, nor, uv, mat, cast = true) {
   const m = new THREE.Mesh(g, mat); m.castShadow = cast; m.receiveShadow = true; scene.add(m); return m;
 }
 function buildStatic() {
-  for (const p of PAGES) { const m = new THREE.MeshLambertMaterial({ map: dataTex(p.col, ATLAS, ATLAS), emissive: 0xffffff, emissiveMap: dataTex(p.emi, ATLAS, ATLAS), emissiveIntensity: 0 }); meshFrom(p.pos, p.nor, p.uv, m); STATIC_MATS.push(m); }
+  for (const p of PAGES) { const m = new THREE.MeshLambertMaterial({ map: dataTex(p.col, ATLAS, ATLAS), emissive: 0xffffff, emissiveMap: dataTex(p.emi, ATLAS, ATLAS), emissiveIntensity: 0 }); STATIC_HITS.push(meshFrom(p.pos, p.nor, p.uv, m)); STATIC_MATS.push(m); }
 }
 // Ground: re-sample the 2D ground pass (roads, paint, fields) onto the grid plane, 32 texels per tile.
 function groundQuad(x0, n, y, tex, cast) {

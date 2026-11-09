@@ -62,8 +62,8 @@ is no "skip the game" button. The Today panel and DOS mode are the quick ways in
 
 ## MVP
 
-The MVP is a polished small town with real data. It goes public only when it's polished; there's no
-early deploy. Everything in the table ships together.
+The MVP is a polished small town with real data. It runs locally first, on my computer and home
+network (ADR-018), and goes public only when it's polished. Everything in the table ships together.
 
 | Area               | What ships                                                                                                                                           | Done when                                                                             |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
@@ -123,7 +123,8 @@ ADR-011. Two guardrails stay:
 - One server setting (`PRIVATE_FEEDS`) hides the calendar, to-dos and traffic without a code change.
 
 Reading is public; changing things isn't. Editing the Town Hall's to-dos and calendar needs my
-sign-in (ADR-014).
+sign-in once the site is public (ADR-014). While the MVP runs locally, editing works from my own
+machine (ADR-018).
 
 The access gate (ADR-004) stays in the code and still fails closed when no mode is set. Launch adds a
 `public` mode.

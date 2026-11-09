@@ -44,6 +44,18 @@ copy values here.
 - Heights are written in the 2D art's pixels and converted, so the same numbers describe the 2D and
   3D versions.
 
+## Moving around
+
+- Keys follow the streets. W, A, S and D walk along the grid's axes as they appear in the nearest
+  classic isometric view, so one key keeps you on a sidewalk; two keys walk straight up or across
+  the screen.
+- Click or tap anywhere and you walk an A* path around buildings, with a dotted line and a pulsing
+  ring where you'll stop. Long trips break into a run.
+- Click a building and you walk to its door and go in. You step inside, its window opens, and you
+  come back out when it closes.
+- Overhead, a low plane sometimes sweeps right under the camera with its shadow racing across the
+  ground, and high jets leave contrails.
+
 ## Light, time and weather
 
 - Day: a hemisphere light carries the sky colour and the sun carries the shadows. A low sun is
