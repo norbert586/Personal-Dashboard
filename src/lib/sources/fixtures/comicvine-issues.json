@@ -1,0 +1,113 @@
+{
+ "error": "OK",
+ "limit": 100,
+ "offset": 0,
+ "number_of_page_results": 8,
+ "number_of_total_results": 8,
+ "status_code": 1,
+ "results": [
+  {
+   "id": 9000001,
+   "issue_number": "12",
+   "name": null,
+   "store_date": "2026-11-04",
+   "site_detail_url": "https://comicvine.gamespot.com/ace-of-wings-12/4000-9000001/",
+   "volume": {
+    "api_detail_url": "https://comicvine.gamespot.com/api/volume/4050-190001/",
+    "id": 190001,
+    "name": "Ace of Wings",
+    "site_detail_url": "https://comicvine.gamespot.com/ace-of-wings/4050-190001/"
+   }
+  },
+  {
+   "id": 9000002,
+   "issue_number": "27",
+   "name": "Deadline",
+   "store_date": "2026-11-04",
+   "site_detail_url": "https://comicvine.gamespot.com/night-desk-27/4000-9000002/",
+   "volume": {
+    "api_detail_url": "https://comicvine.gamespot.com/api/volume/4050-190002/",
+    "id": 190002,
+    "name": "Night Desk",
+    "site_detail_url": "https://comicvine.gamespot.com/night-desk/4050-190002/"
+   }
+  },
+  {
+   "id": 9000003,
+   "issue_number": "3",
+   "name": null,
+   "store_date": "2026-11-04",
+   "site_detail_url": "https://comicvine.gamespot.com/lake-effect-3/4000-9000003/",
+   "volume": {
+    "api_detail_url": "https://comicvine.gamespot.com/api/volume/4050-190003/",
+    "id": 190003,
+    "name": "Lake Effect",
+    "site_detail_url": "https://comicvine.gamespot.com/lake-effect/4050-190003/"
+   }
+  },
+  {
+   "id": 9000004,
+   "issue_number": "1",
+   "name": "Boot Sequence",
+   "store_date": "2026-11-04",
+   "site_detail_url": "https://comicvine.gamespot.com/sector-nine-1/4000-9000004/",
+   "volume": {
+    "api_detail_url": "https://comicvine.gamespot.com/api/volume/4050-190004/",
+    "id": 190004,
+    "name": "Sector Nine",
+    "site_detail_url": "https://comicvine.gamespot.com/sector-nine/4050-190004/"
+   }
+  },
+  {
+   "id": 9000005,
+   "issue_number": "1",
+   "name": "Annual",
+   "store_date": "2026-11-04",
+   "site_detail_url": "https://comicvine.gamespot.com/pine-barrens-1/4000-9000005/",
+   "volume": {
+    "api_detail_url": "https://comicvine.gamespot.com/api/volume/4050-190005/",
+    "id": 190005,
+    "name": "Pine Barrens",
+    "site_detail_url": "https://comicvine.gamespot.com/pine-barrens/4050-190005/"
+   }
+  },
+  {
+   "id": 9000006,
+   "issue_number": "8",
+   "name": null,
+   "store_date": "2026-11-04",
+   "site_detail_url": "https://comicvine.gamespot.com/copperline-tales-8/4000-9000006/",
+   "volume": {
+    "api_detail_url": "https://comicvine.gamespot.com/api/volume/4050-190006/",
+    "id": 190006,
+    "name": "Copperline Tales",
+    "site_detail_url": "https://comicvine.gamespot.com/copperline-tales/4050-190006/"
+   }
+  },
+  {
+   "id": 9000007,
+   "issue_number": "11",
+   "name": null,
+   "store_date": "2026-11-04",
+   "site_detail_url": "https://comicvine.gamespot.com/ace-of-wings-11/4000-9000007/",
+   "volume": {
+    "api_detail_url": "https://comicvine.gamespot.com/api/volume/4050-190001/",
+    "id": 190001,
+    "name": "Ace of Wings",
+    "site_detail_url": "https://comicvine.gamespot.com/ace-of-wings/4050-190001/"
+   }
+  },
+  {
+   "id": 9000008,
+   "issue_number": "2",
+   "name": null,
+   "store_date": null,
+   "site_detail_url": "https://comicvine.gamespot.com/no-date-2/4000-9000008/",
+   "volume": {
+    "id": 190003,
+    "name": "Lake Effect"
+   }
+  }
+ ],
+ "version": "1.0"
+}

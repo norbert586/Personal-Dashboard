@@ -4,10 +4,11 @@
  * everything from the saved samples, with no network.
  */
 import { getCollection } from 'astro:content';
-import { FEEDS, TMDB_READ_TOKEN, TOMTOM_API_KEY } from 'astro:env/server';
+import { COMIC_VINE_API_KEY, FEEDS, TMDB_READ_TOKEN, TOMTOM_API_KEY } from 'astro:env/server';
 import { UpstreamCache, sampleFetcher } from './fetcher.ts';
 import { readSource, type ReadOptions, type Source } from './readings.ts';
 import { activity, titlesByRepo } from './sources/activity.ts';
+import { comics } from './sources/comics.ts';
 import { flights } from './sources/flights.ts';
 import { movies } from './sources/movies.ts';
 import { news } from './sources/news.ts';
@@ -47,6 +48,7 @@ export async function getFeeds(now: Date = new Date()) {
       national: read(news('national')),
       world: read(news('world')),
     }),
+    comics: read(comics(COMIC_VINE_API_KEY)),
     movies: read(movies(TMDB_READ_TOKEN)),
     flights: read(flights()),
     activity: read(activity(site.github.user, titles)),

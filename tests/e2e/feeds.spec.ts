@@ -49,6 +49,15 @@ test('serves every feed as JSON, each with its provenance', async ({ request }) 
   expect(traffic.provenance).toBe('sample');
   expect(traffic.data.incidents[1]).toMatchObject({ road: '24 Mile Rd', bothWays: true });
 
+  const comics = body.feeds.comics;
+  expect(comics.source).toBe('Comic Vine');
+  expect(comics.provenance).toBe('sample');
+  expect(comics.data.groups.map((group: { publisher: string }) => group.publisher)).toEqual([
+    'DC',
+    'Image',
+    'Marvel',
+  ]);
+
   const movies = body.feeds.movies;
   expect(movies.source).toBe('TMDB');
   expect(movies.provenance).toBe('sample');

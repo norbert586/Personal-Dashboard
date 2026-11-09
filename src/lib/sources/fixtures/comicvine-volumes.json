@@ -1,0 +1,73 @@
+{
+ "error": "OK",
+ "limit": 100,
+ "offset": 0,
+ "number_of_page_results": 7,
+ "number_of_total_results": 7,
+ "status_code": 1,
+ "results": [
+  {
+   "id": 190001,
+   "name": "Ace of Wings",
+   "publisher": {
+    "api_detail_url": "https://comicvine.gamespot.com/api/publisher/4010-10/",
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 190002,
+   "name": "Night Desk",
+   "publisher": {
+    "api_detail_url": "https://comicvine.gamespot.com/api/publisher/4010-10/",
+    "id": 10,
+    "name": "DC Comics"
+   }
+  },
+  {
+   "id": 190003,
+   "name": "Lake Effect",
+   "publisher": {
+    "api_detail_url": "https://comicvine.gamespot.com/api/publisher/4010-513/",
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 190004,
+   "name": "Sector Nine",
+   "publisher": {
+    "api_detail_url": "https://comicvine.gamespot.com/api/publisher/4010-513/",
+    "id": 513,
+    "name": "Image"
+   }
+  },
+  {
+   "id": 190005,
+   "name": "Pine Barrens",
+   "publisher": {
+    "api_detail_url": "https://comicvine.gamespot.com/api/publisher/4010-31/",
+    "id": 31,
+    "name": "Marvel"
+   }
+  },
+  {
+   "id": 190006,
+   "name": "Copperline Tales",
+   "publisher": {
+    "api_detail_url": "https://comicvine.gamespot.com/api/publisher/4010-99999/",
+    "id": 99999,
+    "name": "Copperline"
+   }
+  },
+  {
+   "id": 123,
+   "name": "Not asked for",
+   "publisher": {
+    "id": 10,
+    "name": "DC Comics"
+   }
+  }
+ ],
+ "version": "1.0"
+}

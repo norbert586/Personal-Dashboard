@@ -10,6 +10,7 @@ const CARDS = [
   'Tech news',
   'National news',
   'World news',
+  'New comics',
   'Movies',
   'Flights overhead',
   'Coding activity',
@@ -69,6 +70,11 @@ test('reads the saved samples as they were when captured', async ({ page }) => {
   await expect(traffic).toContainText('24 Mile Rd');
   await expect(traffic).toContainText('Romeo Plank Rd to North Ave, both ways');
   await expect(traffic).toContainText('12 closures on side streets not shown.');
+
+  const comics = page.getByRole('region', { name: 'New comics' });
+  await expect(comics).toContainText('Week of Nov 2: 6 books');
+  await expect(comics.getByRole('heading', { name: /^DC/ })).toBeVisible();
+  await expect(comics).toContainText('Ace of Wings #12');
 
   const movies = page.getByRole('region', { name: 'Movies' });
   await expect(movies.getByRole('listitem').first()).toContainText('Wildwood');

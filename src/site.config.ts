@@ -18,6 +18,8 @@ export interface SiteConfig {
   teams: Team[];
   /** Headlines by section (ADR-017). Each outlet is an RSS or Atom feed, or Hacker News. */
   news: Record<NewsSection, Outlet[]>;
+  /** New comics from these publishers (ADR-015), by Comic Vine publisher id, in the order shown. */
+  comics: Array<{ id: number; name: string }>;
   /** Area traffic (ADR-017): incidents inside the box, closures only on the main roads. */
   traffic: {
     box: { west: number; south: number; east: number; north: number };
@@ -160,6 +162,11 @@ export const site: SiteConfig = {
       },
     ],
   },
+  comics: [
+    { id: 10, name: 'DC' },
+    { id: 513, name: 'Image' },
+    { id: 31, name: 'Marvel' },
+  ],
   traffic: {
     // The real grid (23 to 29 Mile, Mound to Romeo Plank) plus Hall Road (M-59) to the south.
     box: { west: -83.12, south: 42.6, east: -82.88, north: 42.8 },
