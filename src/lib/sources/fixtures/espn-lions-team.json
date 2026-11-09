@@ -1,0 +1,118 @@
+{
+ "team": {
+  "id": "8",
+  "abbreviation": "DET",
+  "location": "Detroit",
+  "name": "Lions",
+  "displayName": "Detroit Lions",
+  "record": {
+   "items": [
+    {
+     "type": "total",
+     "summary": "6-2"
+    },
+    {
+     "description": "Home Record",
+     "type": "home",
+     "summary": "4-0"
+    },
+    {
+     "description": "Away Record",
+     "type": "road",
+     "summary": "2-2"
+    }
+   ]
+  },
+  "nextEvent": [
+   {
+    "id": "401873042",
+    "date": "2026-11-08T18:00Z",
+    "name": "Detroit Lions at Miami Dolphins",
+    "shortName": "DET @ MIA",
+    "season": {
+     "displayName": "2026",
+     "year": 2026
+    },
+    "seasonType": {
+     "abbreviation": "reg",
+     "id": "2",
+     "name": "Regular Season",
+     "type": 2
+    },
+    "timeValid": true,
+    "competitions": [
+     {
+      "id": "401873042",
+      "date": "2026-11-08T18:00Z",
+      "timeValid": true,
+      "neutralSite": false,
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0:00",
+       "period": 4,
+       "type": {
+        "completed": true,
+        "description": "Final",
+        "detail": "Final",
+        "id": "3",
+        "name": "STATUS_FINAL",
+        "shortDetail": "Final",
+        "state": "post"
+       }
+      },
+      "broadcasts": [
+       {
+        "type": {
+         "id": "1",
+         "shortName": "TV"
+        },
+        "market": {
+         "id": "1",
+         "type": "National"
+        },
+        "media": {
+         "shortName": "CBS"
+        },
+        "region": "us"
+       }
+      ],
+      "competitors": [
+       {
+        "id": "15",
+        "homeAway": "home",
+        "winner": false,
+        "score": {
+         "displayValue": "9",
+         "value": 9.0
+        },
+        "team": {
+         "id": "15",
+         "abbreviation": "MIA",
+         "displayName": "Miami Dolphins",
+         "shortDisplayName": "Dolphins",
+         "location": "Miami"
+        }
+       },
+       {
+        "id": "8",
+        "homeAway": "away",
+        "winner": true,
+        "score": {
+         "displayValue": "19",
+         "value": 19.0
+        },
+        "team": {
+         "id": "8",
+         "abbreviation": "DET",
+         "displayName": "Detroit Lions",
+         "shortDisplayName": "Lions",
+         "location": "Detroit"
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

@@ -1,0 +1,560 @@
+{
+ "timestamp": "2026-11-09T04:21:54Z",
+ "status": "success",
+ "season": {
+  "year": 2027,
+  "type": 2,
+  "name": "Regular Season",
+  "displayName": "2026-27",
+  "half": 1
+ },
+ "requestedSeason": {
+  "year": 2027,
+  "type": 2,
+  "name": "Regular Season",
+  "displayName": "2026-27"
+ },
+ "team": {
+  "id": "8",
+  "abbreviation": "DET",
+  "location": "Detroit",
+  "name": "Pistons",
+  "displayName": "Detroit Pistons",
+  "recordSummary": "6-3",
+  "standingSummary": "1st in Central Division"
+ },
+ "events": [
+  {
+   "id": "401909908",
+   "date": "2026-11-03T00:30Z",
+   "name": "Detroit Pistons at Charlotte Hornets",
+   "shortName": "DET @ CHA",
+   "season": {
+    "year": 2027,
+    "displayName": "2026-27"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401909908",
+     "date": "2026-11-03T00:30Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0.0",
+      "period": 4,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "6",
+        "shortName": "Subscription Package"
+       },
+       "market": {
+        "id": "3",
+        "type": "Away"
+       },
+       "media": {
+        "shortName": "NBA League Pass"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "30",
+       "homeAway": "home",
+       "winner": false,
+       "score": {
+        "value": 91.0,
+        "displayValue": "91"
+       },
+       "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "shortDisplayName": "Hornets",
+        "location": "Charlotte"
+       }
+      },
+      {
+       "id": "8",
+       "homeAway": "away",
+       "winner": true,
+       "score": {
+        "value": 124.0,
+        "displayValue": "124"
+       },
+       "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "shortDisplayName": "Pistons",
+        "location": "Detroit"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401909922",
+   "date": "2026-11-05T00:00Z",
+   "name": "Philadelphia 76ers at Detroit Pistons",
+   "shortName": "PHI @ DET",
+   "season": {
+    "year": 2027,
+    "displayName": "2026-27"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401909922",
+     "date": "2026-11-05T00:00Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0.0",
+      "period": 4,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "ESPN"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "8",
+       "homeAway": "home",
+       "winner": false,
+       "score": {
+        "value": 106.0,
+        "displayValue": "106"
+       },
+       "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "shortDisplayName": "Pistons",
+        "location": "Detroit"
+       }
+      },
+      {
+       "id": "20",
+       "homeAway": "away",
+       "winner": true,
+       "score": {
+        "value": 112.0,
+        "displayValue": "112"
+       },
+       "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "shortDisplayName": "76ers",
+        "location": "Philadelphia"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401909946",
+   "date": "2026-11-08T23:00Z",
+   "name": "Los Angeles Lakers at Detroit Pistons",
+   "shortName": "LAL @ DET",
+   "season": {
+    "year": 2027,
+    "displayName": "2026-27"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401909946",
+     "date": "2026-11-08T23:00Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0.0",
+      "period": 4,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "NBA TV"
+       },
+       "region": "us"
+      },
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "3",
+        "type": "Away"
+       },
+       "media": {
+        "shortName": "Spectrum Sports Net"
+       },
+       "region": "us"
+      },
+      {
+       "type": {
+        "id": "4",
+        "shortName": "Streaming"
+       },
+       "market": {
+        "id": "3",
+        "type": "Away"
+       },
+       "media": {
+        "shortName": "Spectrum Sports Net +"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "8",
+       "homeAway": "home",
+       "winner": false,
+       "score": {
+        "value": 116.0,
+        "displayValue": "116"
+       },
+       "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "shortDisplayName": "Pistons",
+        "location": "Detroit"
+       }
+      },
+      {
+       "id": "13",
+       "homeAway": "away",
+       "winner": true,
+       "score": {
+        "value": 121.0,
+        "displayValue": "121"
+       },
+       "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "shortDisplayName": "Lakers",
+        "location": "Los Angeles"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401909954",
+   "date": "2026-11-10T00:00Z",
+   "name": "Washington Wizards at Detroit Pistons",
+   "shortName": "WSH @ DET",
+   "season": {
+    "year": 2027,
+    "displayName": "2026-27"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401909954",
+     "date": "2026-11-10T00:00Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0.0",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Mon, November 9th at 7:00 PM EST",
+       "shortDetail": "11/9 - 7:00 PM EST"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "NBCSN"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "8",
+       "homeAway": "home",
+       "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "shortDisplayName": "Pistons",
+        "location": "Detroit"
+       }
+      },
+      {
+       "id": "27",
+       "homeAway": "away",
+       "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "shortDisplayName": "Wizards",
+        "location": "Washington"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401909977",
+   "date": "2026-11-13T00:00Z",
+   "name": "Detroit Pistons at Washington Wizards",
+   "shortName": "DET @ WSH",
+   "season": {
+    "year": 2027,
+    "displayName": "2026-27"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401909977",
+     "date": "2026-11-13T00:00Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0.0",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Thu, November 12th at 7:00 PM EST",
+       "shortDetail": "11/12 - 7:00 PM EST"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "2",
+        "type": "Home"
+       },
+       "media": {
+        "shortName": "MNMT"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "27",
+       "homeAway": "home",
+       "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "shortDisplayName": "Wizards",
+        "location": "Washington"
+       }
+      },
+      {
+       "id": "8",
+       "homeAway": "away",
+       "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "shortDisplayName": "Pistons",
+        "location": "Detroit"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401909982",
+   "date": "2026-11-15T01:00Z",
+   "name": "Detroit Pistons at Miami Heat",
+   "shortName": "DET @ MIA",
+   "season": {
+    "year": 2027,
+    "displayName": "2026-27"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401909982",
+     "date": "2026-11-15T01:00Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0.0",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, November 14th at 8:00 PM EST",
+       "shortDetail": "11/14 - 8:00 PM EST"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "NBA TV"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "14",
+       "homeAway": "home",
+       "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "shortDisplayName": "Heat",
+        "location": "Miami"
+       }
+      },
+      {
+       "id": "8",
+       "homeAway": "away",
+       "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "shortDisplayName": "Pistons",
+        "location": "Detroit"
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

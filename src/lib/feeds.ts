@@ -6,6 +6,7 @@
 import { FEEDS } from 'astro:env/server';
 import { UpstreamCache, sampleFetcher } from './fetcher.ts';
 import { readSource, type ReadOptions } from './readings.ts';
+import { scores } from './sources/scores.ts';
 import { weather } from './sources/weather.ts';
 import { site } from '../site.config.ts';
 
@@ -27,8 +28,11 @@ export async function getFeeds(now: Date = new Date()) {
     now,
     sampleNow: SAMPLES_CAPTURED_AT,
   };
-  const [weatherReading] = await Promise.all([readSource(weather(), options)]);
-  return { weather: weatherReading };
+  const [weatherReading, scoresReading] = await Promise.all([
+    readSource(weather(), options),
+    readSource(scores(), options),
+  ]);
+  return { weather: weatherReading, scores: scoresReading };
 }
 
 export type Feeds = Awaited<ReturnType<typeof getFeeds>>;

@@ -1,0 +1,443 @@
+{
+ "timestamp": "2026-11-09T04:22:02Z",
+ "status": "success",
+ "season": {
+  "year": 2027,
+  "type": 2,
+  "name": "Regular Season",
+  "displayName": "2026-27",
+  "half": 1
+ },
+ "requestedSeason": {
+  "year": 2027,
+  "type": 2,
+  "name": "Regular Season",
+  "displayName": "2026-27"
+ },
+ "team": {
+  "id": "130",
+  "abbreviation": "MICH",
+  "location": "Michigan",
+  "name": "Wolverines",
+  "displayName": "Michigan Wolverines",
+  "recordSummary": "1-1",
+  "standingSummary": "1st in Big Ten"
+ },
+ "events": [
+  {
+   "id": "401925733",
+   "date": "2026-11-02T23:00Z",
+   "name": "Oakland Golden Grizzlies at Michigan Wolverines",
+   "shortName": "OAK @ MICH",
+   "season": {
+    "year": 2027,
+    "displayName": "2026-27"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401925733",
+     "date": "2026-11-02T23:00Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0:00",
+      "period": 2,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "BTN"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "130",
+       "homeAway": "home",
+       "winner": true,
+       "score": {
+        "value": 84.0,
+        "displayValue": "84"
+       },
+       "team": {
+        "id": "130",
+        "abbreviation": "MICH",
+        "displayName": "Michigan Wolverines",
+        "shortDisplayName": "Michigan",
+        "location": "Michigan"
+       }
+      },
+      {
+       "id": "2473",
+       "homeAway": "away",
+       "winner": false,
+       "score": {
+        "value": 68.0,
+        "displayValue": "68"
+       },
+       "team": {
+        "id": "2473",
+        "abbreviation": "OAK",
+        "displayName": "Oakland Golden Grizzlies",
+        "shortDisplayName": "Oakland",
+        "location": "Oakland"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401920685",
+   "date": "2026-11-07T01:00Z",
+   "name": "UConn Huskies at Michigan Wolverines",
+   "shortName": "CONN VS MICH",
+   "season": {
+    "year": 2027,
+    "displayName": "2026-27"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401920685",
+     "date": "2026-11-07T01:00Z",
+     "timeValid": true,
+     "neutralSite": true,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0:00",
+      "period": 2,
+      "type": {
+       "id": "3",
+       "name": "STATUS_FINAL",
+       "state": "post",
+       "completed": true,
+       "description": "Final",
+       "detail": "Final",
+       "shortDetail": "Final"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "TNT"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "130",
+       "homeAway": "home",
+       "winner": false,
+       "score": {
+        "value": 77.0,
+        "displayValue": "77"
+       },
+       "team": {
+        "id": "130",
+        "abbreviation": "MICH",
+        "displayName": "Michigan Wolverines",
+        "shortDisplayName": "Michigan",
+        "location": "Michigan"
+       }
+      },
+      {
+       "id": "41",
+       "homeAway": "away",
+       "winner": true,
+       "score": {
+        "value": 85.0,
+        "displayValue": "85"
+       },
+       "team": {
+        "id": "41",
+        "abbreviation": "CONN",
+        "displayName": "UConn Huskies",
+        "shortDisplayName": "UConn",
+        "location": "UConn"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401909524",
+   "date": "2026-11-12T00:00Z",
+   "name": "Marquette Golden Eagles at Michigan Wolverines",
+   "shortName": "MARQ @ MICH",
+   "season": {
+    "year": 2027,
+    "displayName": "2026-27"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401909524",
+     "date": "2026-11-12T00:00Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Wed, November 11th at 7:00 PM EST",
+       "shortDetail": "11/11 - 7:00 PM EST"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "FS1"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "130",
+       "homeAway": "home",
+       "team": {
+        "id": "130",
+        "abbreviation": "MICH",
+        "displayName": "Michigan Wolverines",
+        "shortDisplayName": "Michigan",
+        "location": "Michigan"
+       }
+      },
+      {
+       "id": "269",
+       "homeAway": "away",
+       "team": {
+        "id": "269",
+        "abbreviation": "MARQ",
+        "displayName": "Marquette Golden Eagles",
+        "shortDisplayName": "Marquette",
+        "location": "Marquette"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401918453",
+   "date": "2026-11-15T19:00Z",
+   "name": "William & Mary Tribe at Michigan Wolverines",
+   "shortName": "W&M @ MICH",
+   "season": {
+    "year": 2027,
+    "displayName": "2026-27"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401918453",
+     "date": "2026-11-15T19:00Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sun, November 15th at 2:00 PM EST",
+       "shortDetail": "11/15 - 2:00 PM EST"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "4",
+        "shortName": "Streaming"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "B1G+"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "130",
+       "homeAway": "home",
+       "team": {
+        "id": "130",
+        "abbreviation": "MICH",
+        "displayName": "Michigan Wolverines",
+        "shortDisplayName": "Michigan",
+        "location": "Michigan"
+       }
+      },
+      {
+       "id": "2729",
+       "homeAway": "away",
+       "team": {
+        "id": "2729",
+        "abbreviation": "W&M",
+        "displayName": "William & Mary Tribe",
+        "shortDisplayName": "William & Mary",
+        "location": "William & Mary"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401921776",
+   "date": "2026-11-22T00:00Z",
+   "name": "Michigan Wolverines at Villanova Wildcats",
+   "shortName": "MICH @ VILL",
+   "season": {
+    "year": 2027,
+    "displayName": "2026-27"
+   },
+   "seasonType": {
+    "id": "2",
+    "type": 2,
+    "name": "Regular Season",
+    "abbreviation": "reg"
+   },
+   "timeValid": true,
+   "competitions": [
+    {
+     "id": "401921776",
+     "date": "2026-11-22T00:00Z",
+     "timeValid": true,
+     "neutralSite": false,
+     "status": {
+      "clock": 0.0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, November 21st at 7:00 PM EST",
+       "shortDetail": "11/21 - 7:00 PM EST"
+      }
+     },
+     "broadcasts": [
+      {
+       "type": {
+        "id": "1",
+        "shortName": "TV"
+       },
+       "market": {
+        "id": "1",
+        "type": "National"
+       },
+       "media": {
+        "shortName": "Fox"
+       },
+       "region": "us"
+      }
+     ],
+     "competitors": [
+      {
+       "id": "222",
+       "homeAway": "home",
+       "team": {
+        "id": "222",
+        "abbreviation": "VILL",
+        "displayName": "Villanova Wildcats",
+        "shortDisplayName": "Villanova",
+        "location": "Villanova"
+       }
+      },
+      {
+       "id": "130",
+       "homeAway": "away",
+       "team": {
+        "id": "130",
+        "abbreviation": "MICH",
+        "displayName": "Michigan Wolverines",
+        "shortDisplayName": "Michigan",
+        "location": "Michigan"
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

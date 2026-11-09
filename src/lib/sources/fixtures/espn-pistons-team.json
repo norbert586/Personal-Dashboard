@@ -1,0 +1,109 @@
+{
+ "team": {
+  "id": "8",
+  "abbreviation": "DET",
+  "location": "Detroit",
+  "name": "Pistons",
+  "displayName": "Detroit Pistons",
+  "record": {
+   "items": [
+    {
+     "description": "Overall Record",
+     "type": "total",
+     "summary": "6-3"
+    },
+    {
+     "description": "Home Record",
+     "type": "home",
+     "summary": "2-2"
+    },
+    {
+     "description": "Away Record",
+     "type": "road",
+     "summary": "4-1"
+    }
+   ]
+  },
+  "nextEvent": [
+   {
+    "id": "401909954",
+    "date": "2026-11-10T00:00Z",
+    "name": "Washington Wizards at Detroit Pistons",
+    "shortName": "WSH @ DET",
+    "season": {
+     "displayName": "2026-27",
+     "year": 2027
+    },
+    "seasonType": {
+     "abbreviation": "reg",
+     "id": "2",
+     "name": "Regular Season",
+     "type": 2
+    },
+    "timeValid": true,
+    "competitions": [
+     {
+      "id": "401909954",
+      "date": "2026-11-10T00:00Z",
+      "timeValid": true,
+      "neutralSite": false,
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0.0",
+       "period": 0,
+       "type": {
+        "completed": false,
+        "description": "Scheduled",
+        "detail": "Mon, November 9th at 7:00 PM EST",
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "shortDetail": "11/9 - 7:00 PM EST",
+        "state": "pre"
+       }
+      },
+      "broadcasts": [
+       {
+        "type": {
+         "id": "1",
+         "shortName": "TV"
+        },
+        "market": {
+         "id": "1",
+         "type": "National"
+        },
+        "media": {
+         "shortName": "NBCSN"
+        },
+        "region": "us"
+       }
+      ],
+      "competitors": [
+       {
+        "id": "8",
+        "homeAway": "home",
+        "team": {
+         "id": "8",
+         "abbreviation": "DET",
+         "displayName": "Detroit Pistons",
+         "shortDisplayName": "Pistons",
+         "location": "Detroit"
+        }
+       },
+       {
+        "id": "27",
+        "homeAway": "away",
+        "team": {
+         "id": "27",
+         "abbreviation": "WSH",
+         "displayName": "Washington Wizards",
+         "shortDisplayName": "Wizards",
+         "location": "Washington"
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

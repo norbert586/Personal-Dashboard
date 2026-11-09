@@ -1,0 +1,113 @@
+{
+ "team": {
+  "id": "5",
+  "abbreviation": "DET",
+  "location": "Detroit",
+  "name": "Red Wings",
+  "displayName": "Detroit Red Wings",
+  "record": {
+   "items": [
+    {
+     "description": "Overall Record",
+     "type": "total",
+     "summary": "7-8"
+    }
+   ]
+  },
+  "nextEvent": [
+   {
+    "id": "401892687",
+    "date": "2026-11-11T01:00Z",
+    "name": "Detroit Red Wings at St. Louis Blues",
+    "shortName": "DET @ STL",
+    "season": {
+     "displayName": "2026-27",
+     "year": 2027
+    },
+    "seasonType": {
+     "abbreviation": "reg",
+     "id": "2",
+     "name": "Regular Season",
+     "type": 2
+    },
+    "timeValid": true,
+    "competitions": [
+     {
+      "id": "401892687",
+      "date": "2026-11-11T01:00Z",
+      "timeValid": true,
+      "neutralSite": false,
+      "status": {
+       "clock": 0.0,
+       "displayClock": "0:00",
+       "period": 0,
+       "type": {
+        "completed": false,
+        "description": "Scheduled",
+        "detail": "Tue, November 10th at 8:00 PM EST",
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "shortDetail": "11/10 - 8:00 PM EST",
+        "state": "pre"
+       }
+      },
+      "broadcasts": [
+       {
+        "type": {
+         "id": "1",
+         "shortName": "TV"
+        },
+        "market": {
+         "id": "1",
+         "type": "National"
+        },
+        "media": {
+         "shortName": "TNT"
+        },
+        "region": "us"
+       },
+       {
+        "type": {
+         "id": "1",
+         "shortName": "TV"
+        },
+        "market": {
+         "id": "1",
+         "type": "National"
+        },
+        "media": {
+         "shortName": "truTV"
+        },
+        "region": "us"
+       }
+      ],
+      "competitors": [
+       {
+        "id": "19",
+        "homeAway": "home",
+        "team": {
+         "id": "19",
+         "abbreviation": "STL",
+         "displayName": "St. Louis Blues",
+         "shortDisplayName": "Blues",
+         "location": "St. Louis"
+        }
+       },
+       {
+        "id": "5",
+        "homeAway": "away",
+        "team": {
+         "id": "5",
+         "abbreviation": "DET",
+         "displayName": "Detroit Red Wings",
+         "shortDisplayName": "Red Wings",
+         "location": "Detroit"
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

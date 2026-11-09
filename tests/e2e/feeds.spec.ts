@@ -16,4 +16,19 @@ test('serves every feed as JSON, each with its provenance', async ({ request }) 
   expect(weather.provenance).toBe('sample');
   expect(weather.data.now.tempF).toBe(52);
   expect(weather.data.days).toHaveLength(8);
+
+  const scores = body.feeds.scores;
+  expect(scores.source).toBe('ESPN');
+  expect(scores.provenance).toBe('sample');
+  expect(scores.data.map((team: { name: string }) => team.name)).toEqual([
+    'Pistons',
+    'Lions',
+    'Tigers',
+    'Red Wings',
+    'Michigan basketball',
+    'Michigan football',
+    'Georgia Tech football',
+  ]);
+  const lions = scores.data.find((team: { id: string }) => team.id === 'lions');
+  expect(lions.last).toMatchObject({ result: 'W', score: { us: 19, them: 9 } });
 });
