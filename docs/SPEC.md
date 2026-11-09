@@ -175,8 +175,9 @@ The access gate (ADR-004) stays in the code and still fails closed when no mode 
 3. **Traffic:** area traffic on the main roads (no personal information), or your own drive, from
    a start to an end such as home to work? A personal route is public too unless `PRIVATE_FEEDS`
    is on.
-4. **Hosting:** Norbert wants to reach it from home, at work and on the go, behind a login (a
-   password or similar) well before launch. Claude proposes the setup (ADR to come).
+4. **Hosting:** it stays local for now (ADR-018; Norbert confirmed on 2026-11-09). When it's
+   deployed, he wants to reach it from home, at work and on the go, behind a login (a password or
+   similar). Claude proposes the setup then (ADR to come).
 5. **The pizzeria's sign:** a stand-in name on the real corner, with no real brand or logo in the
    product. Norbert picks one, or Claude does.
 6. **Going inside, in 3D:** in the prototype, entering only hides you and opens the building's

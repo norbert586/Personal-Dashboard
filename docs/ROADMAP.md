@@ -35,12 +35,6 @@ assembles them.
 Feeds came first: they're useful on their own, and the town reads them. Everything in the spec's
 MVP table ships together, and it goes public only when it's polished (ADR-018).
 
-**Alongside the steps:**
-
-- [ ] **Reach it from anywhere, behind a login.** Norbert wants to use the site at home, at work and
-      on the go, behind a login, well before launch (SPEC open question 4). Claude proposes the
-      setup in a decision entry, which revisits ADR-018 and may move parts of step 11 earlier.
-
 1. [x] **Feeds, server side.** One source per feed in `src/lib/sources/`, each a `Reading<T>` with a
        parser unit test on a saved sample and an offline state. Weather, scores, comics, movies,
        news (local, tech, national, world), area traffic, flights overhead and GitHub activity, from
@@ -179,7 +173,8 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
     - [ ] The Options pane: sound, volume, detail and motion (`paneOptions` in the 2D prototype).
 11. [ ] **Going public.** The game and the real data go live together.
     - [ ] Hosting: Claude proposes it, with storage that lasts for the Town Hall (SPEC open
-          question 4, ADR-014). A new decision entry.
+          question 4, ADR-014). Norbert reaches it from home, at work and on the go, behind a
+          login. A new decision entry.
     - [ ] The `public` gate mode, and `PRIVATE_FEEDS` to hide the calendar, to-dos and traffic
           without a code change (SPEC: Access).
     - [ ] Passkey sign-in for editing the Town Hall (ADR-014, SPEC open question 1).
