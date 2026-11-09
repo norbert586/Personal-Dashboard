@@ -34,7 +34,7 @@ Feeds come first: they're useful on their own, and the town reads them later.
        home page until the town lands (ADR-022).
 3. [ ] **Town island in Astro.** Port the 3D engine from `prototype/3d/` to TypeScript in
        `src/game/`, including what the prototype learned: street-aligned keys, click-to-walk with A*,
-       going inside, flyovers. An e2e smoke test: the canvas boots with no console errors.
+       going inside in 3D (spec open question 6), flyovers. An e2e smoke test: the canvas boots with no console errors.
 4. [ ] **The town shows the feeds.** Marquee, comic shop window, sports bar sign, real aircraft from
        ADS-B, the forecast's weather and seasons.
 5. [ ] **Town Hall.** To-dos and calendar stored locally (SQLite), editable from this machine.

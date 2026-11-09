@@ -172,6 +172,12 @@ The access gate (ADR-004) stays in the code and still fails closed when no mode 
 3. **Traffic:** area traffic on the main roads (no personal information), or your own drive, from
    a start to an end such as home to work? A personal route is public too unless `PRIVATE_FEEDS`
    is on.
-4. **Hosting:** Claude proposes it before launch (ADR to come).
+4. **Hosting:** Norbert wants to reach it from home, at work and on the go, behind a login (a
+   password or similar) well before launch. Claude proposes the setup (ADR to come).
 5. **The pizzeria's sign:** a stand-in name on the real corner, with no real brand or logo in the
    product. Norbert picks one, or Claude does.
+6. **Going inside, in 3D:** in the prototype, entering only hides you and opens the building's
+   window over an unchanged town, and walking into a door does nothing until you press F. Norbert:
+   "nothing happens when you walk into a building". Options: a short 3D entrance (the door opens,
+   you walk through, the camera follows), or that plus a simple room for each building type. Hero
+   interiors stay after launch. Decide before the town port (roadmap step 3).
