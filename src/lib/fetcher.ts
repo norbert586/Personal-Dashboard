@@ -3,6 +3,9 @@
  * so page loads and the JSON endpoint share answers and free API quotas last.
  *
  * - An answer is fresh for its upstream's `ttl`; concurrent requests share one fetch.
+ * - Past its `ttl`, an answer up to KEEP_TTLS × `ttl` old is served at once while a fresh one is
+ *   fetched in the background, so a slow upstream (Comic Vine takes 5 s a page) never holds up a
+ *   page. Older than that, the request waits for the fresh answer.
  * - A failure is remembered for a minute, so a dead upstream doesn't add a timeout to every page.
  * - When a refresh fails, the last good answer stands in for up to KEEP_TTLS × `ttl`, and the
  *   reading says why it's old. After that the source is offline.
@@ -20,6 +23,8 @@ export interface Upstream {
   headers?: Readonly<Record<string, string>>;
   /** Sends an API key, so a refusal (401 or 403) most likely means a bad key. */
   keyed?: boolean;
+  /** For slow upstreams: how long to wait for an answer, in milliseconds. */
+  timeoutMs?: number;
 }
 
 /** What sources fetch through. The live cache, saved samples and tests all fit. */
@@ -58,10 +63,10 @@ interface Entry {
 const DEFAULT_TIMEOUT_MS = 8_000;
 /** Don't retry a failed upstream sooner than this (or its ttl, if shorter). */
 const COOLDOWN_MS = 60_000;
-/** A failed refresh may fall back to an answer up to this many ttls old. */
+/** An answer up to this many ttls old may stand in while a fresh one loads, or after it fails. */
 export const KEEP_TTLS = 6;
-/** Forget answers nobody has asked for in a day. */
-const FORGET_MS = 86_400_000;
+/** Forget answers nobody has asked for in three days (longer than a once-a-day visit). */
+const FORGET_MS = 3 * 86_400_000;
 
 /** A failure we've already put into words. */
 class UpstreamError extends Error {}
@@ -119,7 +124,8 @@ export class UpstreamCache {
         entry.pending ??= this.#refresh(upstream, kind, entry).finally(() => {
           entry.pending = undefined;
         });
-        await entry.pending;
+        // With a recent enough answer in hand, serve it now and let the refresh finish behind.
+        if (age() >= upstream.ttl * KEEP_TTLS) await entry.pending;
       }
     }
 
@@ -128,14 +134,15 @@ export class UpstreamCache {
       return entry.value;
     }
     if (entry.at !== undefined && age() < upstream.ttl * KEEP_TTLS) {
-      record(entry.at, entry.failure ?? `Couldn't refresh ${upstream.name}.`);
+      // Old because a refresh is under way (no note), or because the last one failed (say why).
+      record(entry.at, entry.failure);
       return entry.value;
     }
     throw new UpstreamError(entry.failure ?? `Couldn't reach ${upstream.name}.`);
   }
 
   async #refresh(upstream: Upstream, kind: Kind, entry: Entry): Promise<void> {
-    const timeoutMs = this.#options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+    const timeoutMs = upstream.timeoutMs ?? this.#options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
     try {
       const response = await (this.#options.fetch ?? globalThis.fetch)(upstream.url, {
         headers: {

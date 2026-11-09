@@ -24,6 +24,8 @@ function network(...answers: Array<() => Promise<Response>>) {
 }
 
 const ok = (body: unknown) => () => Promise.resolve(Response.json(body));
+/** Let a background refresh finish. */
+const settled = () => new Promise((resolve) => setTimeout(resolve, 20));
 const status = (code: number) => () => Promise.resolve(new Response('nope', { status: code }));
 const refused = () => () =>
   Promise.reject(new TypeError('fetch failed', { cause: { code: 'ECONNREFUSED' } }));
@@ -62,12 +64,23 @@ describe('UpstreamCache', () => {
     assert.equal(calls.length, 1);
   });
 
-  it('asks again once the answer is older than its ttl', async () => {
+  it('serves the old answer at once while a fresh one loads behind it', async () => {
     const { cache, calls, advance } = setup(ok({ n: 1 }), ok({ n: 2 }));
     await cache.fetcher().json(upstream);
     advance(2 * MINUTE);
-    assert.deepEqual(await cache.fetcher().json(upstream), { n: 2 });
+    const fetcher = cache.fetcher();
+    assert.deepEqual(await fetcher.json(upstream), { n: 1 });
+    assert.deepEqual(fetcher.problems, []);
+    await settled();
     assert.equal(calls.length, 2);
+    assert.deepEqual(await cache.fetcher().json(upstream), { n: 2 });
+  });
+
+  it('waits for a fresh answer once the old one is too old to stand in', async () => {
+    const { cache, advance } = setup(ok({ n: 1 }), ok({ n: 2 }));
+    await cache.fetcher().json(upstream);
+    advance(KEEP_TTLS * upstream.ttl);
+    assert.deepEqual(await cache.fetcher().json(upstream), { n: 2 });
   });
 
   it('sends the User-Agent and the upstream headers', async () => {
@@ -82,6 +95,8 @@ describe('UpstreamCache', () => {
     const { cache, advance } = setup(ok({ n: 1 }), status(503));
     await cache.fetcher().json(upstream);
     advance(3 * MINUTE);
+    await cache.fetcher().json(upstream); // the old answer, while a refresh starts and fails
+    await settled();
     const fetcher = cache.fetcher();
     assert.deepEqual(await fetcher.json(upstream), { n: 1 });
     assert.deepEqual(fetcher.problems, ['ESPN answered 503.']);
