@@ -43,4 +43,9 @@ test('serves every feed as JSON, each with its provenance', async ({ request }) 
   expect(flights.provenance).toBe('sample');
   expect(flights.data.via).toBe('adsb.lol');
   expect(flights.data.aircraft[0]).toMatchObject({ callsign: 'N831VP', direction: 'WSW' });
+
+  const activity = body.feeds.activity;
+  expect(activity.source).toBe('GitHub');
+  expect(activity.provenance).toBe('sample');
+  expect(activity.data.repos[0]).toMatchObject({ name: 'Ratiu Twp', pushes: 7 });
 });

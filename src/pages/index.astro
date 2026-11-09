@@ -4,6 +4,7 @@
  * town lands, and reads the same feeds as /api/feeds.json.
  */
 import Page from '../layouts/Page.astro';
+import ActivityCard from '../components/ActivityCard.astro';
 import Credits from '../components/Credits.astro';
 import FlightsCard from '../components/FlightsCard.astro';
 import Mark from '../components/Mark.astro';
@@ -18,7 +19,13 @@ import { site } from '../site.config.ts';
 const now = new Date();
 const feeds = await getFeeds(now);
 
-const readings = [feeds.weather, feeds.scores, ...Object.values(feeds.news), feeds.flights];
+const readings = [
+  feeds.weather,
+  feeds.scores,
+  ...Object.values(feeds.news),
+  feeds.flights,
+  feeds.activity,
+];
 const order: Provenance[] = ['live', 'local', 'sample', 'offline'];
 const summary = order
   .map((provenance) => ({
@@ -30,7 +37,7 @@ const summary = order
 
 <Page
   title="Today · Ratiu Twp"
-  description={`The morning update for Ratiu Twp: weather, scores, news and flights over ${site.place.name}.`}
+  description={`The morning update for Ratiu Twp, ${site.place.name}, on real data.`}
 >
   <div class="page">
     <header class="masthead">
@@ -63,6 +70,7 @@ const summary = order
       <NewsCard section="national" reading={feeds.news.national} now={now} />
       <NewsCard section="world" reading={feeds.news.world} now={now} />
       <FlightsCard reading={feeds.flights} />
+      <ActivityCard reading={feeds.activity} now={now} />
     </main>
 
     <Credits />

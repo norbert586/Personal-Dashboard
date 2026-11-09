@@ -283,3 +283,16 @@ deleted. Jersey 10 and Pixelify Sans are self-hosted through Fontsource, as the 
 Consequences: no light theme; adding one later means a second set of token values. The console's
 agenda, tasks and devices modules are gone; the Town Hall (roadmap step 5) brings the to-dos and
 calendar back.
+
+## ADR-023: Coding activity counts pushes from GitHub's public events, without a token
+
+**Accepted · 2026-11-09**
+Context: the town needs to know which repos got a push on which days (fireworks) and which repos
+are new (the crane). GitHub's public events API needs no token and allows 60 requests an hour.
+Since October 2025 its push events no longer carry commit counts; those would need a token and
+the GraphQL contributions API.
+Decision: count pushes, not commits, from the public events API, every 10 minutes (six requests an
+hour), with no token. Project titles come from `src/content/projects`, matched by repo.
+Consequences: private repos don't show. The API keeps 90 days of events, plenty for two weeks.
+Claude's cloud sandboxes can't reach GitHub's user endpoints, so the saved sample is built from
+GitHub's documented format and this repo's real commits; Norbert's machine reads it live.

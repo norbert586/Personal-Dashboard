@@ -10,6 +10,7 @@ const CARDS = [
   'National news',
   'World news',
   'Flights overhead',
+  'Coding activity',
 ];
 
 /** Console errors include CSP violations, so an empty list means the policy holds. */
@@ -62,6 +63,12 @@ test('reads the saved samples as they were when captured', async ({ page }) => {
   await expect(local).toContainText('hours ago');
 
   await expect(page.getByRole('region', { name: 'Flights overhead' })).toContainText('N831VP');
+  const activity = page.getByRole('region', { name: 'Coding activity' });
+  await expect(activity).toContainText('8 pushes to 2 projects in the last two weeks, 6 today.');
+  await expect(activity.getByRole('link', { name: 'Ratiu Twp' })).toHaveAttribute(
+    'href',
+    'https://github.com/norbert586/Personal-Dashboard',
+  );
   await expect(page.getByRole('contentinfo')).toContainText('National Weather Service');
 });
 

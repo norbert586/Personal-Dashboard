@@ -3,9 +3,11 @@
  * always agree. Live answers are cached per upstream (src/lib/fetcher.ts); FEEDS=sample answers
  * everything from the saved samples, with no network.
  */
+import { getCollection } from 'astro:content';
 import { FEEDS } from 'astro:env/server';
 import { UpstreamCache, sampleFetcher } from './fetcher.ts';
 import { readSource, type ReadOptions, type Source } from './readings.ts';
+import { activity, titlesByRepo } from './sources/activity.ts';
 import { flights } from './sources/flights.ts';
 import { news } from './sources/news.ts';
 import { scores } from './sources/scores.ts';
@@ -31,6 +33,7 @@ export async function getFeeds(now: Date = new Date()) {
     sampleNow: SAMPLES_CAPTURED_AT,
   };
   const read = <T>(source: Source<T>) => readSource(source, options);
+  const titles = titlesByRepo((await getCollection('projects')).map((entry) => entry.data));
   // Every read starts at once and settles on its own; readSource never throws.
   return together({
     weather: read(weather()),
@@ -42,6 +45,7 @@ export async function getFeeds(now: Date = new Date()) {
       world: read(news('world')),
     }),
     flights: read(flights()),
+    activity: read(activity(site.github.user, titles)),
   });
 }
 
