@@ -1,0 +1,37 @@
+---
+/** Who the Today panel's data comes from. Every headline also links to its source. */
+import { site } from '../site.config.ts';
+
+const outlets = Object.values(site.news).flat();
+---
+
+<footer class="credits">
+  <h2 class="visually-hidden">Credits</h2>
+  <p>
+    Weather from the <a href="https://www.weather.gov/">National Weather Service</a>. Scores from{' '}
+    <a href="https://www.espn.com/">ESPN</a>, with the <a href="https://www.nhl.com/">NHL</a> and{' '}
+    <a href="https://www.mlb.com/">MLB</a> as backups. Aircraft from the{' '}
+    <a href="https://adsb.lol/">adsb.lol</a> and{' '}
+    <a href="https://airplanes.live/">airplanes.live</a> ADS-B networks.
+  </p>
+  <p>
+    Headlines from{' '}
+    {outlets.map((outlet, i) => (
+      <>
+        <a href={outlet.home}>{outlet.name}</a>
+        {i < outlets.length - 2 ? ', ' : i === outlets.length - 2 ? ' and ' : '.'}
+      </>
+    ))}
+  </p>
+</footer>
+
+<style>
+  .credits {
+    display: grid;
+    gap: var(--space-2);
+    padding-block: var(--space-5) var(--space-6);
+    font-size: var(--size-14);
+    color: var(--ink-dim);
+    max-width: 70ch;
+  }
+</style>

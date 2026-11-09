@@ -1,76 +1,145 @@
 ---
-import Console from '../layouts/Console.astro';
-import StatusScreen from '../components/StatusScreen.astro';
-import AgendaModule from '../components/AgendaModule.astro';
-import TasksModule from '../components/TasksModule.astro';
-import ProjectsModule from '../components/ProjectsModule.astro';
-import ActivityModule from '../components/ActivityModule.astro';
-import DevicesModule from '../components/DevicesModule.astro';
-import { settle, type Provenance } from '../lib/readings.ts';
-import { getAgenda } from '../lib/sources/agenda.ts';
-import { getTasks } from '../lib/sources/tasks.ts';
-import { getProjects } from '../lib/sources/projects.ts';
-import { getCodeActivity } from '../lib/sources/github.ts';
-import { getDevices } from '../lib/sources/devices.ts';
-import {
-  calendarDaysBetween,
-  formatCountdown,
-  formatLongDate,
-  formatTime,
-  greeting,
-  isoWeek,
-} from '../lib/time.ts';
+/**
+ * The Today panel: the morning update on real data (docs/SPEC.md). It's the home page until the
+ * town lands, and reads the same feeds as /api/feeds.json.
+ */
+import Page from '../layouts/Page.astro';
+import Credits from '../components/Credits.astro';
+import FlightsCard from '../components/FlightsCard.astro';
+import Mark from '../components/Mark.astro';
+import NewsCard from '../components/NewsCard.astro';
+import ScoresCard from '../components/ScoresCard.astro';
+import WeatherCard from '../components/WeatherCard.astro';
+import { getFeeds } from '../lib/feeds.ts';
+import { provenanceLabel, type Provenance } from '../lib/readings.ts';
+import { formatLongDate, formatTime } from '../lib/time.ts';
 import { site } from '../site.config.ts';
 
 const now = new Date();
+const feeds = await getFeeds(now);
 
-// Sources run in parallel; any that fail come back as Offline instead of breaking the page.
-const [agenda, tasks, projects, activity, devices] = await Promise.all([
-  settle('Google Calendar', [], () => getAgenda(now)),
-  settle('Tasks', [], () => getTasks(now)),
-  settle('Project files', [], () => getProjects(now)),
-  settle('GitHub', { days: [], previousTotal: 0 }, () => getCodeActivity(now)),
-  settle('flightpi', [], () => getDevices(now)),
-]);
-
-const upcoming = agenda.data.find((event) => event.end > now);
-const next = upcoming && {
-  label: upcoming.start <= now ? ('Now' as const) : ('Next' as const),
-  time: formatTime(upcoming.start),
-  title: upcoming.title,
-  note:
-    upcoming.start <= now
-      ? `until ${formatTime(upcoming.end)}`
-      : formatCountdown(now, upcoming.start),
-};
-
-const dueToday = tasks.data.filter(
-  (task) => task.due !== undefined && calendarDaysBetween(now, task.due) <= 0,
-).length;
-
-const readings = [agenda, tasks, projects, activity, devices];
-const count = (provenance: Provenance) =>
-  readings.filter((reading) => reading.provenance === provenance).length;
+const readings = [feeds.weather, feeds.scores, ...Object.values(feeds.news), feeds.flights];
+const order: Provenance[] = ['live', 'local', 'sample', 'offline'];
+const summary = order
+  .map((provenance) => ({
+    provenance,
+    count: readings.filter((reading) => reading.provenance === provenance).length,
+  }))
+  .filter(({ count }) => count > 0);
 ---
 
-<Console title={`${site.device.model} console`} now={now}>
-  <StatusScreen
-    greeting={greeting(now)}
-    owner={site.owner}
-    date={formatLongDate(now)}
-    week={isoWeek(now)}
-    next={next}
-    tasks={{ open: tasks.data.length, dueToday }}
-    sources={{
-      live: count('live'),
-      local: count('local'),
-      sample: count('sample'),
-      offline: count('offline'),
-    }}
-  />
-  <AgendaModule reading={agenda} now={now} />
-  <TasksModule reading={tasks} now={now} />
-  <ProjectsModule reading={projects} now={now} />
-  <ActivityModule reading={activity} />
-  <DevicesModule reading={devices} now={now} />
-</Console>
+<Page
+  title="Today · Ratiu Twp"
+  description={`The morning update for Ratiu Twp: weather, scores, news and flights over ${site.place.name}.`}
+>
+  <div class="page">
+    <header class="masthead">
+      <p class="badge">
+        <span class="town">Ratiu Twp</span>
+        <span class="place">{site.place.name}, Michigan</span>
+      </p>
+      <h1>Today</h1>
+      <p class="when">
+        <time datetime={now.toISOString()}>
+          {formatLongDate(now)}, {formatTime(now)}
+        </time>
+      </p>
+      <p class="summary">
+        <span class="visually-hidden">Feeds:</span>
+        {summary.map(({ provenance, count }) => (
+          <span class="count" data-state={provenance}>
+            <Mark state={provenance} />
+            {count} {provenanceLabel[provenance].toLowerCase()}
+          </span>
+        ))}
+      </p>
+    </header>
+
+    <main id="main" class="cards">
+      <WeatherCard reading={feeds.weather} now={now} />
+      <ScoresCard reading={feeds.scores} now={now} />
+      <NewsCard section="local" reading={feeds.news.local} now={now} />
+      <NewsCard section="tech" reading={feeds.news.tech} now={now} />
+      <NewsCard section="national" reading={feeds.news.national} now={now} />
+      <NewsCard section="world" reading={feeds.news.world} now={now} />
+      <FlightsCard reading={feeds.flights} />
+    </main>
+
+    <Credits />
+  </div>
+</Page>
+
+<style>
+  .page {
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .masthead {
+    display: grid;
+    gap: var(--space-1);
+    padding-block: var(--space-4) var(--space-5);
+  }
+
+  .badge {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-3);
+    justify-self: start;
+    padding: var(--space-1) var(--space-3);
+    background: var(--panel);
+    border: 2px solid var(--outline);
+    box-shadow: var(--bevel-up);
+  }
+
+  .town {
+    font-family: var(--font-display);
+    font-size: var(--size-28);
+    line-height: 1;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--maize);
+  }
+
+  .place {
+    font-size: var(--size-14);
+    color: var(--ink-dim);
+  }
+
+  h1 {
+    margin-block-start: var(--space-3);
+    font-size: var(--size-48);
+    color: var(--ink);
+  }
+
+  .when {
+    font-size: var(--size-18);
+  }
+
+  .summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    font-size: var(--size-14);
+    color: var(--ink-dim);
+  }
+
+  .count {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+
+  .count[data-state='offline'] {
+    color: var(--offline);
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    gap: var(--space-4);
+    align-items: start;
+  }
+</style>

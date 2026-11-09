@@ -56,6 +56,14 @@ export interface ReadOptions {
   sampleNow: Date;
 }
 
+/**
+ * The moment a reading's relative times ("3 hours ago", "Tomorrow") count from: now for live data,
+ * the capture time for saved samples, so a sample reads as it did when it was saved.
+ */
+export function readingNow(reading: Reading<unknown>, now: Date): Date {
+  return reading.provenance === 'sample' ? reading.fetchedAt : now;
+}
+
 /** Load a source into a reading. Never throws: a failure comes back as an offline reading. */
 export async function readSource<T>(source: Source<T>, options: ReadOptions): Promise<Reading<T>> {
   const problems: string[] = [];
@@ -79,7 +87,7 @@ export async function readSource<T>(source: Source<T>, options: ReadOptions): Pr
         provenance: 'sample',
         fetchedAt: options.sampleNow,
         data,
-        ...detail(source.unconfigured ?? 'Saved sample.', ...problems),
+        ...detail(source.unconfigured, ...problems),
       };
     }
 
@@ -99,25 +107,6 @@ export async function readSource<T>(source: Source<T>, options: ReadOptions): Pr
       fetchedAt: options.now,
       data: source.empty,
       ...detail(error instanceof Error ? error.message : String(error)),
-    };
-  }
-}
-
-/** Run a source; if it throws, return an Offline reading instead of breaking the page. */
-export async function settle<T>(
-  source: string,
-  fallback: T,
-  load: () => Promise<Reading<T>>,
-): Promise<Reading<T>> {
-  try {
-    return await load();
-  } catch (error) {
-    return {
-      source,
-      provenance: 'offline',
-      fetchedAt: new Date(),
-      data: fallback,
-      detail: error instanceof Error ? error.message : String(error),
     };
   }
 }

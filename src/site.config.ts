@@ -4,8 +4,7 @@
  */
 export interface SiteConfig {
   owner: string;
-  device: { model: string; name: string; revision: string };
-  /** IANA zone used for the clock, greeting and agenda. */
+  /** IANA zone for every date and time on the site. */
   timeZone: string;
   /** 'h23' = 24-hour clock, 'h12' = 12-hour clock. */
   hourCycle: 'h23' | 'h12';
@@ -29,6 +28,8 @@ export interface Outlet {
   name: string;
   /** The RSS or Atom feed; Hacker News uses its own API instead. */
   feed: string | 'hacker-news';
+  /** The outlet's front page, for the credits. */
+  home: string;
 }
 
 export interface Team {
@@ -44,11 +45,6 @@ export interface Team {
 
 export const site: SiteConfig = {
   owner: 'Norbert',
-  device: {
-    model: 'N-586',
-    name: 'Personal console',
-    revision: '0.1',
-  },
   // The town's real zone (Macomb County, Michigan).
   timeZone: 'America/Detroit',
   hourCycle: 'h23',
@@ -99,30 +95,63 @@ export const site: SiteConfig = {
         id: 'clickondetroit',
         name: 'ClickOnDetroit',
         feed: 'https://www.clickondetroit.com/arc/outboundfeeds/rss/category/news/local/?outputType=xml',
+        home: 'https://www.clickondetroit.com/',
       },
-      { id: 'wdet', name: 'WDET', feed: 'https://wdet.org/feed/' },
-      { id: 'bridgemi', name: 'Bridge Michigan', feed: 'https://www.bridgemi.com/rss.xml' },
+      { id: 'wdet', name: 'WDET', feed: 'https://wdet.org/feed/', home: 'https://wdet.org/' },
+      {
+        id: 'bridgemi',
+        name: 'Bridge Michigan',
+        feed: 'https://www.bridgemi.com/rss.xml',
+        home: 'https://www.bridgemi.com/',
+      },
     ],
     tech: [
       {
         id: 'arstechnica',
         name: 'Ars Technica',
         feed: 'https://feeds.arstechnica.com/arstechnica/index',
+        home: 'https://arstechnica.com/',
       },
-      { id: 'theverge', name: 'The Verge', feed: 'https://www.theverge.com/rss/index.xml' },
-      { id: 'hacker-news', name: 'Hacker News', feed: 'hacker-news' },
+      {
+        id: 'theverge',
+        name: 'The Verge',
+        feed: 'https://www.theverge.com/rss/index.xml',
+        home: 'https://www.theverge.com/',
+      },
+      {
+        id: 'hacker-news',
+        name: 'Hacker News',
+        feed: 'hacker-news',
+        home: 'https://news.ycombinator.com/',
+      },
     ],
     national: [
-      { id: 'npr-national', name: 'NPR', feed: 'https://feeds.npr.org/1003/rss.xml' },
+      {
+        id: 'npr-national',
+        name: 'NPR',
+        feed: 'https://feeds.npr.org/1003/rss.xml',
+        home: 'https://www.npr.org/sections/national/',
+      },
       {
         id: 'pbs-newshour',
         name: 'PBS News Hour',
         feed: 'https://www.pbs.org/newshour/feeds/rss/headlines',
+        home: 'https://www.pbs.org/newshour/',
       },
     ],
     world: [
-      { id: 'bbc-world', name: 'BBC World', feed: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
-      { id: 'npr-world', name: 'NPR World', feed: 'https://feeds.npr.org/1004/rss.xml' },
+      {
+        id: 'bbc-world',
+        name: 'BBC World',
+        feed: 'https://feeds.bbci.co.uk/news/world/rss.xml',
+        home: 'https://www.bbc.com/news/world',
+      },
+      {
+        id: 'npr-world',
+        name: 'NPR World',
+        feed: 'https://feeds.npr.org/1004/rss.xml',
+        home: 'https://www.npr.org/sections/world/',
+      },
     ],
   },
 };

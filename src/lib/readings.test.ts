@@ -80,7 +80,6 @@ describe('readSource', () => {
       provenance: 'sample',
       fetchedAt: SAMPLE_NOW,
       data: `sample at ${SAMPLE_NOW.toISOString()}`,
-      detail: 'Saved sample.',
     });
   });
 

@@ -23,117 +23,55 @@
     max-width: 100%;
   }
 
-  input,
-  button {
-    font: inherit;
-    color: inherit;
-  }
-
   ul[class],
   ol[class] {
     list-style: none;
     padding: 0;
   }
-
-  fieldset {
-    border: 0;
-    padding: 0;
-    min-inline-size: 0;
-  }
 }
 
 @layer base {
   body {
-    background: var(--chassis);
+    background: var(--night);
     color: var(--ink);
-    font-family: var(--font-body);
+    font-family: var(--font-ui);
     font-size: var(--size-16);
     line-height: var(--leading-body);
     font-synthesis: none;
-    -webkit-font-smoothing: antialiased;
   }
 
   h1,
   h2,
   h3 {
+    font-family: var(--font-display);
     font-weight: 400;
     line-height: var(--leading-tight);
+    letter-spacing: 0.02em;
+    text-wrap: balance;
   }
 
   a {
     color: inherit;
     text-decoration-thickness: 1px;
-    text-underline-offset: 0.22em;
+    text-underline-offset: 0.2em;
+  }
+
+  a:hover {
+    color: var(--maize);
   }
 
   :focus-visible {
-    outline: 2px solid var(--ink);
+    outline: 2px solid var(--maize);
     outline-offset: 2px;
   }
 
+  abbr[title] {
+    text-decoration: none;
+  }
+
   ::selection {
-    background: var(--phosphor);
-    color: var(--glass);
-  }
-}
-
-@layer layout {
-  .chassis {
-    max-width: 1440px;
-    margin-inline: auto;
-    padding: clamp(0.75rem, 2vw, 1.75rem);
-  }
-
-  /* The deck: panels separated by seams (the seam colour shows through the gaps). */
-  .deck {
-    display: grid;
-    gap: var(--seam-width);
-    background: var(--seam);
-    border: var(--seam-width) solid var(--seam);
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: 'status' 'agenda' 'tasks' 'projects' 'activity' 'devices';
-  }
-
-  @media (min-width: 720px) {
-    .deck {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      grid-template-areas:
-        'status   status   status   status   status   status'
-        'agenda   agenda   agenda   tasks    tasks    tasks'
-        'projects projects projects projects projects projects'
-        'activity activity activity activity activity activity'
-        'devices  devices  devices  devices  devices  devices';
-    }
-  }
-
-  /* Rows group by meaning: today (status, agenda, tasks), work (projects), signals. */
-  @media (min-width: 1100px) {
-    .deck {
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-      grid-template-areas:
-        'status   status   status   status   status   status   agenda   agenda   agenda   tasks    tasks    tasks'
-        'projects projects projects projects projects projects projects projects projects projects projects projects'
-        'activity activity activity activity activity activity activity devices  devices  devices  devices  devices';
-    }
-  }
-
-  .area-status {
-    grid-area: status;
-  }
-  .area-agenda {
-    grid-area: agenda;
-  }
-  .area-tasks {
-    grid-area: tasks;
-  }
-  .area-projects {
-    grid-area: projects;
-  }
-  .area-activity {
-    grid-area: activity;
-  }
-  .area-devices {
-    grid-area: devices;
+    background: var(--maize);
+    color: var(--night);
   }
 }
 
@@ -156,17 +94,21 @@
     inset-inline-start: var(--space-2);
     z-index: 10;
     padding: var(--space-2) var(--space-3);
-    background: var(--ink);
-    color: var(--chassis);
+    background: var(--maize);
+    color: var(--night);
     transform: translateY(-200%);
   }
 
   .skip-link:focus-visible {
     transform: none;
   }
+
+  .dim {
+    color: var(--ink-dim);
+  }
 }
 
-/* Safety net: components already gate their motion, this catches anything that slips through. */
+/* Safety net: nothing here animates, and this keeps it that way for anyone who asks. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

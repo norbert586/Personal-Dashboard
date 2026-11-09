@@ -1,0 +1,86 @@
+---
+import Card from './Card.astro';
+import { readingNow, type Reading } from '../lib/readings.ts';
+import { SECTION_TITLES, type Headline } from '../lib/sources/news.ts';
+import { formatRelative } from '../lib/time.ts';
+import type { NewsSection } from '../site.config.ts';
+
+interface Props {
+  section: NewsSection;
+  reading: Reading<Headline[]>;
+  now: Date;
+  /** Headlines to show; the feed keeps a few more for the town's marquee. */
+  limit?: number;
+}
+
+const { section, reading, now, limit = 5 } = Astro.props;
+const at = readingNow(reading, now);
+---
+
+<Card id={`news-${section}`} title={`${SECTION_TITLES[section]} news`} reading={reading}>
+  {reading.data.length === 0 ? (
+    reading.provenance !== 'offline' && <p class="dim">No headlines right now.</p>
+  ) : (
+    <ol class="headlines">
+      {reading.data.slice(0, limit).map((headline) => (
+        <li class="headline">
+          <a href={headline.url}>{headline.title}</a>
+          <p class="meta">
+            {headline.outlet}
+            {headline.published && (
+              <>
+                <span aria-hidden="true"> · </span>
+                <span class="visually-hidden">, </span>
+                <time datetime={headline.published.toISOString()}>
+                  {formatRelative(headline.published, at)}
+                </time>
+              </>
+            )}
+            {headline.discussion && (
+              <>
+                <span aria-hidden="true"> · </span>
+                <span class="visually-hidden">, </span>
+                <a href={headline.discussion.url}>
+                  {headline.discussion.points} points, {headline.discussion.comments} comments
+                </a>
+              </>
+            )}
+          </p>
+        </li>
+      ))}
+    </ol>
+  )}
+</Card>
+
+<style>
+  .headlines {
+    display: grid;
+  }
+
+  .headline {
+    padding-block: var(--space-2);
+    border-block-start: 2px solid var(--panel-lo);
+    line-height: 1.3;
+  }
+
+  .headline:first-child {
+    border-block-start: 0;
+    padding-block-start: 0;
+  }
+
+  /* Every headline is a link, so they skip the underline until pointed at or focused. */
+  .headline > a {
+    text-decoration: none;
+  }
+
+  .headline > a:hover,
+  .headline > a:focus-visible {
+    text-decoration: underline;
+  }
+
+  .meta {
+    margin-block-start: var(--space-1);
+    font-size: var(--size-14);
+    color: var(--ink-dim);
+  }
+</style>

@@ -61,10 +61,13 @@ npm run format       # prettier --write .
 - Every data source returns a `Reading<T>` (`src/lib/readings.ts`) carrying provenance:
   `live | local | sample | offline`. Sources never throw into a page: on failure, return
   `offline` with a human-readable `detail`.
-- CSS: tokens + `light-dark()`; component styles scoped in `.astro` files.
-  **No inline `style=""` attributes, no `define:vars`, no `<script is:inline>`**: the CSP
-  blocks all three. Put dynamic geometry in SVG attributes, use classes for discrete states,
-  use bundled `<script>` tags, and prefer server rendering (e.g. the theme comes from a cookie).
+- Feeds: one source per feed in `src/lib/sources/`, fetching only through the `Fetcher` it's
+  given (`src/lib/fetcher.ts`), with pure parsers tested on real responses saved in
+  `src/lib/sources/fixtures/`. Register it in `src/lib/feeds.ts` (ADR-021).
+- CSS: tokens in `src/styles/tokens.css`, one dark look (ADR-022); component styles scoped in
+  `.astro` files. **No inline `style=""` attributes, no `define:vars`, no `<script is:inline>`**:
+  the CSP blocks all three. Put dynamic geometry in SVG attributes, use classes for discrete
+  states, use bundled `<script>` tags, and prefer server rendering.
 - Accessibility floor is WCAG 2.2 AA: semantic HTML, visible focus, `prefers-reduced-motion`
   respected, colour is never the only signal (pair it with a label or shape).
 - Security: the access gate (`src/middleware.ts` → `src/lib/access.ts`) fails closed in
@@ -78,7 +81,11 @@ npm run format       # prettier --write .
 - `@astrojs/check` supports TypeScript ≤ 6, so we stay on TS 6 until it supports TS 7.
 - The CSP only applies to `build` + `preview`/server, never `dev`. e2e tests run against the
   built server, so they catch CSP violations.
-- Cloud sandboxes can't reach the GitHub REST/GraphQL user APIs; sources fall back to sample.
+- e2e tests run the server with `FEEDS=sample`, so they never touch the network.
+- In Claude cloud sandboxes, start a live server with `NODE_USE_ENV_PROXY=1`: Node's `fetch`
+  otherwise skips the sandbox proxy, and its direct route answers some feeds with "Blocked by
+  egress policy". The GitHub user API (coding activity) and airplanes.live are unreachable
+  there either way; both work from home.
 - `prototype/` holds the throwaway 2D and 3D prototypes the MVP ports from (ADR-013).
   `prototype/build.sh` assembles them into `prototype/dist/`. They're excluded from formatting
   and type checks. Port from them; don't add features there.

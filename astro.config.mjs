@@ -47,45 +47,26 @@ export default defineConfig({
     },
   },
 
+  // The game's type (docs/DESIGN.md): Jersey 10 for names and titles, Pixelify Sans for the
+  // interface.
   fonts: [
     {
       provider: local,
-      name: 'Michroma',
+      name: 'Jersey 10',
       cssVariable: '--font-display',
-      fallbacks: ['sans-serif'],
-      options: { variants: [face('michroma', 'michroma-latin-400-normal.woff2', 400)] },
+      fallbacks: ['monospace'],
+      options: { variants: [face('jersey-10', 'jersey-10-latin-400-normal.woff2', 400)] },
     },
     {
       provider: local,
-      name: 'B612',
-      cssVariable: '--font-body',
-      fallbacks: ['sans-serif'],
-      options: {
-        variants: [
-          face('b612', 'b612-latin-400-normal.woff2', 400),
-          face('b612', 'b612-latin-700-normal.woff2', 700),
-        ],
-      },
-    },
-    {
-      provider: local,
-      name: 'B612 Mono',
-      cssVariable: '--font-mono',
+      name: 'Pixelify Sans',
+      cssVariable: '--font-ui',
       fallbacks: ['monospace'],
       options: {
         variants: [
-          face('b612-mono', 'b612-mono-latin-400-normal.woff2', 400),
-          face('b612-mono', 'b612-mono-latin-700-normal.woff2', 700),
+          face('pixelify-sans', 'pixelify-sans-latin-400-normal.woff2', 400),
+          face('pixelify-sans', 'pixelify-sans-latin-600-normal.woff2', 600),
         ],
-      },
-    },
-    {
-      provider: local,
-      name: 'DSEG7 Classic',
-      cssVariable: '--font-segment',
-      fallbacks: ['monospace'],
-      options: {
-        variants: [face('dseg7-classic', 'dseg7-classic-latin-700-normal.woff2', 700)],
       },
     },
   ],

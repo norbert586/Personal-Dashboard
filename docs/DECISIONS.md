@@ -268,3 +268,18 @@ the parser tests use too. A feed whose free key is missing shows its saved sampl
 sample, and says which key to add.
 Consequences: no database and no background jobs; a restart empties the cache. Each reading says
 when its data was fetched. The saved samples ship inside the server build.
+
+## ADR-022: The Today panel replaces the console, in the game's one dark look
+
+**Accepted · 2026-11-09 · Norbert chose one dark look**
+Context: the roadmap makes the Today panel the home page until the town lands, which retires the
+M0 console (ADR-009). DESIGN.md gives the game one dark look; the console had Day and Night keys.
+Decision: `/` is the Today panel, one card per feed, each saying where its data came from. It
+wears the game's interface (bevelled navy panels, maize, Jersey 10 and Pixelify Sans) in one dark
+look whatever the device setting, so it looks the same when the town opens it with T. The
+console's layout, components, Day and Night keys and fonts (Michroma, B612, B612 Mono, DSEG7) are
+deleted. Jersey 10 and Pixelify Sans are self-hosted through Fontsource, as the old fonts were
+(ADR-003). Tokens stay in `tokens.css`, without `light-dark()`.
+Consequences: no light theme; adding one later means a second set of token values. The console's
+agenda, tasks and devices modules are gone; the Town Hall (roadmap step 5) brings the to-dos and
+calendar back.
