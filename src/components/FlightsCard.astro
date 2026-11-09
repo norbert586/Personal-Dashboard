@@ -23,32 +23,32 @@ const height = (plane: Aircraft) =>
 
 <Card id="flights" title="Flights overhead" reading={reading}>
   {aircraft.length > 0 ? (
-    <ol class="aircraft">
-      {aircraft.slice(0, limit).map((plane) => (
-        <li class="plane">
-          <p class="who">
-            <a href={`https://globe.adsb.lol/?icao=${plane.hex}`}>
-              {plane.callsign ?? plane.registration ?? plane.hex.toUpperCase()}
-            </a>
-            {plane.type && <span class="dim"> {plane.type}</span>}
-            {plane.military && <span class="tag">Military</span>}
-            {plane.emergency && <span class="tag alert">{plane.emergency}</span>}
-          </p>
-          <p class="where">
-            {height(plane)}, {Math.round(plane.distanceMi)} mi {plane.direction}
-          </p>
-        </li>
-      ))}
-    </ol>
+    <>
+      <ol class="aircraft">
+        {aircraft.slice(0, limit).map((plane) => (
+          <li class="plane">
+            <p class="who">
+              <a href={`https://globe.adsb.lol/?icao=${plane.hex}`}>
+                {plane.callsign ?? plane.registration ?? plane.hex.toUpperCase()}
+              </a>
+              {plane.type && <span class="dim"> {plane.type}</span>}
+              {plane.military && <span class="tag">Military</span>}
+              {plane.emergency && <span class="tag alert">{plane.emergency}</span>}
+            </p>
+            <p class="where">
+              {height(plane)}, {Math.round(plane.distanceMi)} mi {plane.direction}
+            </p>
+          </li>
+        ))}
+      </ol>
+      <p class="via">
+        Within {radius} miles of town, from {via}
+      </p>
+    </>
   ) : (
     reading.provenance !== 'offline' && (
-      <p class="dim">Nothing in the air within {radius} miles right now.</p>
+      <p class="dim">Nothing in the air within {radius} miles of town right now.</p>
     )
-  )}
-  {reading.provenance !== 'offline' && (
-    <p class="via">
-      Within {radius} miles of town, from {via}
-    </p>
   )}
 </Card>
 
