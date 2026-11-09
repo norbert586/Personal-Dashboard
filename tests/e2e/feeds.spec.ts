@@ -31,4 +31,11 @@ test('serves every feed as JSON, each with its provenance', async ({ request }) 
   ]);
   const lions = scores.data.find((team: { id: string }) => team.id === 'lions');
   expect(lions.last).toMatchObject({ result: 'W', score: { us: 19, them: 9 } });
+
+  for (const section of ['local', 'tech', 'national', 'world']) {
+    const reading = body.feeds.news[section];
+    expect(reading.provenance, section).toBe('sample');
+    expect(reading.data.length, section).toBeGreaterThanOrEqual(6);
+    expect(reading.data[0].url, section).toMatch(/^https:\/\//);
+  }
 });

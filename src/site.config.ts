@@ -17,6 +17,18 @@ export interface SiteConfig {
   userAgent: string;
   /** The teams on the scoreboard, in the order shown. */
   teams: Team[];
+  /** Headlines by section (ADR-017). Each outlet is an RSS or Atom feed, or Hacker News. */
+  news: Record<NewsSection, Outlet[]>;
+}
+
+export type NewsSection = 'local' | 'tech' | 'national' | 'world';
+
+export interface Outlet {
+  /** Stable id, also the saved sample's name: rss-{id}.xml. */
+  id: string;
+  name: string;
+  /** The RSS or Atom feed; Hacker News uses its own API instead. */
+  feed: string | 'hacker-news';
 }
 
 export interface Team {
@@ -81,6 +93,38 @@ export const site: SiteConfig = {
       espn: espn('football', 'college-football', '59'),
     },
   ],
+  news: {
+    local: [
+      {
+        id: 'clickondetroit',
+        name: 'ClickOnDetroit',
+        feed: 'https://www.clickondetroit.com/arc/outboundfeeds/rss/category/news/local/?outputType=xml',
+      },
+      { id: 'wdet', name: 'WDET', feed: 'https://wdet.org/feed/' },
+      { id: 'bridgemi', name: 'Bridge Michigan', feed: 'https://www.bridgemi.com/rss.xml' },
+    ],
+    tech: [
+      {
+        id: 'arstechnica',
+        name: 'Ars Technica',
+        feed: 'https://feeds.arstechnica.com/arstechnica/index',
+      },
+      { id: 'theverge', name: 'The Verge', feed: 'https://www.theverge.com/rss/index.xml' },
+      { id: 'hacker-news', name: 'Hacker News', feed: 'hacker-news' },
+    ],
+    national: [
+      { id: 'npr-national', name: 'NPR', feed: 'https://feeds.npr.org/1003/rss.xml' },
+      {
+        id: 'pbs-newshour',
+        name: 'PBS News Hour',
+        feed: 'https://www.pbs.org/newshour/feeds/rss/headlines',
+      },
+    ],
+    world: [
+      { id: 'bbc-world', name: 'BBC World', feed: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
+      { id: 'npr-world', name: 'NPR World', feed: 'https://feeds.npr.org/1004/rss.xml' },
+    ],
+  },
 };
 
 function espn(sport: string, league: string, team: string): Team['espn'] {

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" version="2.0">
+    <channel>
+        <title>Ars Technica - All content</title>
+        <atom:link href="https://arstechnica.com/feed/" rel="self" type="application/rss+xml"/>
+        <link>https://arstechnica.com</link>
+        <description>All Ars Technica stories</description>
+        <lastBuildDate>Sun, 08 Nov 2026 00:12:19 +0000</lastBuildDate>
+        <language>en-US</language>
+        <sy:updatePeriod>
+            hourly        </sy:updatePeriod>
+        <sy:updateFrequency>
+            1        </sy:updateFrequency>
+        
+<image>
+	<url>https://cdn.arstechnica.net/wp-content/uploads/2016/10/cropped-ars-logo-512_480-60x60.png</url>
+	<title>Ars Technica</title>
+	<link>https://arstechnica.com</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+            <item>
+                <title>Physicists listened to electrical noise to crack a superconductor mystery</title>
+                <link>https://arstechnica.com/science/2026/11/physicists-listened-to-electrical-noise-to-crack-a-superconductor-mystery/</link>
+                
+                <dc:creator>
+                    <![CDATA[Jacek Krywko]]>
+                </dc:creator>
+                <pubDate>Sun, 08 Nov 2026 12:15:31 +0000</pubDate>
+                		<category><![CDATA[Science]]></category>
+		<category><![CDATA[Cooper pairs]]></category>
+		<category><![CDATA[cuprates]]></category>
+		<category><![CDATA[materials science]]></category>
+		<category><![CDATA[quantum mechanics]]></category>
+		<category><![CDATA[superconductivity]]></category>
+                <guid isPermaLink="true">https://arstechnica.com/science/2026/11/physicists-listened-to-electrical-noise-to-crack-a-superconductor-mystery/</guid>
+
+                                    <description>
+                        <![CDATA[Tuning in to electronic noise can tell us whether electrons have paired up or not.]]>
+                    </description>
+                                                                <content:encoded>
+                            <![CDATA[<p>Superconductors carry electricity without resistance, but most only work a few degrees above absolute zero. In the late 1980s, copper-based materials called cuprates were found to superconduct at higher temperatures—reachable with affordable liquid nitrogen. Yet nearly 40 years later, physicists still don't agree on why.</p>
+<p>In a recent Science study, a team of physicists led by Milan Allan of Ludwig Maximilian University of Munich and Ingmar Swart of Utrecht University in the Netherlands has found some answers by listening to the faint electrical crackle of current flowing into a cuprate.</p>
+<h2>The missing electrons</h2>
+<p>Central to the mystery of cuprates’ high-temperature superconductivity is a strange state called the pseudogap. “The pseudogap is a phenomenon of missing electrons,” Allan said. Above the temperature at which cuprates become superconducting, some of their electrons seem to vanish—measurements find far fewer of them at the energies where they should be. “Everybody knows that from different probes, you see that there's these vanishing electrons, but nobody knows why,” Allan said.</p><p><a href="https://arstechnica.com/science/2026/11/physicists-listened-to-electrical-noise-to-crack-a-superconductor-mystery/">Read full article</a></p>
+<p><a href="https://arstechnica.com/science/2026/11/physicists-listened-to-electrical-noise-to-crack-a-superconductor-mystery/#comments">Comments</a></p>
+]]>
+                        </content:encoded>
+                                    
+                
+                
+                <media:content height="648" medium="image" type="image/jpeg" url="https://cdn.arstechnica.net/wp-content/uploads/2026/11/GettyImages-90737843-884x648.jpg" width="884">
+<media:thumbnail height="500" url="https://cdn.arstechnica.net/wp-content/uploads/2026/11/GettyImages-90737843-500x500.jpg" width="500"/>
+<media:credit>Science &amp; Society Picture Library</media:credit><media:text>A ribbon of superconductive cuprate material.</media:text></media:content>
+            </item>
+<item>
+                <title>The Bantu expansion changed Africa. Scientists are still tracing how.</title>
+                <link>https://arstechnica.com/science/2026/11/the-migration-that-transformed-africas-languages-genes-and-cultures/</link>
+                                    <comments>https://arstechnica.com/science/2026/11/the-migration-that-transformed-africas-languages-genes-and-cultures/#comments</comments>
+                
+                <dc:creator>
+                    <![CDATA[Katarina Zimmer, Knowable Magazine]]>
+                </dc:creator>
+                <pubDate>Sat, 07 Nov 2026 12:15:55 +0000</pubDate>
+                		<category><![CDATA[Science]]></category>
+		<category><![CDATA[anthropology]]></category>
+		<category><![CDATA[Genetics]]></category>
+		<category><![CDATA[human origins]]></category>
+		<category><![CDATA[syndication]]></category>
+                <guid isPermaLink="true">https://arstechnica.com/science/2026/11/the-migration-that-transformed-africas-languages-genes-and-cultures/</guid>
+
+                                    <description>
+                        <![CDATA[Genes and archaeology are revealing how Bantu speakers spread across much of Africa.]]>
+                    </description>
+                                                                <content:encoded>
+                            <![CDATA[<p>It’s not easy to extract iron from its ore. But the peoples of the ancient city of Great Zimbabwe—the capital of a thriving kingdom in southern Africa between 1000 to 1700 AD—were masters.</p>
+<p>At sites near the city’s stone ruins, clusters of iron-smelting furnaces survive today as mounds of rubble. At Mashava, a village 25 miles northwest, fragments bear fingermarks of those who long ago smoothed the structures’ clay interiors.</p>
+<p>Some of the furnaces were nearly an adult’s arm span in width, with walls thick and strong to contain the heat of more than 2,100° Fahrenheit needed to smelt iron. Unlike other furnaces that required workers to force air into them with bellows, these were designed to suck air in, then out through a chimney, no human labor required. This would have made it significantly easier to produce the iron, which was fashioned into hoes, axes, and arrowheads.</p><p><a href="https://arstechnica.com/science/2026/11/the-migration-that-transformed-africas-languages-genes-and-cultures/">Read full article</a></p>
+<p><a href="https://arstechnica.com/science/2026/11/the-migration-that-transformed-africas-languages-genes-and-cultures/#comments">Comments</a></p>
+]]>
+                        </content:encoded>
+                                    
+                                    <slash:comments>52</slash:comments>
+                
+                
+                <media:content height="648" medium="image" type="image/jpeg" url="https://cdn.arstechnica.net/wp-content/uploads/2026/11/great-zimbabwe-1152x648.jpg" width="1152">
+<media:thumbnail height="500" url="https://cdn.arstechnica.net/wp-content/uploads/2026/11/great-zimbabwe-500x500.jpg" width="500"/>
+<media:credit>evanfh/Getty</media:credit><media:text>The dry-stone wall ruins of Great Zimbabwe—an ancient African capital that once presided over a thriving kingdom across much of modern-day Zimbabwe—are one legacy of the Bantu-speaking people who migrated there from western Africa.</media:text></media:content>
+            </item>
+<item>
+                <title>British soldier ignored order to pull his SIM card, then got blackmailed</title>
+                <link>https://arstechnica.com/security/2026/11/british-soldier-ignored-order-to-pull-his-sim-card-then-got-blackmailed/</link>
+                                    <comments>https://arstechnica.com/security/2026/11/british-soldier-ignored-order-to-pull-his-sim-card-then-got-blackmailed/#comments</comments>
+                
+                <dc:creator>
+                    <![CDATA[Cyrus Farivar]]>
+                </dc:creator>
+                <pubDate>Sat, 07 Nov 2026 11:00:34 +0000</pubDate>
+                		<category><![CDATA[Security]]></category>
+		<category><![CDATA[Tech]]></category>
+		<category><![CDATA[Daniel Barton-Kennedy]]></category>
+		<category><![CDATA[sim card]]></category>
+		<category><![CDATA[soldier]]></category>
+                <guid isPermaLink="true">https://arstechnica.com/security/2026/11/british-soldier-ignored-order-to-pull-his-sim-card-then-got-blackmailed/</guid>
+
+                                    <description>
+                        <![CDATA[Soldier told repeatedly to lock down devices before deploying, got sextorted, court-martialed.]]>
+                    </description>
+                                                                <content:encoded>
+                            <![CDATA[<p>An <a href="https://ekspress.delfi.ee/artikkel/120621435/tapal-nato-oppusel-kainud-briti-soduri-telefonist-varastati-alastipildid-algas-valjapressimine">Estonian newspaper recently revealed</a> that a British soldier disobeyed a direct order to remove the SIM card from his cellphone before being deployed to a part of Estonia, approximately 90 miles west of the Russian border.</p>
+<p>As a result of his refusal to engage in this element of operational security (opsec), the soldier, Daniel Barton-Kennedy, had his phone hacked, and nude photos of himself were stolen and used as blackmail against him.</p>
+<p>Eventually, Barton-Kennedy was court-martialed for disobeying a lawful command, pled guilty, was reduced in rank, and ordered to serve 10 months in detention.</p><p><a href="https://arstechnica.com/security/2026/11/british-soldier-ignored-order-to-pull-his-sim-card-then-got-blackmailed/">Read full article</a></p>
+<p><a href="https://arstechnica.com/security/2026/11/british-soldier-ignored-order-to-pull-his-sim-card-then-got-blackmailed/#comments">Comments</a></p>
+]]>
+                        </content:encoded>
+                                    
+                                    <slash:comments>162</slash:comments>
+                
+                
+                <media:content height="648" medium="image" type="image/jpeg" url="https://cdn.arstechnica.net/wp-content/uploads/2026/11/GettyImages-2290156853-1024x648.jpg" width="1024">
+<media:thumbnail height="500" url="https://cdn.arstechnica.net/wp-content/uploads/2026/11/GettyImages-2290156853-500x500.jpg" width="500"/>
+<media:credit>Mateusz Wlodarczyk/NurPhoto</media:credit></media:content>
+            </item>
+<item>
+                <title>Doctors pull knife from man's eye that went through his brain—and he's fine now</title>
+                <link>https://arstechnica.com/health/2026/11/man-unexpectedly-recovers-from-a-knife-wound-through-his-eye-and-brain/</link>
+                                    <comments>https://arstechnica.com/health/2026/11/man-unexpectedly-recovers-from-a-knife-wound-through-his-eye-and-brain/#comments</comments>
+                
+                <dc:creator>
+                    <![CDATA[Beth Mole]]>
+                </dc:creator>
+                <pubDate>Fri, 06 Nov 2026 23:09:45 +0000</pubDate>
+                		<category><![CDATA[Health]]></category>
+		<category><![CDATA[BMJ]]></category>
+		<category><![CDATA[brain]]></category>
+		<category><![CDATA[eye]]></category>
+		<category><![CDATA[knife]]></category>
+		<category><![CDATA[surgery]]></category>
+                <guid isPermaLink="true">https://arstechnica.com/health/2026/11/man-unexpectedly-recovers-from-a-knife-wound-through-his-eye-and-brain/</guid>
+
+                                    <description>
+                        <![CDATA[It's the exact path, not the apparent severity that matters most, doctors say.]]>
+                    </description>
+                                                                <content:encoded>
+                            <![CDATA[<p>A man in his 20s showed up to a UK hospital with the hilt of a knife sticking out of his face. The 15 mm-wide blade hidden within went completely through his right eye and through his brain, with the tip of the blade hitting the top of his skull.</p>
+<p>Despite the ghastly injury, the man was alive and conscious when he arrived. He could still talk and move all four limbs. His doctors described him as being in a state of agitation. On the Glasgow Coma Scale, he scored a <a href="https://my.clevelandclinic.org/health/diagnostics/24848-glasgow-coma-scale-gcs">12 (E3 V4 M5)</a>, indicating a "moderate" brain injury, just one point above "mild." He could open his left eye when told, but otherwise kept it closed (E3 score); he could talk and answer questions, but was confused (V4); and he intentionally moved away when pressure was applied to his body (M5).</p>
+<p>In a report published Friday in BMJ Case Report, his doctors said they were concerned that in his confused, agitated state he may try to pull the knife out on his own. So, they swiftly sedated and intubated him. They put him on prophylactic treatments for bacterial infections, including tetanus. Then they used images to see what was going on in his head.</p><p><a href="https://arstechnica.com/health/2026/11/man-unexpectedly-recovers-from-a-knife-wound-through-his-eye-and-brain/">Read full article</a></p>
+<p><a href="https://arstechnica.com/health/2026/11/man-unexpectedly-recovers-from-a-knife-wound-through-his-eye-and-brain/#comments">Comments</a></p>
+]]>
+                        </content:encoded>
+                                    
+                                    <slash:comments>84</slash:comments>
+                
+                
+                <media:content height="648" medium="image" type="image/jpeg" url="https://cdn.arstechnica.net/wp-content/uploads/2026/11/bmjcr-2026-November-19-11-F2.large_-1152x648-1794006532.jpg" width="1152">
+<media:thumbnail height="500" url="https://cdn.arstechnica.net/wp-content/uploads/2026/11/bmjcr-2026-November-19-11-F2.large_-500x500-1794006484.jpg" width="500"/>
+<media:credit>BMJ Case Reports, 2026</media:credit><media:text>(A) CT angiographic reconstruction demonstrating the blade trajectory in relation to major intracranial vessels. (B) Oblique CT angiographic reconstruction showing indentation of the left M2 parietal branch of the middle cerebral artery by the blade, highlighted by the red circle.</media:text></media:content>
+            </item>
+<item>
+                <title>Ships loiter near subsea cables amid Iran's warnings to Trump</title>
+                <link>https://arstechnica.com/gadgets/2026/11/ships-loiter-near-subsea-cables-amid-irans-warnings-to-trump/</link>
+                                    <comments>https://arstechnica.com/gadgets/2026/11/ships-loiter-near-subsea-cables-amid-irans-warnings-to-trump/#comments</comments>
+                
+                <dc:creator>
+                    <![CDATA[Jeremy Hsu]]>
+                </dc:creator>
+                <pubDate>Fri, 06 Nov 2026 22:41:37 +0000</pubDate>
+                		<category><![CDATA[Tech]]></category>
+		<category><![CDATA[donald trump iran war]]></category>
+		<category><![CDATA[Iran]]></category>
+		<category><![CDATA[Iran Revolutionary Guard Corps]]></category>
+		<category><![CDATA[subsea cable]]></category>
+		<category><![CDATA[subsea cables]]></category>
+		<category><![CDATA[undersea cable]]></category>
+		<category><![CDATA[undersea cable cuts]]></category>
+		<category><![CDATA[undersea cables]]></category>
+		<category><![CDATA[USA-Iran War]]></category>
+                <guid isPermaLink="true">https://arstechnica.com/gadgets/2026/11/ships-loiter-near-subsea-cables-amid-irans-warnings-to-trump/</guid>
+
+                                    <description>
+                        <![CDATA[Iran threatened to attack subsea cables if US escalates military strikes again.]]>
+                    </description>
+                                                                <content:encoded>
+                            <![CDATA[<p>Several tanker ships linked to Iran have been loitering over subsea Internet cables in the Gulf of Oman near the Strait of Hormuz—a possible indication that the Iranian government is preparing to attack such undersea infrastructure in response to any renewed US and Israeli strikes.</p>
+<p>The movements of three sanctioned tankers and an Iranian fishing boat have been tracked near major undersea cables by the maritime intelligence firm Windward in October, <a href="https://www.ft.com/content/492b2c62-8e15-47b3-bf24-842ae62e7217">according to the Financial Times</a>. Six <a href="https://www.submarinecablemap.com/">active cables</a> currently cross through the contested Strait of Hormuz, linking the Middle East to Europe, Africa and Asia, with two more cables having segments under construction in the region.</p>
+<p>Four countries, including Iraq, Kuwait, Bahrain and Qatar, depend entirely upon such subsea telecommunications connections running through the Strait of Hormuz chokepoint to link with the outside world. But other countries also depend heavily on the region's undersea cable network—one third of India’s westbound Internet traffic goes through the Persian Gulf and Strait of Hormuz.</p><p><a href="https://arstechnica.com/gadgets/2026/11/ships-loiter-near-subsea-cables-amid-irans-warnings-to-trump/">Read full article</a></p>
+<p><a href="https://arstechnica.com/gadgets/2026/11/ships-loiter-near-subsea-cables-amid-irans-warnings-to-trump/#comments">Comments</a></p>
+]]>
+                        </content:encoded>
+                                    
+                                    <slash:comments>61</slash:comments>
+                
+                
+                <media:content height="648" medium="image" type="image/jpeg" url="https://cdn.arstechnica.net/wp-content/uploads/2026/11/Iranian-oil-tanker-and-flag-1152x648.jpg" width="1152">
+<media:thumbnail height="500" url="https://cdn.arstechnica.net/wp-content/uploads/2026/11/Iranian-oil-tanker-and-flag-500x500.jpg" width="500"/>
+<media:credit>Anton Petrus</media:credit><media:text>Oil tanker at sea with Iranian flag as background.</media:text></media:content>
+            </item>
+<item>
+                <title>Re-releases of Wing Commander, Ultima titles hit Steam and GOG</title>
+                <link>https://arstechnica.com/gaming/2026/11/ea-producer-tells-the-inside-story-behind-new-wing-commander-remasters/</link>
+                                    <comments>https://arstechnica.com/gaming/2026/11/ea-producer-tells-the-inside-story-behind-new-wing-commander-remasters/#comments</comments>
+                
+                <dc:creator>
+                    <![CDATA[Samuel Axon]]>
+                </dc:creator>
+                <pubDate>Fri, 06 Nov 2026 22:08:47 +0000</pubDate>
+                		<category><![CDATA[Gaming]]></category>
+		<category><![CDATA[EA]]></category>
+		<category><![CDATA[gog]]></category>
+		<category><![CDATA[Privateer 2]]></category>
+		<category><![CDATA[Road Rash]]></category>
+		<category><![CDATA[ultima]]></category>
+		<category><![CDATA[Wing Commander]]></category>
+                <guid isPermaLink="true">https://arstechnica.com/gaming/2026/11/ea-producer-tells-the-inside-story-behind-new-wing-commander-remasters/</guid>
+
+                                    <description>
+                        <![CDATA[It's mostly bad news from EA lately, but preservation efforts are nice to see.]]>
+                    </description>
+                                                                <content:encoded>
+                            <![CDATA[<p><!-- obsidian --></p>
+<p>Many people are not big fans of game publisher EA right now for <a href="https://arstechnica.com/gaming/2026/10/rip-bioware-ea-shuts-down-storied-rpg-studio-after-over-three-decades/">good reason</a>, but for those who remember a better time in the 1990s, there's a little good news. Twenty-five classic games from that EA era have been lightly remastered and updated, then placed for sale on <a href="https://store.steampowered.com/sale/ea_classics_sale?l=english">Steam</a> and <a href="https://www.gog.com/en/game/wing_commander_prophecy_30th_anniversary_edition">GOG</a>, including several Wing Commander games and nearly the entire Ultima series.</p>
+<p>Below is the full list of remastered or re-released games:</p><p><a href="https://arstechnica.com/gaming/2026/11/ea-producer-tells-the-inside-story-behind-new-wing-commander-remasters/">Read full article</a></p>
+<p><a href="https://arstechnica.com/gaming/2026/11/ea-producer-tells-the-inside-story-behind-new-wing-commander-remasters/#comments">Comments</a></p>
+]]>
+                        </content:encoded>
+                                    
+                                    <slash:comments>78</slash:comments>
+                
+                
+                <media:content medium="image" type="image/avif" url="https://cdn.arstechnica.net/wp-content/uploads/2026/11/EACOM-News-EA_Classics_Feature_Article_16x9-Screenshot_09.avif">
+<media:thumbnail url="https://cdn.arstechnica.net/wp-content/uploads/2026/11/EACOM-News-EA_Classics_Feature_Article_16x9-Screenshot_09.avif"/>
+<media:credit>EA</media:credit><media:text>A screenshot from one of the Wing Commander games.</media:text></media:content>
+            </item>
+            </channel>
+</rss>

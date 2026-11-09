@@ -123,7 +123,7 @@ describe('UpstreamCache', () => {
       });
     const cases: Array<[string, typeof globalThis.fetch]> = [
       ['ESPN answered 500.', network(status(500)).fetch],
-      ['ESPN refused the request (401). Check the key.', network(status(401)).fetch],
+      ['ESPN refused the request (403).', network(status(403)).fetch],
       ["ESPN says we're asking too often (429).", network(status(429)).fetch],
       ["Couldn't reach ESPN (ECONNREFUSED).", network(refused()).fetch],
       [
@@ -140,6 +140,13 @@ describe('UpstreamCache', () => {
         return true;
       });
     }
+  });
+
+  it('blames the key only when the upstream sends one', async () => {
+    const cache = new UpstreamCache({ userAgent: 'test', fetch: network(status(401)).fetch });
+    await assert.rejects(cache.fetcher().json({ ...upstream, name: 'TMDB', keyed: true }), {
+      message: 'TMDB refused the key (401). Check it in .env.',
+    });
   });
 
   it('keeps text answers as text', async () => {

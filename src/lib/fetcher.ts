@@ -18,6 +18,8 @@ export interface Upstream {
   /** The saved sample (a file in src/lib/sources/fixtures/) that answers in sample mode. */
   sample: string;
   headers?: Readonly<Record<string, string>>;
+  /** Sends an API key, so a refusal (401 or 403) most likely means a bad key. */
+  keyed?: boolean;
 }
 
 /** What sources fetch through. The live cache, saved samples and tests all fit. */
@@ -143,7 +145,7 @@ export class UpstreamCache {
         },
         signal: AbortSignal.timeout(timeoutMs),
       });
-      if (!response.ok) throw new UpstreamError(statusMessage(upstream.name, response.status));
+      if (!response.ok) throw new UpstreamError(statusMessage(upstream, response.status));
       const body = await response.text();
       let value: unknown = body;
       if (kind === 'json') {
@@ -177,10 +179,13 @@ function capitalize(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-function statusMessage(name: string, status: number): string {
-  const who = capitalize(name);
-  if (status === 401 || status === 403)
-    return `${who} refused the request (${status}). Check the key.`;
+function statusMessage(upstream: Upstream, status: number): string {
+  const who = capitalize(upstream.name);
+  if (status === 401 || status === 403) {
+    return upstream.keyed
+      ? `${who} refused the key (${status}). Check it in .env.`
+      : `${who} refused the request (${status}).`;
+  }
   if (status === 429) return `${who} says we're asking too often (429).`;
   return `${who} answered ${status}.`;
 }
