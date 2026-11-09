@@ -6,6 +6,8 @@ import { BasicShadowMap, ColorManagement, LinearSRGBColorSpace, WebGLRenderer } 
 import { CameraRig } from './camera.ts';
 import { nearestDoor, walksIn } from './entrance.ts';
 import { GoingIn } from './going-in.ts';
+import { createLife, stepLife } from './life.ts';
+import { LifeBodies } from './life-bodies.ts';
 import { PathMarks } from './marks.ts';
 import { buildNav, findPath, pathLength, type Point } from './nav.ts';
 import type { Door } from './world/builders.ts';
@@ -229,6 +231,9 @@ function boot(): void {
     $('#hint-text').textContent =
       'Tap anywhere to walk there, or tap a building to go in. Drag to turn the camera.';
   const marks = new PathMarks(town.scene);
+  // Life in town; with reduced motion it holds still (SPEC: Quality bar).
+  const life = createLife(world, true);
+  const bodies = new LifeBodies(town.scene, world, life);
   $<HTMLElement>('#loading').hidden = true;
   document.documentElement.dataset.town = 'ready';
   canvas.focus({ focusVisible: false });
@@ -275,7 +280,13 @@ function boot(): void {
       document.documentElement.dataset.place = inside;
 
     const L = lighting(simDate(time));
-    player.sync(town, nightK(L.night));
+    const night = nightK(L.night);
+    if (!still) {
+      stepLife(life, dt);
+      bodies.sky(dt, rig.target.x, rig.target.z, rig.yaw);
+    }
+    player.sync(town, night);
+    bodies.sync(town, still ? 0 : now, night, still);
     marks.update(path, you.x, you.y, now, still);
     town.moving.flush();
     applyLight(town, L, {

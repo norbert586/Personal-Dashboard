@@ -1,5 +1,6 @@
 /** The path preview, like a modern RPG: a dotted line on the ground and a pulsing ring where you'll stop. */
 import {
+  BufferAttribute,
   BufferGeometry,
   Float32BufferAttribute,
   Mesh,
@@ -34,7 +35,7 @@ export class PathMarks {
     this.ring.rotation.x = -Math.PI / 2;
     this.ring.visible = false;
     const g = new BufferGeometry();
-    g.setAttribute('position', new Float32BufferAttribute(this.pos, 3));
+    g.setAttribute('position', new BufferAttribute(this.pos, 3));
     this.dots = new Points(
       g,
       new PointsMaterial({

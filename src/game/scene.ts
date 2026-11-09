@@ -4,6 +4,7 @@
  * blobs, and the power lines.
  */
 import {
+  BufferAttribute,
   BoxGeometry,
   BufferGeometry,
   Color,
@@ -68,8 +69,8 @@ export class MovingLights {
     this.max = max;
     this.pos = new Float32Array(max * 3);
     this.col = new Float32Array(max * 3);
-    points.geometry.setAttribute('position', new Float32BufferAttribute(this.pos, 3));
-    points.geometry.setAttribute('color', new Float32BufferAttribute(this.col, 3));
+    points.geometry.setAttribute('position', new BufferAttribute(this.pos, 3));
+    points.geometry.setAttribute('color', new BufferAttribute(this.col, 3));
   }
 
   /** A glow at grid (x, y), z pixels up, colour 0–1. */
@@ -317,7 +318,7 @@ function wires(scene: Scene, world: World): void {
 
 // ---- Night glows: lamp halos (points sized in screen pixels) and pools of light on the ground ----
 let glowTex: CanvasTexture | null = null;
-function glowTexture(): CanvasTexture {
+export function glowTexture(): CanvasTexture {
   if (glowTex) return glowTex;
   const c = document.createElement('canvas');
   c.width = c.height = 64;

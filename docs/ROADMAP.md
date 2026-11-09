@@ -69,7 +69,7 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
          door, you walk through, the camera eases in, and the window opens; closing it brings you
          back out. The building's window is an accessible HTML dialog. Keyboard alone reaches
          every building.
-   - [ ] Life: townspeople, cars, the train and smoke (`p3d-4-bodies.js`, moved by the 2D
+   - [x] Life: townspeople, cars, the train and smoke (`p3d-4-bodies.js`, moved by the 2D
          simulation in `prototype/2d/p5b-actors.js`), and low flyovers and high jets with contrails
          (`p3d-7-path.js`), on sample data until step 4.
    - [ ] The old-PC shell (SPEC: Menus), ported from `prototype/2d/p6-ui.js` and `p7-windows.js`: a
