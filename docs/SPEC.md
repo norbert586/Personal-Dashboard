@@ -1,6 +1,6 @@
 # Spec: Ratiu Twp
 
-**Status:** v1.1, MVP defined · **Updated:** 2026-11-09
+**Status:** v1.2, MVP defined · **Updated:** 2026-11-09
 
 This is the only spec. Change it here, in place; don't fork it.
 
@@ -105,6 +105,7 @@ network (ADR-018), and goes public only when it's polished. Everything in the ta
 | Feeds in town      | Cinema marquee, comic shop window, sports bar sign, real aircraft overhead, weather in the sky                                                       | The town and the panel never disagree                                                 |
 | Time, sky, seasons | Real sun and shadows; weather from the forecast; seasons by date                                                                                     | Matches the feel test at day, dusk and night                                          |
 | Sound              | Music on by default, starting at the first key press or click; tracks change with place and time                                                     | Mute and volume are one key away                                                      |
+| Menus              | A DOS boot, a sound-card setup and a title; Esc opens a pause menu: map, projects, tools inventory, Today, jukebox, options, Quit to DOS             | Every menu works by keyboard alone; reduced motion skips the boot                     |
 | DOS mode           | The plain-text version of the whole site                                                                                                             | Works with a screen reader and without WebGL                                          |
 | Saving             | Your device remembers where you were and what you've found                                                                                           | Nothing breaks when storage is blocked                                                |
 
@@ -123,7 +124,8 @@ network (ADR-018), and goes public only when it's polished. Everything in the ta
 
 ## After the MVP
 
-The car (start-up sequence, radio, gears), the plane and the landing challenge, recurring characters
+The car (start-up sequence, radio, gears), the plane and the landing challenge, tower radio read
+from real airport weather, recurring characters
 who talk, the guestbook (visitors leave a plane or a name), places past the grid's edges (north toward
 Romeo, a cider mill, a drive-in, a high-school field, a mall, a base), the helicopter, train rides, skateboard and winter
 vehicles, and interiors. Much later, a pizza delivery sim based on where I work (see World data). Order lives in
@@ -131,7 +133,8 @@ vehicles, and interiors. Much later, a pizza delivery sim based on where I work 
 
 ## Not planned
 
-Stocks. Accounts or logins for visitors. Multiplayer. A "skip the game" button.
+Stocks. Accounts or logins for visitors. Multiplayer. A "skip the game" button. Minigames other
+than the landing challenge.
 
 ## Data rules
 
@@ -181,3 +184,5 @@ The access gate (ADR-004) stays in the code and still fails closed when no mode 
    "nothing happens when you walk into a building". Options: a short 3D entrance (the door opens,
    you walk through, the camera follows), or that plus a simple room for each building type. Hero
    interiors stay after launch. Decide before the town port (roadmap step 3).
+7. **Where the town's centre sits:** Main Street, Ratiu Field and the project buildings are placed
+   by hand on the real grid. Proposed: beside the Town Hall, near 26 Mile and Van Dyke.

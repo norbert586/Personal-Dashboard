@@ -86,6 +86,9 @@ npm run format       # prettier --write .
   otherwise skips the sandbox proxy, and its direct route answers some feeds with "Blocked by
   egress policy". The GitHub user API (coding activity) and airplanes.live are unreachable
   there either way; both work from home.
+- OpenStreetMap from Claude cloud sandboxes: the main Overpass server (overpass-api.de) is
+  blocked, but the mirror at `maps.mail.ru/osm/tools/overpass/api/interpreter` answers. Split
+  big queries into pieces; it times out on large ones.
 - `prototype/` holds the throwaway 2D and 3D prototypes the MVP ports from (ADR-013).
   `prototype/build.sh` assembles them into `prototype/dist/`. They're excluded from formatting
   and type checks. Port from them; don't add features there.

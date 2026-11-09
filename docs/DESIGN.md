@@ -70,6 +70,8 @@ copy values here.
 ## Interface
 
 - Old PC game: bevelled navy panels, maize accent, ink-coloured text. One dark look for the game.
+- It opens like a mid-90s PC game: a short DOS boot, a sound-card setup screen, then the title.
+  Esc opens a pause menu in the same style.
 - Type: Jersey 10 for display (names, titles), Pixelify Sans for the interface.
 - On screen: a name badge, camera and bike controls, a compass, a door prompt that names its key,
   and a hint bar. Windows open in the centre on desktop and as a bottom sheet on phones.
