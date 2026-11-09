@@ -65,9 +65,10 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
          steps and follows you. On phones, buttons turn the camera, zoom and switch to the bike.
    - [ ] Click to walk and going in (`p3d-7-path.js`): the nav grid, A* with string-pulling, the
          dotted path and ring, and tap to walk on phones. Clicking a building walks you to its door.
-         How going in looks and works in 3D, walking straight into a door included, is SPEC open
-         question 6: settle it with Norbert before building this. The building's window is an
-         accessible HTML dialog. Keyboard alone reaches every building.
+         Going in is the short entrance from ADR-027: walking into a door, F or a click opens the
+         door, you walk through, the camera eases in, and the window opens; closing it brings you
+         back out. The building's window is an accessible HTML dialog. Keyboard alone reaches
+         every building.
    - [ ] Life: townspeople, cars, the train and smoke (`p3d-4-bodies.js`, moved by the 2D
          simulation in `prototype/2d/p5b-actors.js`), and low flyovers and high jets with contrails
          (`p3d-7-path.js`), on sample data until step 4.
@@ -222,8 +223,8 @@ details in the spec and a plan before work starts.
 - [ ] Past the grid's edges: north toward Romeo, a cider mill, a drive-in whose screen shows
       what's playing, a high-school football field, a mall and a base. Each one adds sections on
       the same projection, so nothing that exists moves (ADR-016, ADR-019).
-- [ ] Hero interiors: real rooms you can walk around in for the hero buildings, beyond what going
-      inside became in step 3 (SPEC open question 6).
+- [ ] Hero interiors: real rooms you can walk around in for the hero buildings, beyond step 3's
+      door-and-camera entrance (ADR-027).
 - [ ] More secrets.
 
 ### M6: Pizza delivery (much later)

@@ -51,8 +51,9 @@ copy values here.
   the screen.
 - Click or tap anywhere and you walk an A* path around buildings, with a dotted line and a pulsing
   ring where you'll stop. Long trips break into a run.
-- Click a building and you walk to its door and go in. You step inside, its window opens, and you
-  come back out when it closes.
+- Going in: walk into a door, press F at it, or click the building and you walk to its door. The
+  door swings open, you step through as the camera eases in and the view dims, and the building's
+  window opens. When it closes you step back out onto the doorstep. There are no rooms yet (ADR-027).
 - Overhead, a low plane sometimes sweeps right under the camera with its shadow racing across the
   ground, and high jets leave contrails.
 

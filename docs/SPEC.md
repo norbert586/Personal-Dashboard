@@ -180,10 +180,9 @@ The access gate (ADR-004) stays in the code and still fails closed when no mode 
    similar). Claude proposes the setup then (ADR to come).
 5. **The pizzeria's sign:** a stand-in name on the real corner, with no real brand or logo in the
    product. Norbert picks one, or Claude does.
-6. **Going inside, in 3D:** in the prototype, entering only hides you and opens the building's
-   window over an unchanged town, and walking into a door does nothing until you press F. Norbert:
-   "nothing happens when you walk into a building". Options: a short 3D entrance (the door opens,
-   you walk through, the camera follows), or that plus a simple room for each building type. Hero
-   interiors stay after launch. Decide before the town port (roadmap step 3).
+6. **Going inside, in 3D:** settled on 2026-11-09 (ADR-027). Norbert chose the short entrance:
+   the door opens, you walk through and the camera follows, then the building's window opens.
+   Walking into a door goes in too. Rooms per building type are not planned; hero interiors stay
+   after launch.
 7. **Where the town's centre sits:** Main Street, Ratiu Field and the project buildings are placed
    by hand on the real grid. Proposed: beside the Town Hall, near 26 Mile and Van Dyke.
