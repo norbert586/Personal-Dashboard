@@ -48,7 +48,7 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
        `src/game/`, with three.js from npm, bundled and loaded only on the town's page (ADR-010,
        SPEC: Quality bar). Keep what the prototype learned (DESIGN: Camera and scale, Moving
        around). The town gets its own page; the Today panel stays the home page until step 4.
-   - [ ] Boot: the canvas island renders at low resolution and scales up by whole device pixels,
+   - [x] Boot: the canvas island renders at low resolution and scales up by whole device pixels,
          with the input and frame loop from `p3d-6-loop.js`. An e2e smoke test checks that it boots
          with no console errors or CSP violations. Without WebGL, the page says so and links the
          plain pages.

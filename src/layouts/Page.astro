@@ -6,9 +6,11 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description: string;
+  /** Where the skip link goes, and what it says. */
+  skip?: { href: string; label: string };
 }
 
-const { title, description } = Astro.props;
+const { title, description, skip = { href: '#main', label: 'Skip to the update' } } = Astro.props;
 ---
 
 <!doctype html>
@@ -26,8 +28,8 @@ const { title, description } = Astro.props;
     <Font cssVariable="--font-ui" preload />
   </head>
   <body>
-    <a class="skip-link" href="#main">
-      Skip to the update
+    <a class="skip-link" href={skip.href}>
+      {skip.label}
     </a>
     <slot />
   </body>

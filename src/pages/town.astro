@@ -1,0 +1,159 @@
+---
+/**
+ * The town: a three.js island that fills the screen (ADR-010), with the game's interface floating
+ * over it in bevelled panels. Its own page until it becomes the home page (roadmap step 4).
+ */
+import Page from '../layouts/Page.astro';
+---
+
+<Page
+  title="Ratiu Twp"
+  description="Ratiu Twp: Norbert's projects as a small 3D pixel-art town you can walk around."
+  skip={{ href: '#help', label: 'Skip to the controls and plain pages' }}
+>
+  <main>
+    <canvas
+      id="world"
+      tabindex="0"
+      role="application"
+      aria-roledescription="town"
+      aria-label="Ratiu Twp, the town. Press plus or minus to zoom."
+    ></canvas>
+  </main>
+  <header class="hud badge">
+    <h1>Ratiu Twp</h1>
+  </header>
+  <footer id="help" class="hud hint">
+    <p>
+      Press + or − to zoom, or scroll. <a href="/">Today</a> has the morning update.
+    </p>
+  </footer>
+  <div id="loading" class="hud cover" role="status">
+    Building Ratiu Twp…
+  </div>
+  <section id="no-webgl" class="hud cover" aria-labelledby="no-webgl-title" hidden>
+    <div class="panel">
+      <h2 id="no-webgl-title">The town needs WebGL</h2>
+      <p>This browser couldn't start it, so the 3D town can't open here.</p>
+      <p>
+        <a class="key" href="/">
+          Read Today instead
+        </a>
+      </p>
+    </div>
+  </section>
+</Page>
+
+<script>
+  import '../game/main.ts';
+</script>
+
+<style>
+  :global(html),
+  :global(body) {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #world {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    display: block;
+    image-rendering: pixelated;
+    touch-action: none;
+    outline: none;
+    cursor: crosshair;
+  }
+
+  #world:focus-visible {
+    outline: 3px solid var(--maize);
+    outline-offset: -3px;
+  }
+
+  .hud {
+    position: fixed;
+    z-index: 2;
+  }
+
+  .badge h1 {
+    font-size: var(--size-28);
+    letter-spacing: 0.04em;
+  }
+
+  .badge {
+    inset-block-start: calc(env(safe-area-inset-top, 0px) + var(--space-3));
+    inset-inline-start: calc(env(safe-area-inset-left, 0px) + var(--space-3));
+    padding: var(--space-1) var(--space-3);
+    background: var(--panel);
+    border: 2px solid var(--outline);
+    box-shadow: var(--bevel-up);
+    color: var(--maize);
+  }
+
+  .hint {
+    inset-inline: 0;
+    inset-block-end: 0;
+    padding: var(--space-2) max(var(--space-4), env(safe-area-inset-right, 0px))
+      calc(env(safe-area-inset-bottom, 0px) + var(--space-2));
+    background: rgb(4 7 15 / 0.82);
+    color: var(--ink-dim);
+    font-size: var(--size-14);
+    text-align: center;
+  }
+
+  .cover[hidden] {
+    display: none;
+  }
+
+  .cover {
+    inset: 0;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    padding: var(--space-4);
+    background: var(--night);
+    text-align: center;
+  }
+
+  #loading {
+    color: var(--maize);
+    font: var(--size-28) / 1.2 var(--font-display);
+  }
+
+  .panel {
+    max-width: 28rem;
+    padding: var(--space-4) var(--space-5);
+    background: var(--panel);
+    border: 2px solid var(--outline);
+    box-shadow: var(--bevel-up);
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .panel h2 {
+    color: var(--maize);
+    font-size: var(--size-28);
+  }
+
+  .key {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    padding: var(--space-2) var(--space-3);
+    background: var(--panel);
+    border: 2px solid var(--outline);
+    box-shadow: var(--bevel-up);
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .key:hover {
+    color: var(--maize);
+  }
+
+  .key:active {
+    box-shadow: var(--bevel-down);
+  }
+</style>
