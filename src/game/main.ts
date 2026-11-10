@@ -5,12 +5,13 @@
 import { BasicShadowMap, ColorManagement, LinearSRGBColorSpace, WebGLRenderer } from 'three';
 import { CameraRig } from './camera.ts';
 import { nearestDoor, walksIn } from './entrance.ts';
-import { FeedClient } from './feeds.ts';
+import { FeedClient, ageAtAnswer } from './feeds.ts';
 import { GoingIn } from './going-in.ts';
 import { createLife, stepLife } from './life.ts';
 import { LifeBodies } from './life-bodies.ts';
 import { PathMarks } from './marks.ts';
 import { Shell } from './shell.ts';
+import { plotAircraft } from './sky-traffic.ts';
 import { comicCovers, comicPages, moviePages, scorePages, signContent } from './sign-pages.ts';
 import { SignBoards } from './signs.ts';
 import { fillCards } from './windows.ts';
@@ -113,9 +114,15 @@ function boot(): void {
   $('#b-in').addEventListener('click', () => rig.zoomBy(1));
   $('#b-out').addEventListener('click', () => rig.zoomBy(-1));
 
+  // Life in town; with reduced motion it holds still (SPEC: Quality bar).
+  const life = createLife(world, true);
+  const bodies = new LifeBodies(town.scene, world, life);
+
   // ---- The feeds: the same answers the Today panel shows, read again every half minute ----
   const feeds = new FeedClient();
   const boards = new SignBoards(town, world);
+  /** When the latest answer arrived, on the frame clock (seconds). */
+  let skyHeld = 0;
   const windowBody = $<HTMLElement>('#window-body');
   feeds.onChange(() => {
     const now = feeds.snapshot?.feeds;
@@ -146,6 +153,22 @@ function boot(): void {
     // The shop window has a cover for every book; it's empty when there's no data.
     const live = now && now.comics.provenance !== 'offline';
     boards.set('comics-window', { ...comics, covers: live ? comicCovers(now.comics) : [] });
+    // Real aircraft, where they really are. A saved sample replays from when the page opened.
+    const snap = feeds.snapshot;
+    if (snap) {
+      skyHeld = snap.receivedAt / 1000;
+      const flights = snap.feeds.flights;
+      const planes = plotAircraft(flights.data.aircraft);
+      bodies.setAircraft(
+        planes,
+        `${flights.provenance} ${flights.fetchedAt}`,
+        ageAtAnswer(flights, snap),
+        snap.receivedAt / 1000,
+        flights.provenance === 'sample',
+      );
+      canvas.dataset.aircraft =
+        flights.provenance === 'offline' ? 'offline' : String(planes.length);
+    }
     fillCards(windowBody, feeds);
     document.documentElement.dataset.feeds = now ? 'ready' : down ? 'unreachable' : 'loading';
   });
@@ -300,9 +323,6 @@ function boot(): void {
     $('#hint-text').textContent =
       'Tap anywhere to walk there, or tap a building to go in. Drag to turn the camera.';
   const marks = new PathMarks(town.scene);
-  // Life in town; with reduced motion it holds still (SPEC: Quality bar).
-  const life = createLife(world, true);
-  const bodies = new LifeBodies(town.scene, world, life);
   $<HTMLElement>('#loading').hidden = true;
   document.documentElement.dataset.town = 'ready';
   void shell.boot(still);
@@ -352,9 +372,12 @@ function boot(): void {
 
     const L = lighting(simDate(time));
     const night = nightK(L.night);
-    if (!still && shell.playing) {
-      stepLife(life, dt);
-      bodies.sky(dt, rig.target.x, rig.target.z, rig.yaw);
+    if (!still && shell.playing) stepLife(life, dt);
+    // With reduced motion the aircraft hold still between answers, like the rest of the town.
+    if (shell.playing) {
+      bodies.sky(still ? skyHeld : now, rig.target.x, rig.target.z, rig.yaw);
+      if (canvas.dataset.overhead !== String(bodies.inView))
+        canvas.dataset.overhead = String(bodies.inView);
     }
     player.sync(town, night);
     if (shell.playing) boards.update(now, still);

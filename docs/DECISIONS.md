@@ -377,3 +377,21 @@ Consequences: one more route, and the town's page carries the cards' styles. Boa
 characters wide, so a long title carries on to the next page, and a board shows the first few
 items; the window always has the whole list. The feed shops are a floor taller than in the feel
 test, to carry their boards.
+
+## ADR-030: One projection, anchored on the town's point, and squeezed heights for aircraft
+
+**Accepted · 2026-11-10**
+Context: real aircraft need a place in the world, so step 4 adds the projection the map will be
+built on (ADR-019). The Today panel measures every aircraft from the town's point (26 Mile and Van
+Dyke, `site.place`), where SPEC open question 7 proposes the town's centre.
+Decision: `src/game/world/projection.ts` turns latitude and longitude into tiles with one origin
+and 32 tiles to the mile. The origin puts the town's point in the middle of today's town, so an
+aircraft the panel calls 4 miles west-south-west is 4 sections west-south-west in the game. Real
+altitudes are squeezed between the rooftops and the camera (1,000 ft is about 4.6 tiles up, 35,000
+ft about 11.4), keeping their order; lower aircraft are drawn larger, as the feel test's low
+flyover was. Between answers an aircraft flies on at its real speed and heading. The feel test's
+made-up flyovers are gone; Ratiu Field's own plane stays as town life.
+Consequences: at 32 tiles to the mile an aircraft is in view only when it really is within about
+half a mile, so the sky is often empty until the big world (step 7) gives more sky to watch. A
+saved sample has no clock, so it replays from the moment the page opened. If step 7 moves the
+town's centre, it moves the hand-placed town on this projection, not the projection.

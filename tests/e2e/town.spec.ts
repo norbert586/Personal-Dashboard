@@ -262,3 +262,26 @@ test('when the town cannot reach its feeds, the marquee goes dark and the window
     "The town couldn't reach its feeds: the server answered 503.",
   );
 });
+
+test('real aircraft fly where the feed says they are', async ({ page }) => {
+  await enterTown(page);
+  const world = page.locator('#world');
+  // The saved sample has 11 aircraft in the air, the nearest 13 miles off: none over the town.
+  await expect(world).toHaveAttribute('data-aircraft', '11');
+  await expect(world).toHaveAttribute('data-overhead', '0');
+});
+
+test('an aircraft over the real town is over the town', async ({ page }) => {
+  // Move one of the sample's aircraft to the town's own point (site.config.ts) and hold it there.
+  await page.route('**/api/feeds.json', async (route) => {
+    const response = await route.fetch();
+    const json = await response.json();
+    const airborne = json.feeds.flights.data.aircraft.find(
+      (aircraft: { onGround: boolean }) => !aircraft.onGround,
+    );
+    Object.assign(airborne, { lat: 42.72, lon: -83.03, speedKt: 0 });
+    await route.fulfill({ response, json });
+  });
+  await enterTown(page);
+  await expect(page.locator('#world')).toHaveAttribute('data-overhead', '1');
+});

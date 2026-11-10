@@ -84,7 +84,7 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
    - [x] Cinema marquee: what's playing (TMDB), with Emagine Macomb's showtimes link in its window.
    - [x] Comic shop window: this week's DC, Image and Marvel books (ADR-026).
    - [x] Sports bar sign: live and final scores and the next games for the seven teams.
-   - [ ] Real aircraft from ADS-B fly over at their real positions, heights and headings. This step
+   - [x] Real aircraft from ADS-B fly over at their real positions, heights and headings. This step
          adds the world's one projection (ADR-019), which step 7 builds the map on.
    - [ ] Weather and seasons: the forecast brings cloud, rain, snow and snow cover; the date brings
          blossom in the orchards, fall leaves and bare winter trees (DESIGN: Light, time and
@@ -122,8 +122,9 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
          Plank, into typed world data saved in the repo, so builds never touch the network: roads,
          water, parks, golf courses and the Macomb Orchard Trail. The data carries the ODbL credit
          (add it to the site's credits) and is shared under the same licence.
-   - [ ] One projection from latitude and longitude to tiles (from step 4): one origin and one
-         tiles-per-mile constant in one place, unit-tested on real corners.
+   - [ ] One projection from latitude and longitude to tiles (`src/game/world/projection.ts`, from
+         step 4, ADR-030): one origin and one tiles-per-mile constant in one place. Unit-test it on
+         real corners here.
    - [ ] The road graph: intersections and segments with real names, types, lanes, speeds and
          one-way flags, with routing tested between real corners.
    - [ ] Addresses: every building gets a stable address (the real street name and a generated

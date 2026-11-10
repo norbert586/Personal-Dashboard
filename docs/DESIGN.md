@@ -54,8 +54,9 @@ copy values here.
 - Going in: walk into a door, press F at it, or click the building and you walk to its door. The
   door swings open, you step through as the camera eases in and the view dims, and the building's
   window opens. When it closes you step back out onto the doorstep. There are no rooms yet (ADR-027).
-- Overhead, a low plane sometimes sweeps right under the camera with its shadow racing across the
-  ground, and high jets leave contrails.
+- Overhead fly the real aircraft from the ADS-B feed, where they really are: a low one sweeps
+  right under the camera with its shadow racing across the ground, and high jets leave contrails.
+  Heights are squeezed to fit the view (ADR-030).
 
 ## Light, time and weather
 
