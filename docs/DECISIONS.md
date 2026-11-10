@@ -425,3 +425,19 @@ even without a building, and it opens Today. It waits while you hover or focus i
 town is paused.
 Consequences: the freeway sign is now a step 7 box. The Today line is a second place for words
 the boards also show, so it reuses the feed's own text and never invents any.
+
+## ADR-033: The town is the home page; Today opens over it, and first on phones
+
+**Accepted · 2026-11-10 · the phone default is open: Norbert hasn't picked**
+Context: with the feeds in town, the town takes over the home page (ADR-022). The roadmap asked
+whether phones should open straight to the Today panel; Norbert reads his morning update in bed
+on his phone, and started this step without answering.
+Decision: `/` is the town and `/today` is the Today panel's own page, light and readable with no
+3D. In town, T, the Today line or the pause menu opens the panel over the town, with the same
+cards (ADR-029); the town holds still behind it, as it does behind the pause menu. On a phone the
+town opens with the panel already over it and no intro, so the update is the first thing you
+read; closing it puts you in town. That's one setting, `phonesOpenToday` in `site.config.ts`.
+Windows keep their own keys now: arrows and Space scroll them instead of walking you.
+Consequences: a phone loads the 3D town even when you only wanted the update; `/today` is the
+light way in, and worth bookmarking. `/town` is gone. If Norbert prefers the town first on
+phones, flip the setting; nothing else changes.

@@ -12,6 +12,11 @@ export interface SiteConfig {
   github: { user: string };
   /** The real place the town is based on. Weather is forecast for this point. */
   place: { name: string; lat: number; lon: number };
+  /**
+   * On a phone, open the town with the Today panel already over it and skip the intro, so the
+   * morning update is the first thing you read; close it and you're in town (ADR-033).
+   */
+  phonesOpenToday: boolean;
   /** How the server introduces itself to the APIs it asks (some refuse anonymous clients). */
   userAgent: string;
   /** The teams on the scoreboard, in the order shown. */
@@ -62,6 +67,7 @@ export const site: SiteConfig = {
   github: { user: 'norbert586' },
   // About 26 Mile and Van Dyke, the middle of the real grid (docs/SPEC.md, The map).
   place: { name: 'Washington Twp', lat: 42.72, lon: -83.03 },
+  phonesOpenToday: true,
   userAgent: 'RatiuTwp/0.1 (+https://github.com/norbert586/Personal-Dashboard)',
   teams: [
     { id: 'pistons', name: 'Pistons', league: 'NBA', espn: espn('basketball', 'nba', '8') },

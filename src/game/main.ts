@@ -1,6 +1,6 @@
 /**
- * The town's entry point, bundled into /town only (SPEC: Quality bar), so the 3D library never
- * loads on the other pages. It starts the renderer, or says plainly that this browser can't.
+ * The town's entry point, bundled into the home page only (SPEC: Quality bar), so the 3D library
+ * never loads on the other pages. It starts the renderer, or says plainly that this browser can't.
  */
 import {
   BasicShadowMap,
@@ -149,6 +149,8 @@ async function boot(): Promise<void> {
   /** When the latest answer arrived, on the frame clock (seconds). */
   let skyHeld = 0;
   const windowBody = $<HTMLElement>('#window-body');
+  const todayDialog = $<HTMLDialogElement>('#today');
+  const todayBody = $<HTMLElement>('#today-body');
   // The Today line at the foot of the screen: one feed at a time, in words.
   const ticker = $<HTMLElement>('#ticker');
   const tickerText = $<HTMLElement>('#ticker-text');
@@ -223,6 +225,7 @@ async function boot(): Promise<void> {
         flights.provenance === 'offline' ? 'offline' : String(planes.length);
     }
     fillCards(windowBody, feeds);
+    if (todayDialog.open) fillCards(todayBody, feeds);
     document.documentElement.dataset.feeds = now ? 'ready' : down ? 'unreachable' : 'loading';
   };
   feeds.onChange(showFeeds);
@@ -282,6 +285,21 @@ async function boot(): Promise<void> {
     keys.clear();
     canvas.focus({ focusVisible: false });
   };
+  // Today opens over the town with T, from the Today line, or from the pause menu.
+  shell.onToday = () => {
+    keys.clear();
+    fillCards(todayBody, feeds);
+    if (feeds.cardsAge > 60) void feeds.refresh(true);
+  };
+  // Nothing stays behind to clash with a building window's ids.
+  todayDialog.addEventListener('close', () =>
+    todayBody.querySelector('[data-cards]')?.replaceChildren(),
+  );
+  ticker.addEventListener('click', (event) => {
+    if (!shell.playing) return;
+    event.preventDefault();
+    shell.openToday();
+  });
 
   listen();
   onKey((event) => {
@@ -379,7 +397,12 @@ async function boot(): Promise<void> {
   const marks = new PathMarks(town.scene);
   $<HTMLElement>('#loading').hidden = true;
   document.documentElement.dataset.town = 'ready';
-  void shell.boot(still);
+  // Phones open straight to the Today panel, over the town (site.config.ts).
+  const phone = matchMedia('(hover: none) and (max-width: 40rem)').matches;
+  if (phone && site.phonesOpenToday) {
+    shell.play();
+    shell.openToday();
+  } else void shell.boot(still);
 
   startLoop((dt, now) => {
     if (!shell.playing) {

@@ -185,4 +185,9 @@ The access gate (ADR-004) stays in the code and still fails closed when no mode 
    Walking into a door goes in too. Rooms per building type are not planned; hero interiors stay
    after launch.
 7. **Where the town's centre sits:** Main Street, Ratiu Field and the project buildings are placed
-   by hand on the real grid. Proposed: beside the Town Hall, near 26 Mile and Van Dyke.
+   by hand on the real grid. Proposed: beside the Town Hall, near 26 Mile and Van Dyke. The
+   projection already puts today's town there (ADR-030).
+8. **Phones:** open straight to the Today panel over the town (how it works now, ADR-033), or
+   open the town like a desktop does? It's one setting, `phonesOpenToday` in `site.config.ts`.
+9. **Headlines and traffic in town:** built as proposed (a newspaper box now, a freeway sign with
+   M-53; ADR-032). Norbert hasn't confirmed either, so say so if something else would be better.

@@ -78,7 +78,7 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
          Jukebox, Options and Quit to DOS. Later steps fill the panes. The 2D shell still says
          Norbert Field, and 586 survives on the Coney's sign and in the DOS screens; all of it goes
          (ADR-012).
-4. [ ] **The town shows the feeds.** The town reads the same `/api/feeds.json` as the Today panel,
+4. [x] **The town shows the feeds.** The town reads the same `/api/feeds.json` as the Today panel,
        so the two never disagree (SPEC: Feeds in town). A spot whose feed is offline says so and
        why, like the panel's cards (SPEC: Data rules).
    - [x] Cinema marquee: what's playing (TMDB), with Emagine Macomb's showtimes link in its window.
@@ -93,8 +93,9 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
          you start. Traffic gets its freeway sign when step 7 brings M-53; until then it's on the
          Today line at the foot of the screen, with every other feed (ADR-032). This follows the
          proposal, because Norbert left the choice open: he can still ask for something else.
-   - [ ] The town becomes the home page. The Today panel keeps its own page and opens over the town
-         with T (ADR-022). Ask Norbert whether phones should open straight to the panel.
+   - [x] The town becomes the home page. The Today panel keeps its own page (`/today`) and opens
+         over the town with T (ADR-022, ADR-033). Phones open straight to the panel, over the
+         town: Norbert left that choice open, so it's one setting (SPEC open question 8).
 5. [ ] **Town Hall.** The to-do list and calendar live in the Town Hall (ADR-014). Add the building
        to the town; step 7 moves it to the real township office's corner (SPEC: The map).
    - [ ] Storage on this machine in SQLite, a new dependency, so it gets a decision entry. An entry

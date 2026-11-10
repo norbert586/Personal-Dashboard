@@ -27,8 +27,12 @@ export function listen(): void {
       (event.key === 'Enter' || event.key === ' ')
     )
       return;
-    if (CAPTURED.has(event.code)) event.preventDefault();
-    keys.add(event.code);
+    // An open window keeps its keys: arrows and Space scroll it, and nobody walks behind it.
+    const reading = target instanceof Element && target.closest('dialog') !== null;
+    if (!reading) {
+      if (CAPTURED.has(event.code)) event.preventDefault();
+      keys.add(event.code);
+    }
     if (event.repeat) return;
     for (const handler of handlers) if (handler(event) === true) break;
   });

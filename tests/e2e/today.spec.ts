@@ -28,7 +28,7 @@ function collectErrors(page: Page): string[] {
 
 test('shows every feed, each labelled with where its data came from', async ({ page }) => {
   const errors = collectErrors(page);
-  await page.goto('/');
+  await page.goto('/today');
 
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Today');
   await expect(page.getByRole('banner')).toContainText('Ratiu Twp');
@@ -43,7 +43,7 @@ test('shows every feed, each labelled with where its data came from', async ({ p
 });
 
 test('reads the saved samples as they were when captured', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/today');
   const weather = page.getByRole('region', { name: 'Weather' });
   await expect(weather).toContainText('52');
   await expect(weather).toContainText('Mostly Cloudy');
@@ -91,8 +91,13 @@ test('reads the saved samples as they were when captured', async ({ page }) => {
   await expect(page.getByRole('contentinfo')).toContainText('National Weather Service');
 });
 
+test('links back to the town', async ({ page }) => {
+  await page.goto('/today');
+  await expect(page.getByRole('link', { name: 'Walk into town' })).toHaveAttribute('href', '/');
+});
+
 test('responds with private-by-default headers', async ({ request }) => {
-  const response = await request.get('/');
+  const response = await request.get('/today');
   expect(response.status()).toBe(200);
   const headers = response.headers();
   expect(headers['cache-control']).toBe('private, no-store');
@@ -104,7 +109,7 @@ test('responds with private-by-default headers', async ({ request }) => {
 for (const colorScheme of ['light', 'dark'] as const) {
   test(`meets WCAG 2.2 AA per axe (${colorScheme} device setting)`, async ({ page }) => {
     await page.emulateMedia({ colorScheme, reducedMotion: 'reduce' });
-    await page.goto('/');
+    await page.goto('/today');
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
       .analyze();
@@ -117,7 +122,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
 }
 
 test('fits the screen without scrolling sideways', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/today');
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );
@@ -128,7 +133,7 @@ test.describe('without JavaScript', () => {
   test.use({ javaScriptEnabled: false });
 
   test('still shows every feed', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/today');
     for (const name of CARDS) {
       await expect(page.getByRole('region', { name })).toBeVisible();
     }
