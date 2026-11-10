@@ -1,0 +1,62 @@
+# Builds the plain-files version of the town and publishes it to GitHub Pages (ADR-034):
+# on every push to main, and on a timer so the feeds stay fresh.
+#
+# One-time setup:
+#   Settings → Pages → Source → GitHub Actions
+#   Settings → Secrets and variables → Actions → New repository secret, for each of
+#   TMDB_READ_TOKEN, TOMTOM_API_KEY and COMIC_VINE_API_KEY (the same values as in .env).
+#   A feed without its secret shows its saved sample and says so.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # About every half hour. GitHub runs timers late when it's busy, and pauses them after 60
+    # days without a commit; pressing "Run workflow" starts them again.
+    - cron: '11,41 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # A timer run rebuilds code that was already checked when it was pushed.
+      - if: github.event_name != 'schedule'
+        run: npm run check
+      - if: github.event_name != 'schedule'
+        run: npm run test:unit
+      - run: npm run build:pages
+        env:
+          FEEDS: live
+          TMDB_READ_TOKEN: ${{ secrets.TMDB_READ_TOKEN }}
+          TOMTOM_API_KEY: ${{ secrets.TOMTOM_API_KEY }}
+          COMIC_VINE_API_KEY: ${{ secrets.COMIC_VINE_API_KEY }}
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist-pages
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

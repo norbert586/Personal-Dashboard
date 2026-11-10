@@ -1,6 +1,15 @@
 // @ts-check
 import { defineConfig, envField, fontProviders } from 'astro/config';
 import node from '@astrojs/node';
+import { loadEnv } from 'vite';
+
+// Two builds from one codebase (ADR-034). The default is the Node server for home, behind the
+// access gate. DEPLOY_TARGET=pages writes plain files for GitHub Pages instead: every page and
+// the feeds are rendered once at build time, and a scheduled workflow rebuilds them.
+const { DEPLOY_TARGET } = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
+const pages = DEPLOY_TARGET === 'pages';
+/** GitHub serves a project's pages under its repository's name. */
+const PAGES_BASE = '/Personal-Dashboard';
 
 // Fonts are self-hosted from installed @fontsource packages (latin subset), with no
 // third-party CDN at build or run time. We use the `local` provider with explicit files
@@ -15,9 +24,11 @@ const face = (pkg, file, weight) => ({
 });
 
 export default defineConfig({
-  // Private, data-driven pages are rendered per request on our own server (ADR-002).
-  output: 'server',
-  adapter: node({ mode: 'standalone' }),
+  // Private, data-driven pages are rendered per request on our own server (ADR-002); the
+  // GitHub Pages build renders them once, into its own folder so both builds can sit side by side.
+  ...(pages
+    ? { output: 'static', base: PAGES_BASE, outDir: './dist-pages' }
+    : { output: 'server', adapter: node({ mode: 'standalone' }) }),
 
   // Content Security Policy: Astro hashes every script/style it emits (ADR-004).
   // Consequence: no inline style="" attributes or define:vars anywhere.
@@ -38,6 +49,13 @@ export default defineConfig({
         access: 'secret',
         values: ['private-network'],
         optional: true,
+      }),
+      // Which build this is (see the top of this file). Known at build time, so it's `public`.
+      DEPLOY_TARGET: envField.enum({
+        context: 'server',
+        access: 'public',
+        values: ['server', 'pages'],
+        default: 'server',
       }),
       // Where feeds come from (src/lib/feeds.ts): `live` asks the real APIs; `sample` answers
       // from the saved samples in src/lib/sources/fixtures/ with no network (tests, demos).

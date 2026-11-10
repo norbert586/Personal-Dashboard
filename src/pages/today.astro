@@ -9,6 +9,7 @@ import Mark from '../components/Mark.astro';
 import TodayCards from '../components/TodayCards.astro';
 import { getFeeds } from '../lib/feeds.ts';
 import { provenanceLabel, type Provenance } from '../lib/readings.ts';
+import { path } from '../lib/paths.ts';
 import { formatLongDate, formatTime } from '../lib/time.ts';
 import { site } from '../site.config.ts';
 
@@ -41,7 +42,7 @@ const summary = order
   <div class="page">
     <header class="masthead">
       <p class="badge">
-        <a class="town" href="/">
+        <a class="town" href={path('/')}>
           Ratiu Twp
         </a>
         <span class="place">{site.place.name}, Michigan</span>
@@ -62,7 +63,7 @@ const summary = order
         ))}
       </p>
       <p class="way">
-        <a href="/">Walk into town</a>
+        <a href={path('/')}>Walk into town</a>
       </p>
     </header>
 

@@ -17,6 +17,10 @@ const DENIED_PAGE = `<!doctype html>
 
 /** The access gate (ADR-004). Runs before every server-rendered page. */
 export const onRequest = defineMiddleware(async (context, next) => {
+  // A page rendered at build time becomes a plain file, which no server-side gate can guard.
+  // Only the GitHub Pages build has any, and that build is public on purpose (ADR-034).
+  if (context.isPrerendered) return next();
+
   let clientAddress: string | undefined;
   try {
     clientAddress = context.clientAddress;
