@@ -5,6 +5,8 @@
  */
 import { getCollection } from 'astro:content';
 import Page from '../layouts/Page.astro';
+// For its styles only: the windows show the Today panel's cards, fetched from /today/cards.
+import '../components/TodayCards.astro';
 import { PLACES } from '../game/world/places.ts';
 import { formatRelative } from '../lib/time.ts';
 
@@ -152,6 +154,11 @@ const windows = PLACES.map((place) => {
         <>
           <p class="dim">Main Street</p>
           <p>{place.note}</p>
+          {place.cards.length > 0 && (
+            <div class="feed" data-cards={place.cards.join(' ')}>
+              <p class="dim">Reading the feed…</p>
+            </div>
+          )}
           <p>
             <a class="key" href="/">
               Open Today
@@ -521,6 +528,21 @@ const windows = PLACES.map((place) => {
 
   #window-body dd {
     margin: 0;
+  }
+
+  /* A feed's card from the Today panel, without its own panel: the window is the panel. */
+  #window-body :global(.card) {
+    padding: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+  }
+
+  :global(.feed-problem) {
+    padding: var(--space-2) var(--space-3);
+    background: var(--panel-lo);
+    box-shadow: var(--bevel-down);
+    color: var(--offline);
   }
 
   @media (max-width: 40rem) {

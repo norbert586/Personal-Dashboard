@@ -159,6 +159,33 @@ const DEFS = {
       ],
     ),
   },
+  // a backlit letter board: cream by day, warm white at night
+  boardLit: {
+    hexes: ['#b9b6a8', '#e8e6da'],
+    emit: glow(
+      [
+        [185, 182, 168],
+        [232, 230, 218],
+      ],
+      [
+        [226, 196, 140],
+        [255, 242, 208],
+      ],
+    ),
+  },
+  ledG: {
+    hexes: ['#2f5a3a', '#58b070'],
+    emit: glow(
+      [
+        [60, 110, 72],
+        [96, 176, 116],
+      ],
+      [
+        [50, 190, 90],
+        [120, 255, 150],
+      ],
+    ),
+  },
   rwyL: { hexes: ['#8a8a80'], emit: (_lv, n) => mix3([138, 138, 128], [255, 244, 208], nightK(n)) },
   twyL: { hexes: ['#6a76a0'], emit: (_lv, n) => mix3([100, 110, 130], [70, 120, 255], nightK(n)) },
   thrG: { hexes: ['#6a8a6a'], emit: (_lv, n) => mix3([100, 120, 100], [90, 255, 130], nightK(n)) },

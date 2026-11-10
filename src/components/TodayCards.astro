@@ -1,0 +1,34 @@
+---
+/**
+ * Every feed's card, in the Today panel's order. The Today page and the fragment the town's
+ * windows read (/today/cards) both render this, so the two never disagree (SPEC: Feeds in town).
+ */
+import ActivityCard from './ActivityCard.astro';
+import ComicsCard from './ComicsCard.astro';
+import FlightsCard from './FlightsCard.astro';
+import MoviesCard from './MoviesCard.astro';
+import NewsCard from './NewsCard.astro';
+import ScoresCard from './ScoresCard.astro';
+import TrafficCard from './TrafficCard.astro';
+import WeatherCard from './WeatherCard.astro';
+import type { Feeds } from '../lib/feeds.ts';
+
+interface Props {
+  feeds: Feeds;
+  now: Date;
+}
+
+const { feeds, now } = Astro.props;
+---
+
+<WeatherCard reading={feeds.weather} now={now} />
+<TrafficCard reading={feeds.traffic} now={now} />
+<ScoresCard reading={feeds.scores} now={now} />
+<NewsCard section="local" reading={feeds.news.local} now={now} />
+<NewsCard section="tech" reading={feeds.news.tech} now={now} />
+<NewsCard section="national" reading={feeds.news.national} now={now} />
+<NewsCard section="world" reading={feeds.news.world} now={now} />
+<ComicsCard reading={feeds.comics} now={now} />
+<MoviesCard reading={feeds.movies} now={now} />
+<FlightsCard reading={feeds.flights} />
+<ActivityCard reading={feeds.activity} now={now} />

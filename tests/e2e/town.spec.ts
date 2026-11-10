@@ -1,9 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-/** Open the town and skip the intro. */
-async function enterTown(page: Page): Promise<void> {
-  await page.goto('/town');
+/** Open the town and skip the intro. `query` can start you somewhere else: "?at=3.6,19.75". */
+async function enterTown(page: Page, query = ''): Promise<void> {
+  await page.goto(`/town${query}`);
   await expect(page.locator('html')).toHaveAttribute('data-town', 'ready', { timeout: 20_000 });
   await page.getByRole('button', { name: 'Skip intro' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-shell', 'play');
@@ -177,4 +177,59 @@ test('with reduced motion, the intro is skipped', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/town');
   await expect(page.locator('html')).toHaveAttribute('data-shell', 'play', { timeout: 20_000 });
+});
+
+// The e2e server answers every feed from its saved sample (serve.mjs).
+const AT_CINEMA = '?at=3.6,19.75';
+
+test('the cinema marquee and its window show what is playing, as Today does', async ({
+  page,
+  context,
+}) => {
+  await enterTown(page, AT_CINEMA);
+  await expect(page.locator('html')).toHaveAttribute('data-feeds', 'ready');
+  // The marquee: where the data came from, then the films, most popular first.
+  await expect(page.locator('#world')).toHaveAttribute(
+    'data-sign-movies',
+    /^SAMPLE DATA\|WILDWOOD\|PG-13\|THE MONGOOSE\|R\|/,
+  );
+
+  await page.locator('#world').focus();
+  await expect(page.getByRole('button', { name: /Cinema/ })).toBeVisible();
+  await page.keyboard.press('f');
+  const window = page.getByRole('dialog', { name: 'Cinema' });
+  await expect(window).toBeVisible();
+  const movies = window.getByRole('region', { name: 'Movies' });
+  await expect(movies).toContainText('Sample data');
+  await expect(movies.getByRole('listitem').first()).toContainText('Wildwood');
+  await expect(movies.getByRole('link', { name: 'Showtimes at Emagine Macomb' })).toHaveAttribute(
+    'href',
+    /emagine/,
+  );
+  const results = await new AxeBuilder({ page }).include('#window').analyze();
+  expect(results.violations).toEqual([]);
+
+  // The window's card is the Today panel's card, word for word.
+  const today = await context.newPage();
+  await today.goto('/');
+  expect(await movies.innerText()).toBe(
+    await today.getByRole('region', { name: 'Movies' }).innerText(),
+  );
+});
+
+test('when the town cannot reach its feeds, the marquee goes dark and the window says why', async ({
+  page,
+}) => {
+  await page.route('**/api/feeds.json', (route) => route.fulfill({ status: 503, body: 'down' }));
+  await enterTown(page, AT_CINEMA);
+  await expect(page.locator('html')).toHaveAttribute('data-feeds', 'unreachable');
+  await expect(page.locator('#world')).toHaveAttribute(
+    'data-sign-movies',
+    'OFFLINE|NO SIGNAL|ASK INSIDE',
+  );
+  await page.locator('#world').focus();
+  await page.keyboard.press('f');
+  await expect(page.getByRole('dialog', { name: 'Cinema' })).toContainText(
+    "The town couldn't reach its feeds: the server answered 503.",
+  );
 });

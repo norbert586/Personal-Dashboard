@@ -360,3 +360,19 @@ intensities by π, so the code-painted colours land on screen as they did in the
 default view, midday and night were checked against the prototype's screenshots.
 Consequences: the town doesn't use physically based light units; materials are painted, not lit
 realistically, which is the look. A three upgrade must be checked against those screenshots again.
+
+## ADR-029: The town's windows show the Today panel's own cards
+
+**Accepted · 2026-11-10**
+Context: the town and the Today panel must never disagree, and a spot whose feed is offline has to
+say so and why (SPEC: Data rules). A second renderer in the browser, building the same lists from
+JSON, would drift from the panel's cards.
+Decision: a feed building's window shows the Today panel's card for its feed, rendered by the same
+components and fetched as an HTML fragment (`/today/cards`). What the town draws in 3D (boards,
+aircraft, the sky) reads `/api/feeds.json`, asked at the same moment. A board has two lines in the
+sign font and a status strip that names where its data came from (live with the time, sample or
+offline); an offline board goes dark and the window says why. The town boots first and asks for
+the feeds after, so a slow feed never holds up the first frame.
+Consequences: one more route, and the town's page carries the cards' styles. Boards are 12
+characters wide, so long titles are cut at a word; the window always has the whole list. The feed
+shops are a floor taller than in the feel test, to carry their boards.

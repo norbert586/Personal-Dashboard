@@ -4,16 +4,9 @@
  * town lands, and reads the same feeds as /api/feeds.json.
  */
 import Page from '../layouts/Page.astro';
-import ActivityCard from '../components/ActivityCard.astro';
-import ComicsCard from '../components/ComicsCard.astro';
 import Credits from '../components/Credits.astro';
-import FlightsCard from '../components/FlightsCard.astro';
 import Mark from '../components/Mark.astro';
-import MoviesCard from '../components/MoviesCard.astro';
-import NewsCard from '../components/NewsCard.astro';
-import ScoresCard from '../components/ScoresCard.astro';
-import TrafficCard from '../components/TrafficCard.astro';
-import WeatherCard from '../components/WeatherCard.astro';
+import TodayCards from '../components/TodayCards.astro';
 import { getFeeds } from '../lib/feeds.ts';
 import { provenanceLabel, type Provenance } from '../lib/readings.ts';
 import { formatLongDate, formatTime } from '../lib/time.ts';
@@ -69,17 +62,7 @@ const summary = order
     </header>
 
     <main id="main" class="cards">
-      <WeatherCard reading={feeds.weather} now={now} />
-      <TrafficCard reading={feeds.traffic} now={now} />
-      <ScoresCard reading={feeds.scores} now={now} />
-      <NewsCard section="local" reading={feeds.news.local} now={now} />
-      <NewsCard section="tech" reading={feeds.news.tech} now={now} />
-      <NewsCard section="national" reading={feeds.news.national} now={now} />
-      <NewsCard section="world" reading={feeds.news.world} now={now} />
-      <ComicsCard reading={feeds.comics} now={now} />
-      <MoviesCard reading={feeds.movies} now={now} />
-      <FlightsCard reading={feeds.flights} />
-      <ActivityCard reading={feeds.activity} now={now} />
+      <TodayCards feeds={feeds} now={now} />
     </main>
 
     <Credits />

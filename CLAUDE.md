@@ -93,6 +93,8 @@ npm run format       # prettier --write .
 - `prototype/` holds the throwaway 2D and 3D prototypes the MVP ports from (ADR-013).
   `prototype/build.sh` assembles them into `prototype/dist/`. They're excluded from formatting
   and type checks. Port from them; don't add features there.
+- For screenshots and tests, the town's page takes `?at=x,y` (where you start, in tiles) and
+  `?time=day|dusk|night`. The canvas carries what each board says in `data-sign-*` attributes.
 - Headless Chromium in Claude cloud sandboxes renders WebGL (software), so the town's e2e smoke
   test and screenshots run there. To compare against the prototypes, open
   `prototype/dist/*.html` over `file://`; the 3D one loads three.js from cdn.jsdelivr.net.

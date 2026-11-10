@@ -5,11 +5,15 @@
 import { BasicShadowMap, ColorManagement, LinearSRGBColorSpace, WebGLRenderer } from 'three';
 import { CameraRig } from './camera.ts';
 import { nearestDoor, walksIn } from './entrance.ts';
+import { FeedClient } from './feeds.ts';
 import { GoingIn } from './going-in.ts';
 import { createLife, stepLife } from './life.ts';
 import { LifeBodies } from './life-bodies.ts';
 import { PathMarks } from './marks.ts';
 import { Shell } from './shell.ts';
+import { moviePages, signContent } from './sign-pages.ts';
+import { SignBoards } from './signs.ts';
+import { fillCards } from './windows.ts';
 import { buildNav, findPath, pathLength, type Point } from './nav.ts';
 import type { Door } from './world/builders.ts';
 import { keys, listen, onKey, startLoop } from './loop.ts';
@@ -72,15 +76,24 @@ function boot(): void {
     return;
   }
 
+  // For screenshots and tests: ?at=x,y starts you somewhere else, ?time=night picks the light.
+  const asked = new URLSearchParams(location.search);
+  const [atX, atY] = (asked.get('at') ?? '').split(',').map(Number);
+  const start =
+    Number.isFinite(atX) && Number.isFinite(atY)
+      ? { x: atX!, y: atY! }
+      : { x: START.x, y: START.y };
+
   const world = buildWorld({ season: seasonOf(...monthDay(new Date())) });
   const town = buildTown(world);
-  const rig = new CameraRig(renderer, canvas, START.x, START.y);
-  const player = new Player(town, newYou(START.x, START.y));
+  const rig = new CameraRig(renderer, canvas, start.x, start.y);
+  const player = new Player(town, newYou(start.x, start.y));
   const you = player.you;
 
   // ---- Controls: keys, buttons, drag and wheel ----
-  let time: TimeOfDay = 'auto';
+  let time: TimeOfDay = TIMES.find((t) => t.id === asked.get('time'))?.id ?? 'auto';
   const timeButton = $<HTMLButtonElement>('#b-time');
+  timeButton.textContent = TIMES.find((t) => t.id === time)!.label;
   const cycleTime = () => {
     const next = TIMES[(TIMES.findIndex((t) => t.id === time) + 1) % TIMES.length]!;
     time = next.id;
@@ -100,6 +113,29 @@ function boot(): void {
   $('#b-in').addEventListener('click', () => rig.zoomBy(1));
   $('#b-out').addEventListener('click', () => rig.zoomBy(-1));
 
+  // ---- The feeds: the same answers the Today panel shows, read again every half minute ----
+  const feeds = new FeedClient();
+  const boards = new SignBoards(town, world);
+  const windowBody = $<HTMLElement>('#window-body');
+  feeds.onChange(() => {
+    const now = feeds.snapshot?.feeds;
+    const down = !now && feeds.problem !== null;
+    const show = <T>(key: string, content: ReturnType<typeof signContent<T>>) => {
+      boards.set(key, content);
+      canvas.dataset[`sign${key[0]!.toUpperCase()}${key.slice(1)}`] = [
+        content.status,
+        ...content.pages.flatMap((page) => page.lines),
+      ].join('|');
+    };
+    show('movies', signContent(now?.movies, moviePages, down));
+    fillCards(windowBody, feeds);
+    document.documentElement.dataset.feeds = now ? 'ready' : down ? 'unreachable' : 'loading';
+  });
+  void feeds.refresh(true);
+  setInterval(() => {
+    if (!document.hidden) void feeds.refresh();
+  }, 30_000);
+
   // ---- Going in, and the door prompt ----
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const going = new GoingIn(
@@ -110,9 +146,14 @@ function boot(): void {
     {
       dialog: $<HTMLDialogElement>('#window'),
       title: $<HTMLElement>('#window-title'),
-      body: $<HTMLElement>('#window-body'),
+      body: windowBody,
       dim: $<HTMLElement>('#dim'),
       template: (id) => document.querySelector<HTMLTemplateElement>(`template[data-place="${id}"]`),
+      opened: (body) => {
+        fillCards(body, feeds);
+        // Cards more than a minute old are read again; the listener above swaps them in.
+        if (body.querySelector('[data-cards]') && feeds.cardsAge > 60) void feeds.refresh(true);
+      },
     },
     still,
   );
@@ -298,6 +339,7 @@ function boot(): void {
       bodies.sky(dt, rig.target.x, rig.target.z, rig.yaw);
     }
     player.sync(town, night);
+    if (shell.playing) boards.update(now, still);
     bodies.sync(town, still ? 0 : now, night, still);
     marks.update(path, you.x, you.y, now, still);
     town.moving.flush();
