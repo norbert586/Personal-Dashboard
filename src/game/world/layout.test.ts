@@ -50,6 +50,28 @@ test('seasons follow the calendar', () => {
   assert.notDeepEqual(palette('winter').ramps.grass, palette('summer').ramps.grass);
 });
 
+test('snow comes from the forecast, not the calendar', () => {
+  // Winter by date is bare and dormant; snow lies only when the weather says so.
+  const bare = palette('winter');
+  const snowy = palette('winter', true);
+  assert.equal(bare.snow, false);
+  assert.notDeepEqual(snowy.ramps.grass, bare.ramps.grass);
+  assert.notDeepEqual(snowy.ramps.shG, bare.ramps.shG); // roofs too
+  assert.deepEqual(snowy.ramps.asph, bare.ramps.asph); // the roads are cleared
+  // An early snow in fall whitens the ground and leaves the trees their colour.
+  assert.deepEqual(palette('fall', true).ramps.grass, snowy.ramps.grass);
+  assert.deepEqual(palette('fall', true).ramps.leafA, palette('fall').ramps.leafA);
+});
+
+test('the orchard blossoms in spring', () => {
+  const mats = (season: 'spring' | 'fall') =>
+    new Set(
+      buildWorld({ season }).trees.flatMap((tree) => (tree.kind === 'tree' ? tree.mats : [])),
+    );
+  assert.ok(mats('spring').has('blossom'));
+  assert.ok(!mats('fall').has('blossom'));
+});
+
 test('signs letter over the wall and leave the rest of it alone', () => {
   const wall = facade({ kind: 'plain', mat: 'cmu' });
   const sign = withText(wall, [{ s: 'I', u: 0, v: 0, tok: M.neonY + 1 }]);

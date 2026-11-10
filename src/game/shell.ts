@@ -1,7 +1,7 @@
 /**
  * The old-PC shell (SPEC: Menus): a short DOS boot, the sound-card setup screen (which doubles as
- * the first gesture sound needs), the title screen, and the pause menu on Esc. Reduced motion skips
- * the boot. Plain DOM, no three.js.
+ * the first gesture sound needs), the title screen, the pause menu on Esc, and the Today panel on
+ * T; the town holds still behind both. Reduced motion skips the boot. Plain DOM, no three.js.
  */
 
 export type ShellState = 'boot-dos' | 'boot-setup' | 'boot-title' | 'play' | 'paused';
@@ -31,12 +31,15 @@ export class Shell {
   sound = true;
   /** Called when play starts or resumes, so the town can take the keys. */
   onPlay: () => void = () => {};
+  /** Called as the Today panel opens, so the town can put the latest cards in it. */
+  onToday: () => void = () => {};
   private readonly dos = $<HTMLElement>('#boot-dos');
   private readonly dosText = $<HTMLElement>('#boot-text');
   private readonly setup = $<HTMLElement>('#boot-setup');
   private readonly title = $<HTMLElement>('#boot-title');
   private readonly skip = $<HTMLButtonElement>('#btn-skip');
   private readonly pause = $<HTMLDialogElement>('#pause');
+  private readonly today = $<HTMLDialogElement>('#today');
   private readonly items: HTMLButtonElement[];
 
   constructor() {
@@ -53,9 +56,19 @@ export class Shell {
       b.addEventListener('click', () =>
         b.dataset.pane === 'resume' ? this.pause.close() : this.show(b.dataset.pane ?? ''),
       );
+    // Closing either one resumes play, unless the other has just opened over it.
     this.pause.addEventListener('close', () => {
-      if (this.state === 'paused') this.play();
+      if (this.state === 'paused' && !this.today.open) this.play();
     });
+    this.today.addEventListener('close', () => {
+      if (this.state === 'paused' && !this.pause.open) this.play();
+    });
+    for (const b of document.querySelectorAll<HTMLElement>('[data-open-today]'))
+      b.addEventListener('click', () => {
+        this.pause.close();
+        this.state = 'play';
+        this.openToday();
+      });
   }
 
   get playing(): boolean {
@@ -124,6 +137,14 @@ export class Shell {
     this.items.find((b) => b.dataset.pane === pane)?.focus();
   }
 
+  /** Today, over the town: the same cards as the Today page. */
+  openToday(): void {
+    if (this.state !== 'play' || this.today.open) return;
+    this.set('paused');
+    this.onToday();
+    this.today.showModal();
+  }
+
   private show(name: string): void {
     for (const b of this.items) b.setAttribute('aria-current', String(b.dataset.pane === name));
     for (const p of this.pause.querySelectorAll<HTMLElement>('[data-pane-body]'))
@@ -152,7 +173,11 @@ export class Shell {
         }
         return true;
       case 'paused': {
-        // Up and down move through the menu; the dialog handles Esc.
+        // T closes Today again. Up and down move through the menu; the dialog handles Esc.
+        if (e.code === 'KeyT' && this.today.open) {
+          this.today.close();
+          return true;
+        }
         const i = this.items.indexOf(document.activeElement as HTMLButtonElement);
         if (i >= 0 && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
           e.preventDefault();
@@ -168,6 +193,11 @@ export class Shell {
         if (e.key === 'Escape' || e.code === 'KeyP') {
           e.preventDefault();
           this.openPause();
+          return true;
+        }
+        if (e.code === 'KeyT') {
+          e.preventDefault();
+          this.openToday();
           return true;
         }
         return false;

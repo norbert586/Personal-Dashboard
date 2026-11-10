@@ -91,6 +91,9 @@ const DEFS = {
   shrub: { hexes: ['#233f20', '#31592a', '#437534', '#5a9142'] },
   pine: { hexes: ['#13291d', '#1c3d2b', '#285539', '#386f4c'] },
   trunk: { hexes: ['#2b1f17', '#46321f', '#5e452c'] },
+  // orchard blossom, for spring
+  blossom: { hexes: ['#b0668a', '#d48cae', '#eeb4cd', '#fbdfe9'] },
+  blossomW: { hexes: ['#c4b2bb', '#e3d3da', '#f5ebef', '#ffffff'] },
   // emissive: lit at night
   glassLit: {
     hexes: ['#46566a', '#62768c', '#8aa0b6'],
@@ -156,6 +159,33 @@ const DEFS = {
       [
         [255, 170, 70],
         [255, 226, 150],
+      ],
+    ),
+  },
+  // a backlit letter board: cream by day, warm white at night
+  boardLit: {
+    hexes: ['#b9b6a8', '#e8e6da'],
+    emit: glow(
+      [
+        [185, 182, 168],
+        [232, 230, 218],
+      ],
+      [
+        [226, 196, 140],
+        [255, 242, 208],
+      ],
+    ),
+  },
+  ledG: {
+    hexes: ['#2f5a3a', '#58b070'],
+    emit: glow(
+      [
+        [60, 110, 72],
+        [96, 176, 116],
+      ],
+      [
+        [50, 190, 90],
+        [120, 255, 150],
       ],
     ),
   },
@@ -248,20 +278,48 @@ const SEASONS: Record<Season, Ramps> = {
     plow: PLOW,
     walk: WALK,
   },
+  // Winter without snow: dormant grass and bare branches. Snow comes from the forecast (SNOW).
   winter: {
-    grass: ['#9eadbb', '#bccad6', '#d9e3ec', '#f2f7fb'],
-    turf: ['#9eadbb', '#bccad6', '#d9e3ec', '#f2f7fb'],
-    leafA: ['#3a312c', '#4f443e', '#6f635b', '#aab7c2'],
-    leafB: ['#3a312c', '#4f443e', '#6f635b', '#aab7c2'],
-    leafC: ['#3a312c', '#4f443e', '#6f635b', '#aab7c2'],
-    shrub: ['#4a4338', '#645a4e', '#82776a', '#b8c3cc'],
-    pine: ['#17302a', '#264a40', '#43695c', '#c5d3dc'],
-    crop: ['#c9d4de', '#dce5ec', '#eef3f7', '#f8fbfd', '#eef3f7', '#dce5ec'],
-    soy: ['#c3cdd6', '#d8e1e8', '#eaf0f4', '#f6f9fb', '#eaf0f4', '#d8e1e8'],
-    stub: ['#bfcad4', '#d8e1e8', '#edf2f6'],
-    plow: ['#7c8892', '#aab4be', '#d8e0e7'],
-    walk: ['#a8b3bd', '#c6d0d8', '#dfe6ec', '#eef3f6'],
+    grass: ['#55553a', '#6a6844', '#807c50', '#96915c'],
+    turf: ['#4f6040', '#5f7349', '#718754', '#859b62'],
+    leafA: ['#3a312c', '#4f443e', '#655950', '#7b6f64'],
+    leafB: ['#3a312c', '#4f443e', '#655950', '#7b6f64'],
+    leafC: ['#3a312c', '#4f443e', '#655950', '#7b6f64'],
+    shrub: ['#3f3a2c', '#554e3a', '#6b6348', '#827a58'],
+    pine: PINE,
+    crop: ['#6e5f3c', '#7d6e46', '#8d7e52', '#9d8e5e', '#8d7e52', '#7d6e46'],
+    soy: ['#665c3c', '#756a45', '#857a50', '#958a5c', '#857a50', '#756a45'],
+    stub: ['#6b5e44', '#84735a', '#9c8a6c'],
+    plow: PLOW,
+    walk: WALK,
   },
+};
+
+/** Snow on the ground and the roofs, over any season's ramps; roads and walks are cleared. */
+const ROOF_SNOW = ['#a9b6c2', '#c5d0d9', '#dee6ec', '#f0f5f8'];
+const SNOW: Ramps = {
+  grass: ['#9eadbb', '#bccad6', '#d9e3ec', '#f2f7fb'],
+  turf: ['#9eadbb', '#bccad6', '#d9e3ec', '#f2f7fb'],
+  dirt: ['#8f9aa4', '#b4bfc8', '#d6dee5'],
+  mulch: ['#8f9aa4', '#b4bfc8', '#d6dee5'],
+  shrub: ['#4a4338', '#645a4e', '#82776a', '#b8c3cc'],
+  pine: ['#17302a', '#264a40', '#43695c', '#c5d3dc'],
+  crop: ['#c9d4de', '#dce5ec', '#eef3f7', '#f8fbfd', '#eef3f7', '#dce5ec'],
+  soy: ['#c3cdd6', '#d8e1e8', '#eaf0f4', '#f6f9fb', '#eaf0f4', '#d8e1e8'],
+  stub: ['#bfcad4', '#d8e1e8', '#edf2f6'],
+  plow: ['#7c8892', '#aab4be', '#d8e0e7'],
+  walk: ['#a8b3bd', '#c6d0d8', '#dfe6ec', '#eef3f6'],
+  shG: ROOF_SNOW,
+  shB: ROOF_SNOW,
+  shR: ROOF_SNOW,
+  shN: ROOF_SNOW,
+  flatR: ROOF_SNOW,
+};
+/** Bare branches carry a little snow. */
+const SNOW_TWIGS: Ramps = {
+  leafA: ['#3a312c', '#4f443e', '#6f635b', '#aab7c2'],
+  leafB: ['#3a312c', '#4f443e', '#6f635b', '#aab7c2'],
+  leafC: ['#3a312c', '#4f443e', '#6f635b', '#aab7c2'],
 };
 
 /** Months: Dec–Feb winter, Mar–May spring, Jun–Aug summer, Sep to mid-Nov fall, then late fall. */
@@ -275,6 +333,8 @@ export function seasonOf(month: number, day: number): Season {
 /** The colour of every token, for one season: rgb[token] and emissive[token] (null when unlit). */
 export interface Palette {
   season: Season;
+  /** Snow lies on the ground. */
+  snow: boolean;
   /** The ramp of each material, dark to light. */
   ramps: Record<MatName, RGB[]>;
   rgb: RGB[];
@@ -282,13 +342,15 @@ export interface Palette {
   emissive: (RGB | null)[];
 }
 
-export function palette(season: Season): Palette {
+export function palette(season: Season, snow = false): Palette {
   const ramps = {} as Record<MatName, RGB[]>;
   const rgb: RGB[] = [];
   const emissive: (RGB | null)[] = [];
+  const bare = season === 'winter' || season === 'latefall';
+  const snowy: Ramps = snow ? { ...SNOW, ...(bare ? SNOW_TWIGS : {}) } : {};
   MAT_NAMES.forEach((name, mi) => {
     const def: MatDef = DEFS[name];
-    const ramp = (SEASONS[season][name] ?? def.hexes).map(hex);
+    const ramp = (snowy[name] ?? SEASONS[season][name] ?? def.hexes).map(hex);
     ramps[name] = ramp;
     for (let lv = 0; lv < 8; lv++) {
       const l = Math.min(lv, ramp.length - 1);
@@ -296,5 +358,5 @@ export function palette(season: Season): Palette {
       emissive[mi * 8 + lv] = def.emit ? def.emit(l, 1, 0) : null;
     }
   });
-  return { season, ramps, rgb, emissive };
+  return { season, snow, ramps, rgb, emissive };
 }

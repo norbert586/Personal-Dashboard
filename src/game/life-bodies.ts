@@ -1,7 +1,7 @@
 /**
  * Bodies for life in town (life.ts): townspeople, cars, the plane and the parked ones, the train,
- * turbine rotors and smoke. Overhead, a low plane sometimes sweeps right under the camera, and high
- * jets leave contrails (DESIGN: Moving around).
+ * turbine rotors and smoke. Overhead fly the real aircraft from the ADS-B feed (sky-traffic.ts):
+ * a low one sweeps right under the camera, and high jets leave contrails (DESIGN: Moving around).
  */
 import {
   BufferAttribute,
@@ -28,6 +28,7 @@ import {
 } from './bodies.ts';
 import { carAt, carColour, CAR_COLOURS, type Car, type Life, type Person } from './life.ts';
 import { glowTexture, type Town } from './scene.ts';
+import { planeAt, type Plane } from './sky-traffic.ts';
 import { V, ZPX } from './world/atlas.ts';
 import type { World } from './world/builders.ts';
 import type { RGB } from './world/materials.ts';
@@ -86,16 +87,18 @@ interface Townsperson {
   B: Bike | null;
   dog: Group | null;
 }
-interface Pass {
-  g: Group;
-  t: number;
-  wait: number;
-  h: number;
-  speed: number;
-  along: number;
-  dir: [number, number];
-  p0: [number, number];
+/** A real aircraft's body, made the first time it comes into view. */
+interface Flyer {
+  plane: Plane;
+  g: Group | null;
+  trail: Line<BufferGeometry, LineBasicMaterial> | null;
 }
+/** Aircraft further than this from where the camera looks aren't drawn, in tiles. */
+const SKY_RANGE = 60;
+/** With no fresh answer for this long, an aircraft is gone: seconds. */
+const SKY_STALE = 300;
+/** A contrail's length, in tiles. */
+const TRAIL = 9;
 
 export class LifeBodies {
   private readonly people: Townsperson[] = [];
@@ -105,16 +108,26 @@ export class LifeBodies {
   private readonly rotors: Group[] = [];
   private readonly smoke: Points<BufferGeometry, PointsMaterial>;
   private readonly smokePos = new Float32Array(400 * 3);
-  private readonly fly: Pass;
-  private readonly jet: Pass;
-  private readonly trail: Line<BufferGeometry, LineBasicMaterial>;
-  private readonly trailPts: Array<[number, number]> = [];
+  private readonly scene: Scene;
+  private readonly flyers = new Map<string, Flyer>();
+  private readonly trailMat = new LineBasicMaterial({
+    color: 0xf4f6fa,
+    transparent: true,
+    opacity: 0.6,
+    fog: false,
+  });
+  /** When the feed saw the aircraft, on the frame clock (seconds), and which answer that was. */
+  private skyT0 = 0;
+  private skyKey = '';
+  private skyLoops = false;
+  /** How many aircraft are in view right now, and the one nearest the middle of the view. */
+  inView = 0;
+  overhead: Plane | null = null;
   private readonly life: Life;
-  private readonly random: () => number;
 
-  constructor(scene: Scene, world: World, life: Life, random: () => number = Math.random) {
+  constructor(scene: Scene, world: World, life: Life) {
     this.life = life;
-    this.random = random;
+    this.scene = scene;
     for (const p of life.people) {
       const F = makeFigure(scene, {
         skin: p.skin,
@@ -212,31 +225,6 @@ export class LifeBodies {
     );
     this.smoke.frustumCulled = false;
     scene.add(this.smoke);
-    // Planes for the eye in the sky.
-    const flyG = model(scene, planeParts([46, 92, 168], false)).g;
-    flyG.scale.setScalar(3.2);
-    flyG.visible = false;
-    const jetG = model(scene, planeParts([200, 52, 44], true)).g;
-    jetG.scale.setScalar(1.5);
-    jetG.visible = false;
-    const blank = {
-      t: -1,
-      h: 0,
-      speed: 0,
-      along: 0,
-      dir: [1, 0] as [number, number],
-      p0: [0, 0] as [number, number],
-    };
-    this.fly = { g: flyG, wait: 9, ...blank };
-    this.jet = { g: jetG, wait: 4, ...blank };
-    const lg = new BufferGeometry();
-    lg.setAttribute('position', new BufferAttribute(new Float32Array(90 * 3), 3));
-    this.trail = new Line(
-      lg,
-      new LineBasicMaterial({ color: 0xf4f6fa, transparent: true, opacity: 0.6, fog: false }),
-    );
-    this.trail.frustumCulled = false;
-    scene.add(this.trail);
   }
 
   /** Pose everything for time t (seconds); `still` holds the rotors for reduced motion. */
@@ -305,82 +293,95 @@ export class LifeBodies {
     }
     this.smoke.geometry.setDrawRange(0, k);
     this.smoke.geometry.attributes.position!.needsUpdate = true;
-    if (night > 0.3 && this.fly.t >= 0) {
-      const p = this.fly.g.position;
-      const [fx, fy] = this.fly.dir;
-      add(p.x + fy * 1.5, p.z - fx * 1.5, p.y * ZPX + 30, [1, 0.2, 0.15]);
-      add(p.x - fy * 1.5, p.z + fx * 1.5, p.y * ZPX + 30, [0.2, 1, 0.4]);
-    }
-  }
-
-  /** A point h tiles up shows mid-screen when it sits h·√3 toward the camera from what you look at. */
-  private start(
-    o: Pass,
-    h: number,
-    speed: number,
-    along: number,
-    cx: number,
-    cz: number,
-    yaw: number,
-  ): void {
-    const a = this.random() * Math.PI * 2;
-    const x = cx + Math.cos(yaw) * h * 1.732 + (this.random() - 0.5) * 3;
-    const y = cz + Math.sin(yaw) * h * 1.732 + (this.random() - 0.5) * 3;
-    o.dir = [Math.cos(a), Math.sin(a)];
-    o.h = h;
-    o.speed = speed;
-    o.along = along;
-    o.t = 0;
-    o.p0 = [x - o.dir[0] * along, y - o.dir[1] * along];
-    o.g.visible = true;
-    faceTo(o.g, o.dir[0], o.dir[1]);
-  }
-
-  private advance(o: Pass, dt: number): boolean {
-    o.t += dt;
-    const d = o.speed * o.t;
-    o.g.position.set(o.p0[0] + o.dir[0] * d, o.h, o.p0[1] + o.dir[1] * d);
-    return d > o.along * 2;
-  }
-
-  /** Low flyovers and high jets with contrails, passing over wherever the camera looks. */
-  sky(dt: number, cx: number, cz: number, yaw: number): void {
-    const { fly, jet } = this;
-    if (fly.t < 0) {
-      if ((fly.wait -= dt) <= 0) this.start(fly, 5.2, 6.5, 14, cx, cz, yaw);
-    } else {
-      fly.g.rotation.x = Math.sin(fly.t * 0.9) * 0.14;
-      if (this.advance(fly, dt)) {
-        fly.t = -1;
-        fly.g.visible = false;
-        fly.wait = 28 + this.random() * 40;
+    // Navigation lights on the real aircraft: red to port, green to starboard, a white strobe.
+    if (night > 0.3)
+      for (const { plane, g } of this.flyers.values()) {
+        if (!g?.visible) continue;
+        const p = g.position;
+        const z = p.y * ZPX;
+        const w = 0.48 * plane.scale;
+        add(p.x + plane.fy * w, p.z - plane.fx * w, z + 9, [1, 0.2, 0.15]);
+        add(p.x - plane.fy * w, p.z + plane.fx * w, z + 9, [0.2, 1, 0.4]);
+        if (Math.floor(t * 1.6) % 2 === 0) add(p.x, p.z, z + 12, [1, 1, 1]);
       }
-    }
-    const g = this.trail.geometry;
-    if (jet.t < 0) {
-      if ((jet.wait -= dt) <= 0) {
-        this.start(jet, 12, 2.4, 20, cx, cz, yaw);
-        this.trailPts.length = 0;
+  }
+
+  /**
+   * The aircraft in the feed's latest answer. `key` names the answer, so hearing the same one again
+   * changes nothing and they fly on; `age` is how old it was on arrival, in seconds; `now` is the
+   * frame clock. A saved sample has no clock of its own, so it replays from the start (`loops`).
+   */
+  setAircraft(planes: Plane[], key: string, age: number, now: number, loops = false): void {
+    if (key === this.skyKey) return;
+    this.skyKey = key;
+    this.skyT0 = now - age;
+    this.skyLoops = loops;
+    const seen = new Set(planes.map((plane) => plane.hex));
+    for (const [hex, flyer] of this.flyers)
+      if (!seen.has(hex)) {
+        if (flyer.g) this.scene.remove(flyer.g);
+        if (flyer.trail) this.scene.remove(flyer.trail);
+        this.flyers.delete(hex);
       }
-      return;
+    for (const plane of planes) {
+      const flyer = this.flyers.get(plane.hex);
+      if (flyer) flyer.plane = plane;
+      else this.flyers.set(plane.hex, { plane, g: null, trail: null });
     }
-    const done = this.advance(jet, dt);
-    const p = jet.g.position;
-    const last = this.trailPts[this.trailPts.length - 1];
-    if (!last || Math.hypot(p.x - last[0], p.z - last[1]) > 0.3) {
-      this.trailPts.push([p.x - jet.dir[0] * 0.6, p.z - jet.dir[1] * 0.6]);
-      if (this.trailPts.length > 90) this.trailPts.shift();
-    }
-    const arr = g.attributes.position!.array as Float32Array;
-    this.trailPts.forEach((q, i) => arr.set([q[0], jet.h + 0.12, q[1]], i * 3));
-    g.setDrawRange(0, this.trailPts.length);
-    g.attributes.position!.needsUpdate = true;
-    if (done) {
-      jet.t = -1;
-      jet.g.visible = false;
-      this.trailPts.length = 0;
-      g.setDrawRange(0, 0);
-      jet.wait = 22 + this.random() * 30;
+  }
+
+  /**
+   * Fly the real aircraft to where they are at time `now` (the frame clock, seconds), and draw the
+   * ones near where the camera looks. A point h tiles up shows mid-screen when it sits h·√3 toward
+   * the camera from what you look at, so that's where "near" is measured from.
+   */
+  sky(now: number, cx: number, cz: number, yaw: number): void {
+    let elapsed = now - this.skyT0;
+    if (this.skyLoops) elapsed %= SKY_STALE;
+    this.inView = 0;
+    this.overhead = null;
+    let nearest = Infinity;
+    for (const flyer of this.flyers.values()) {
+      const { plane } = flyer;
+      const [x, y] = planeAt(plane, elapsed);
+      const mx = cx + Math.cos(yaw) * plane.h * 1.732;
+      const my = cz + Math.sin(yaw) * plane.h * 1.732;
+      const off = Math.hypot(x - mx, y - my);
+      const near = elapsed < SKY_STALE && off < SKY_RANGE;
+      // Close enough to the middle of the view to be on screen: worth a "look up".
+      if (near && off < 14 && off < nearest) {
+        nearest = off;
+        this.overhead = plane;
+      }
+      if (!near) {
+        if (flyer.g) flyer.g.visible = false;
+        if (flyer.trail) flyer.trail.visible = false;
+        continue;
+      }
+      this.inView++;
+      if (!flyer.g) {
+        const accent: RGB = plane.kind === 'jet' ? [200, 52, 44] : [46, 92, 168];
+        flyer.g = model(this.scene, planeParts(accent, plane.kind === 'jet')).g;
+      }
+      const g = flyer.g;
+      g.visible = true;
+      g.scale.setScalar(plane.scale);
+      g.position.set(x, plane.h, y);
+      faceTo(g, plane.fx, plane.fy);
+      if (!plane.contrail) continue;
+      if (!flyer.trail) {
+        const lg = new BufferGeometry();
+        lg.setAttribute('position', new BufferAttribute(new Float32Array(6), 3));
+        flyer.trail = new Line(lg, this.trailMat);
+        flyer.trail.frustumCulled = false;
+        this.scene.add(flyer.trail);
+      }
+      const tail = flyer.trail.geometry.attributes.position!;
+      const back = 0.5 * plane.scale;
+      tail.setXYZ(0, x - plane.fx * back, plane.h + 0.1, y - plane.fy * back);
+      tail.setXYZ(1, x - plane.fx * (back + TRAIL), plane.h + 0.1, y - plane.fy * (back + TRAIL));
+      tail.needsUpdate = true;
+      flyer.trail.visible = true;
     }
   }
 }

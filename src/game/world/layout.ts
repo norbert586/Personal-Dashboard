@@ -21,6 +21,7 @@ import {
   lampPost,
   light,
   mailbox,
+  newsBox,
   obj,
   pineTree,
   pole,
@@ -33,6 +34,7 @@ import {
   turbine,
   utilityPole,
   waterTower,
+  type ShopSpec,
   type World,
 } from './builders.ts';
 import {
@@ -70,12 +72,14 @@ const RWYFONT: Record<string, string[]> = {
 
 export interface Options {
   season: Season;
+  /** Snow lies on the ground (from the forecast). */
+  snow?: boolean;
   /** Land and take off into the wind: true when it blows from the north. */
   northbound?: boolean;
 }
 
-export function buildWorld({ season, northbound = true }: Options): World {
-  const pal = palette(season);
+export function buildWorld({ season, snow = false, northbound = true }: Options): World {
+  const pal = palette(season, snow);
   const ground = new Ground(-4, 40, { x0: -0.6, x1: G + 0.6, paint: grassP, outside: farP });
   const W: World = {
     season,
@@ -92,6 +96,7 @@ export function buildWorld({ season, northbound = true }: Options): World {
     stacks: [],
     fixtures: [],
     turbines: [],
+    signs: [],
   };
   building(W);
   const g = (x0: number, y0: number, x1: number, y1: number, p: GroundPaint) =>
@@ -264,22 +269,34 @@ export function buildWorld({ season, northbound = true }: Options): World {
     [0, 8.4, 10.0, 'brickB', 'awnR', 'HARDWARE'],
     [0, 10.0, 11.4, 'brickY', 'awnB', ''],
   ];
-  row.forEach(([id, x0, x1, brick, awn, name], i) =>
+  // The feed shops are a floor taller, to carry the boards that show their feeds (signs.ts).
+  const boards: Record<number, ShopSpec['board']> = {
+    [PLACE.cinema]: { key: 'movies', skin: 'marquee', canopy: true },
+    [PLACE.comicShop]: { key: 'comics', skin: 'neon', shelves: true },
+    [PLACE.sportsBar]: { key: 'scores', skin: 'led' },
+  };
+  row.forEach(([id, x0, x1, brick, awn, name], i) => {
+    const board = boards[id];
     shop({
       id,
       x0,
       x1,
       y0: 16.9,
       y1: 19.2,
-      floors: i % 3 === 1 ? 3 : 2,
+      floors: board || i % 3 === 1 ? 3 : 2,
       brick,
       awn,
       name,
       seed: i * 5 + 2,
       ntok: [M.neonY, M.neonR, M.neonB][i % 3]! + 1,
-    }),
-  );
+      ...(board ? { board } : {}),
+    });
+  });
   church(12.2, 16.9);
+  // The newspaper box stands by the walk where you start, so the headlines are the first thing
+  // you can read.
+  newsBox(PLACE.newsBox, 15.15, 18.9);
+  keep(14.9, 18.7, 15.4, 19.1);
   diner(PLACE.coney, 16.6, 17.5, 18.8, 18.7);
   kiosk(PLACE.kiosk, 19.3, 17.9, 20.2, 18.65);
   (['PIZZA', 'NAILS', 'VAPE', 'LOANS'] as const).forEach((name, i) =>
@@ -315,7 +332,9 @@ export function buildWorld({ season, northbound = true }: Options): World {
       const x = 2.3 + c * 0.95 + (r & 1) * 0.35;
       const y = 26.4 + r * 0.9;
       keep(x - 0.3, y - 0.3, x + 0.3, y + 0.3);
-      obj(PLACE.orchard, () => tree(x, y, { r: 11, th: 11, mats: ['leafA', 'leafC'] }));
+      // In spring the orchard is in blossom.
+      const mats: MatName[] = season === 'spring' ? ['blossom', 'blossomW'] : ['leafA', 'leafC'];
+      obj(PLACE.orchard, () => tree(x, y, { r: 11, th: 11, mats }));
     }
   farmStand(PLACE.orchard, 5.0, 24.7);
   keep(4.8, 24.5, 6.4, 25.8);
@@ -369,7 +388,8 @@ export function buildWorld({ season, northbound = true }: Options): World {
       if (hash(seed, 8) < 0.7) shrub(x + 0.15, y + d + 0.1, 7);
     }),
   );
-  for (let x = 3; x < 31; x += 3.6) lampPost(x, 19.25);
+  // The first lamp stands clear of the cinema's marquee.
+  for (let x = 3; x < 31; x += 3.6) lampPost(x === 3 ? 1.8 : x, 19.25);
   for (let x = 2.5; x < 30; x += 4.5) lampPost(x, 16.3);
   for (let x = 14.5; x < 26; x += 3.4) {
     lampPost(x, 23.05);

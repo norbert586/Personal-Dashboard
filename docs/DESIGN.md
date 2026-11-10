@@ -54,8 +54,9 @@ copy values here.
 - Going in: walk into a door, press F at it, or click the building and you walk to its door. The
   door swings open, you step through as the camera eases in and the view dims, and the building's
   window opens. When it closes you step back out onto the doorstep. There are no rooms yet (ADR-027).
-- Overhead, a low plane sometimes sweeps right under the camera with its shadow racing across the
-  ground, and high jets leave contrails.
+- Overhead fly the real aircraft from the ADS-B feed, where they really are: a low one sweeps
+  right under the camera with its shadow racing across the ground, and high jets leave contrails.
+  Heights are squeezed to fit the view (ADR-030).
 
 ## Light, time and weather
 
@@ -65,8 +66,12 @@ copy values here.
   down. Halos are screen-space points nudged toward the camera so nearby walls don't clip them.
 - The bike has a headlight. Cars have headlights and tail lights.
 - Fog only touches the far edges of the world.
-- Weather comes from the forecast: overcast dims the sun and adds cloud, rain and snow fall, and
-  snow covers the ground.
+- Weather comes from the forecast: overcast dims the sun and adds cloud, rain and snow fall, fog
+  closes in, and snow covers the ground and the roofs. Clouds are low-poly heaps that drift on the
+  real wind and throw shadows on a fair day. Rain and snow fall in front of the camera, a pixel at
+  a time.
+- Seasons come from the date: blossom in the orchard in spring, fall colour, and bare branches
+  and dormant grass in winter. Snow never comes from the date, only from the forecast (ADR-031).
 
 ## Interface
 
@@ -75,7 +80,7 @@ copy values here.
   Esc opens a pause menu in the same style.
 - Type: Jersey 10 for display (names, titles), Pixelify Sans for the interface.
 - On screen: a name badge, camera and bike controls, a compass, a door prompt that names its key,
-  and a hint bar. Windows open in the centre on desktop and as a bottom sheet on phones.
+  and a hint bar with a Today line that shows one feed at a time in plain words. Windows open in the centre on desktop and as a bottom sheet on phones.
 - Plain words, sentence case. Buttons say what happens. Status is always a word as well as a colour.
 
 ## Sound

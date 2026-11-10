@@ -24,7 +24,8 @@ export default defineConfig({
   security: { csp: true },
   // Shiki's inline styles are incompatible with the CSP, and we don't render code blocks.
   markdown: { syntaxHighlight: false },
-  // The town's bundle is mostly three.js, about 150 KB gzipped (ADR-010), and loads on /town only.
+  // The town's bundle is mostly three.js, about 150 KB gzipped (ADR-010), and loads on the home
+  // page only.
   vite: { build: { chunkSizeWarningLimit: 700 } },
 
   env: {

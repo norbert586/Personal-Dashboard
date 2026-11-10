@@ -78,21 +78,24 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
          Jukebox, Options and Quit to DOS. Later steps fill the panes. The 2D shell still says
          Norbert Field, and 586 survives on the Coney's sign and in the DOS screens; all of it goes
          (ADR-012).
-4. [ ] **The town shows the feeds.** The town reads the same `/api/feeds.json` as the Today panel,
+4. [x] **The town shows the feeds.** The town reads the same `/api/feeds.json` as the Today panel,
        so the two never disagree (SPEC: Feeds in town). A spot whose feed is offline says so and
        why, like the panel's cards (SPEC: Data rules).
-   - [ ] Cinema marquee: what's playing (TMDB), with Emagine Macomb's showtimes link in its window.
-   - [ ] Comic shop window: this week's DC, Image and Marvel books (ADR-026).
-   - [ ] Sports bar sign: live and final scores and the next games for the seven teams.
-   - [ ] Real aircraft from ADS-B fly over at their real positions, heights and headings. This step
+   - [x] Cinema marquee: what's playing (TMDB), with Emagine Macomb's showtimes link in its window.
+   - [x] Comic shop window: this week's DC, Image and Marvel books (ADR-026).
+   - [x] Sports bar sign: live and final scores and the next games for the seven teams.
+   - [x] Real aircraft from ADS-B fly over at their real positions, heights and headings. This step
          adds the world's one projection (ADR-019), which step 7 builds the map on.
-   - [ ] Weather and seasons: the forecast brings cloud, rain, snow and snow cover; the date brings
+   - [x] Weather and seasons: the forecast brings cloud, rain, snow and snow cover; the date brings
          blossom in the orchards, fall leaves and bare winter trees (DESIGN: Light, time and
          weather).
-   - [ ] Headlines and traffic in town. Proposed: headlines in a newspaper box on Main Street, and
-         traffic on a freeway sign once step 7 brings M-53. Confirm with Norbert first.
-   - [ ] The town becomes the home page. The Today panel keeps its own page and opens over the town
-         with T (ADR-022). Ask Norbert whether phones should open straight to the panel.
+   - [x] Headlines and traffic in town: the headlines are in a newspaper box on Main Street, where
+         you start. Traffic gets its freeway sign when step 7 brings M-53; until then it's on the
+         Today line at the foot of the screen, with every other feed (ADR-032). This follows the
+         proposal, because Norbert left the choice open: he can still ask for something else.
+   - [x] The town becomes the home page. The Today panel keeps its own page (`/today`) and opens
+         over the town with T (ADR-022, ADR-033). Phones open straight to the panel, over the
+         town: Norbert left that choice open, so it's one setting (SPEC open question 8).
 5. [ ] **Town Hall.** The to-do list and calendar live in the Town Hall (ADR-014). Add the building
        to the town; step 7 moves it to the real township office's corner (SPEC: The map).
    - [ ] Storage on this machine in SQLite, a new dependency, so it gets a decision entry. An entry
@@ -122,8 +125,9 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
          Plank, into typed world data saved in the repo, so builds never touch the network: roads,
          water, parks, golf courses and the Macomb Orchard Trail. The data carries the ODbL credit
          (add it to the site's credits) and is shared under the same licence.
-   - [ ] One projection from latitude and longitude to tiles (from step 4): one origin and one
-         tiles-per-mile constant in one place, unit-tested on real corners.
+   - [ ] One projection from latitude and longitude to tiles (`src/game/world/projection.ts`, from
+         step 4, ADR-030): one origin and one tiles-per-mile constant in one place. Unit-test it on
+         real corners here.
    - [ ] The road graph: intersections and segments with real names, types, lanes, speeds and
          one-way flags, with routing tested between real corners.
    - [ ] Addresses: every building gets a stable address (the real street name and a generated
@@ -141,6 +145,8 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
          tune tiles per mile (SPEC open question 2).
    - [ ] Life on the network: chill traffic drives the road graph, and people walk the sidewalks
          and the trail.
+   - [ ] The freeway sign over M-53 shows the worst of the area's traffic (TomTom), with the
+         Traffic card in its window, like the boards on Main Street (ADR-029, ADR-032).
    - [ ] The Map pane shows the real grid and where you are (`paneMap` in `prototype/2d/p6-ui.js`).
    - [ ] More than one area: the generator takes an area, so the delivery zone (M6) drops in later
          without touching the town.
@@ -273,6 +279,22 @@ Floated along the way. Any of them can join the plan once the spec says so.
 
 - Hangar doors open on days that project got a push
 - Squadron patches for milestones, and a rank that climbs as projects ship
+
+**From wiring the feeds into town (step 4)**
+
+- An orange-barrel message board: a trailer sign by the road that flashes the worst traffic
+  incident, until M-53 has its freeway sign (and afterwards for road work)
+- Tap an aircraft overhead for its window: the flight, the type, how high, and a link to its track
+- Game nights: a score change flashes on the sports bar's board, the bar fills up while a team is
+  live, and a win lights the water tower
+- Opening night: a film that opens today gets searchlights over the cinema, and posters by the
+  door from TMDB's art, pixelled down
+- Wet streets that mirror the neon in rain, snow that builds up and gets ploughed, and footprints
+- Lightning in a storm; the real wind bends the smoke, spins the turbines and fills a windsock at
+  Ratiu Field
+- Repaint the town in place, so snow can settle and melt while you're there (today it's painted
+  when the town is built, ADR-031)
+- The Today line as a car-radio voice once there's sound
 
 **A living town**
 

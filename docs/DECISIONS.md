@@ -360,3 +360,84 @@ intensities by π, so the code-painted colours land on screen as they did in the
 default view, midday and night were checked against the prototype's screenshots.
 Consequences: the town doesn't use physically based light units; materials are painted, not lit
 realistically, which is the look. A three upgrade must be checked against those screenshots again.
+
+## ADR-029: The town's windows show the Today panel's own cards
+
+**Accepted · 2026-11-10**
+Context: the town and the Today panel must never disagree, and a spot whose feed is offline has to
+say so and why (SPEC: Data rules). A second renderer in the browser, building the same lists from
+JSON, would drift from the panel's cards.
+Decision: a feed building's window shows the Today panel's card for its feed, rendered by the same
+components and fetched as an HTML fragment (`/today/cards`). What the town draws in 3D (boards,
+aircraft, the sky) reads `/api/feeds.json`, asked at the same moment. A board has two lines in the
+sign font and a status strip that names where its data came from (live with the time, sample or
+offline); an offline board goes dark and the window says why. The town boots first and asks for
+the feeds after, so a slow feed never holds up the first frame.
+Consequences: one more route, and the town's page carries the cards' styles. Boards are 12
+characters wide, so a long title carries on to the next page, and a board shows the first few
+items; the window always has the whole list. The feed shops are a floor taller than in the feel
+test, to carry their boards.
+
+## ADR-030: One projection, anchored on the town's point, and squeezed heights for aircraft
+
+**Accepted · 2026-11-10**
+Context: real aircraft need a place in the world, so step 4 adds the projection the map will be
+built on (ADR-019). The Today panel measures every aircraft from the town's point (26 Mile and Van
+Dyke, `site.place`), where SPEC open question 7 proposes the town's centre.
+Decision: `src/game/world/projection.ts` turns latitude and longitude into tiles with one origin
+and 32 tiles to the mile. The origin puts the town's point in the middle of today's town, so an
+aircraft the panel calls 4 miles west-south-west is 4 sections west-south-west in the game. Real
+altitudes are squeezed between the rooftops and the camera (1,000 ft is about 4.6 tiles up, 35,000
+ft about 11.4), keeping their order; lower aircraft are drawn larger, as the feel test's low
+flyover was. Between answers an aircraft flies on at its real speed and heading. The feel test's
+made-up flyovers are gone; Ratiu Field's own plane stays as town life.
+Consequences: at 32 tiles to the mile an aircraft is in view only when it really is within about
+half a mile, so the sky is often empty until the big world (step 7) gives more sky to watch. A
+saved sample has no clock, so it replays from the moment the page opened. If step 7 moves the
+town's centre, it moves the hand-placed town on this projection, not the projection.
+
+## ADR-031: Snow cover is the town's guess from the forecast, painted when the town is built
+
+**Accepted · 2026-11-10**
+Context: the feel test's winter was white by date. The roadmap wants snow cover from the forecast
+and bare trees from the date, but the weather service's forecast doesn't report snow depth.
+Decision: winter by date is bare branches and dormant grass. Snow lies when it's snowing at or
+near freezing, or when it's well below freezing with snow in the next day's forecast
+(`src/game/weather.ts`); roads and walks stay clear. The ground and roofs are painted when the
+town is built, so the town asks for its feeds first and waits up to a second and a half for them.
+Clouds, rain, snow and fog follow each new answer while you play.
+Consequences: snow can linger or melt a little out of step with the real ground. Snow that
+starts while you're in town falls at once but only lies after a reload, and a server that answers
+slowly builds the town without it. `?sky=` and `?season=` preview any weather or season, and the
+canvas says it's a preview.
+
+## ADR-032: Headlines in a newspaper box, traffic on the Today line until M-53
+
+**Accepted · 2026-11-10 · follows the roadmap's proposal; Norbert left the choice open**
+Context: headlines and traffic had no place in town. The roadmap proposed a newspaper box on Main
+Street and a freeway sign once the big world brings M-53, and asked to confirm with Norbert. He
+started the step without picking, so the proposal stands until he says otherwise.
+Decision: a newspaper box stands by the walk where you start; its window has the four news cards.
+The foot of the screen gets a Today line: one feed at a time in plain words (weather, traffic,
+scores, a headline, films, comics, aircraft), from the same answers as the Today panel. It's
+where traffic shows in town until the freeway sign exists, where an offline feed says so and why
+even without a building, and it opens Today. It waits while you hover or focus it, and while the
+town is paused.
+Consequences: the freeway sign is now a step 7 box. The Today line is a second place for words
+the boards also show, so it reuses the feed's own text and never invents any.
+
+## ADR-033: The town is the home page; Today opens over it, and first on phones
+
+**Accepted · 2026-11-10 · the phone default is open: Norbert hasn't picked**
+Context: with the feeds in town, the town takes over the home page (ADR-022). The roadmap asked
+whether phones should open straight to the Today panel; Norbert reads his morning update in bed
+on his phone, and started this step without answering.
+Decision: `/` is the town and `/today` is the Today panel's own page, light and readable with no
+3D. In town, T, the Today line or the pause menu opens the panel over the town, with the same
+cards (ADR-029); the town holds still behind it, as it does behind the pause menu. On a phone the
+town opens with the panel already over it and no intro, so the update is the first thing you
+read; closing it puts you in town. That's one setting, `phonesOpenToday` in `site.config.ts`.
+Windows keep their own keys now: arrows and Space scroll them instead of walking you.
+Consequences: a phone loads the 3D town even when you only wanted the update; `/today` is the
+light way in, and worth bookmarking. `/town` is gone. If Norbert prefers the town first on
+phones, flip the setting; nothing else changes.

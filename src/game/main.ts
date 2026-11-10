@@ -1,23 +1,37 @@
 /**
- * The town's entry point, bundled into /town only (SPEC: Quality bar), so the 3D library never
- * loads on the other pages. It starts the renderer, or says plainly that this browser can't.
+ * The town's entry point, bundled into the home page only (SPEC: Quality bar), so the 3D library
+ * never loads on the other pages. It starts the renderer, or says plainly that this browser can't.
  */
-import { BasicShadowMap, ColorManagement, LinearSRGBColorSpace, WebGLRenderer } from 'three';
+import {
+  BasicShadowMap,
+  ColorManagement,
+  LinearSRGBColorSpace,
+  WebGLRenderer,
+  type Fog,
+} from 'three';
 import { CameraRig } from './camera.ts';
 import { nearestDoor, walksIn } from './entrance.ts';
+import { FeedClient, ageAtAnswer } from './feeds.ts';
 import { GoingIn } from './going-in.ts';
 import { createLife, stepLife } from './life.ts';
 import { LifeBodies } from './life-bodies.ts';
 import { PathMarks } from './marks.ts';
 import { Shell } from './shell.ts';
+import { plotAircraft } from './sky-traffic.ts';
+import { comicCovers, comicPages, moviePages, scorePages, signContent } from './sign-pages.ts';
+import { SignBoards } from './signs.ts';
+import { lookUpLine, tickerLines } from './ticker.ts';
+import { fillCards } from './windows.ts';
 import { buildNav, findPath, pathLength, type Point } from './nav.ts';
 import type { Door } from './world/builders.ts';
 import { keys, listen, onKey, startLoop } from './loop.ts';
 import { applyLight } from './light.ts';
 import { Player } from './player.ts';
-import { buildTown } from './scene.ts';
+import { CAM_DISTANCE, buildTown } from './scene.ts';
+import { FEED_SKIES, townWeather } from './weather.ts';
+import { WeatherBodies } from './weather-bodies.ts';
 import { START, buildWorld } from './world/layout.ts';
-import { nightK, seasonOf } from './world/materials.ts';
+import { nightK, seasonOf, type Season } from './world/materials.ts';
 import { TIMES, lighting, simDate, type TimeOfDay } from './world/sun.ts';
 import { keyDirection, newYou, step } from './you.ts';
 import { site } from '../site.config.ts';
@@ -61,8 +75,11 @@ function monthDay(now: Date): [number, number] {
 }
 
 const held = (...codes: string[]) => codes.some((c) => keys.has(c));
+const SEASONS: readonly Season[] = ['spring', 'summer', 'fall', 'latefall', 'winter'];
+/** How long the town waits for its feeds before it builds itself without them, in ms. */
+const FEEDS_WAIT = 1500;
 
-function boot(): void {
+async function boot(): Promise<void> {
   const canvas = $<HTMLCanvasElement>('#world');
   const renderer = createRenderer(canvas);
   if (!renderer) {
@@ -72,15 +89,39 @@ function boot(): void {
     return;
   }
 
-  const world = buildWorld({ season: seasonOf(...monthDay(new Date())) });
+  // For screenshots and tests: ?at=x,y starts you somewhere else, ?time=night picks the light,
+  // and ?sky=snow or ?season=spring previews weather and seasons (the heads-up says it's a preview).
+  const asked = new URLSearchParams(location.search);
+  const [atX, atY] = (asked.get('at') ?? '').split(',').map(Number);
+  const start =
+    Number.isFinite(atX) && Number.isFinite(atY)
+      ? { x: atX!, y: atY! }
+      : { x: START.x, y: START.y };
+
+  // The town asks for its feeds first, and waits a moment: snow on the ground is painted when the
+  // world is built, so it needs the forecast. A slow answer is used when it lands, without the snow.
+  const feeds = new FeedClient();
+  await Promise.race([
+    feeds.refresh(true),
+    new Promise((resolve) => setTimeout(resolve, FEEDS_WAIT)),
+  ]);
+  const previewSky = FEED_SKIES.find((sky) => sky === asked.get('sky')) ?? null;
+  let weather = townWeather(feeds.snapshot?.feeds.weather, previewSky);
+  const season =
+    SEASONS.find((name) => name === asked.get('season')) ?? seasonOf(...monthDay(new Date()));
+
+  // Ratiu Field lands and takes off into the real wind: runway 36 when it blows from the north.
+  const northbound = weather.drift[0] >= 0;
+  const world = buildWorld({ season, snow: weather.snowCover, northbound });
   const town = buildTown(world);
-  const rig = new CameraRig(renderer, canvas, START.x, START.y);
-  const player = new Player(town, newYou(START.x, START.y));
+  const rig = new CameraRig(renderer, canvas, start.x, start.y);
+  const player = new Player(town, newYou(start.x, start.y));
   const you = player.you;
 
   // ---- Controls: keys, buttons, drag and wheel ----
-  let time: TimeOfDay = 'auto';
+  let time: TimeOfDay = TIMES.find((t) => t.id === asked.get('time'))?.id ?? 'auto';
   const timeButton = $<HTMLButtonElement>('#b-time');
+  timeButton.textContent = TIMES.find((t) => t.id === time)!.label;
   const cycleTime = () => {
     const next = TIMES[(TIMES.findIndex((t) => t.id === time) + 1) % TIMES.length]!;
     time = next.id;
@@ -100,6 +141,107 @@ function boot(): void {
   $('#b-in').addEventListener('click', () => rig.zoomBy(1));
   $('#b-out').addEventListener('click', () => rig.zoomBy(-1));
 
+  // Life in town; with reduced motion it holds still (SPEC: Quality bar).
+  const life = createLife(world, northbound);
+  const bodies = new LifeBodies(town.scene, world, life);
+
+  // ---- The feeds: the same answers the Today panel shows, read again every half minute ----
+  const boards = new SignBoards(town, world);
+  const sky = new WeatherBodies(town.scene, rig.camera);
+  /** When the latest answer arrived, on the frame clock (seconds). */
+  let skyHeld = 0;
+  const windowBody = $<HTMLElement>('#window-body');
+  const todayDialog = $<HTMLDialogElement>('#today');
+  const todayBody = $<HTMLElement>('#today-body');
+  // The Today line at the foot of the screen: one feed at a time, in words.
+  const ticker = $<HTMLElement>('#ticker');
+  const tickerText = $<HTMLElement>('#ticker-text');
+  let tickerAt = 0;
+  /** The real aircraft crossing the view, if any: the line says to look up while it does. */
+  let lookUp = '';
+  const showTicker = () => {
+    const now = feeds.snapshot?.feeds ?? null;
+    const lines = tickerLines(now, feeds.problem, previewSky);
+    const plane = bodies.overhead;
+    const text = plane
+      ? lookUpLine(plane, now?.flights.provenance === 'sample')
+      : (lines[tickerAt % lines.length] ?? '');
+    if (tickerText.textContent !== text) tickerText.textContent = text;
+  };
+  setInterval(() => {
+    // It waits while you're reading it, and while the town is paused.
+    if (document.hidden || !shell.playing || ticker.matches(':hover, :focus-visible')) return;
+    tickerAt++;
+    showTicker();
+  }, 6000);
+
+  const showFeeds = () => {
+    const now = feeds.snapshot?.feeds;
+    const down = !now && feeds.problem !== null;
+    showTicker();
+    // The weather: cloud, rain or snow from the forecast, and fog that closes in.
+    weather = townWeather(now?.weather, previewSky);
+    sky.set(weather);
+    const fog = town.scene.fog as Fog;
+    fog.near = CAM_DISTANCE + (weather.fog ? -16 : 14);
+    fog.far = CAM_DISTANCE + (weather.fog ? 24 : 62);
+    canvas.dataset.weather = [
+      weather.sky ?? 'unknown',
+      ...(previewSky ? ['preview'] : []),
+      ...(world.palette.snow ? ['snow on the ground'] : []),
+    ].join(', ');
+    const show = <T>(key: string, content: ReturnType<typeof signContent<T>>) => {
+      boards.set(key, content);
+      canvas.dataset[`sign${key[0]!.toUpperCase()}${key.slice(1)}`] = [
+        content.status,
+        ...content.pages.flatMap((page) => page.lines),
+      ].join('|');
+    };
+    show('movies', signContent(now?.movies, moviePages, down));
+    show(
+      'scores',
+      // Like the panel, a saved sample counts its days from when it was saved.
+      signContent(
+        now?.scores,
+        (reading) =>
+          scorePages(
+            reading,
+            reading.provenance === 'sample' ? new Date(reading.fetchedAt) : new Date(),
+          ),
+        down,
+      ),
+    );
+    const comics = signContent(now?.comics, comicPages, down);
+    show('comics', comics);
+    // The shop window has a cover for every book; it's empty when there's no data.
+    const live = now && now.comics.provenance !== 'offline';
+    boards.set('comics-window', { ...comics, covers: live ? comicCovers(now.comics) : [] });
+    // Real aircraft, where they really are. A saved sample replays from when the page opened.
+    const snap = feeds.snapshot;
+    if (snap) {
+      skyHeld = snap.receivedAt / 1000;
+      const flights = snap.feeds.flights;
+      const planes = plotAircraft(flights.data.aircraft);
+      bodies.setAircraft(
+        planes,
+        `${flights.provenance} ${flights.fetchedAt}`,
+        ageAtAnswer(flights, snap),
+        snap.receivedAt / 1000,
+        flights.provenance === 'sample',
+      );
+      canvas.dataset.aircraft =
+        flights.provenance === 'offline' ? 'offline' : String(planes.length);
+    }
+    fillCards(windowBody, feeds);
+    if (todayDialog.open) fillCards(todayBody, feeds);
+    document.documentElement.dataset.feeds = now ? 'ready' : down ? 'unreachable' : 'loading';
+  };
+  feeds.onChange(showFeeds);
+  showFeeds();
+  setInterval(() => {
+    if (!document.hidden) void feeds.refresh();
+  }, 30_000);
+
   // ---- Going in, and the door prompt ----
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const going = new GoingIn(
@@ -110,9 +252,14 @@ function boot(): void {
     {
       dialog: $<HTMLDialogElement>('#window'),
       title: $<HTMLElement>('#window-title'),
-      body: $<HTMLElement>('#window-body'),
+      body: windowBody,
       dim: $<HTMLElement>('#dim'),
       template: (id) => document.querySelector<HTMLTemplateElement>(`template[data-place="${id}"]`),
+      opened: (body) => {
+        fillCards(body, feeds);
+        // Cards more than a minute old are read again; the listener above swaps them in.
+        if (body.querySelector('[data-cards]') && feeds.cardsAge > 60) void feeds.refresh(true);
+      },
     },
     still,
   );
@@ -146,6 +293,21 @@ function boot(): void {
     keys.clear();
     canvas.focus({ focusVisible: false });
   };
+  // Today opens over the town with T, from the Today line, or from the pause menu.
+  shell.onToday = () => {
+    keys.clear();
+    fillCards(todayBody, feeds);
+    if (feeds.cardsAge > 60) void feeds.refresh(true);
+  };
+  // Nothing stays behind to clash with a building window's ids.
+  todayDialog.addEventListener('close', () =>
+    todayBody.querySelector('[data-cards]')?.replaceChildren(),
+  );
+  ticker.addEventListener('click', (event) => {
+    if (!shell.playing) return;
+    event.preventDefault();
+    shell.openToday();
+  });
 
   listen();
   onKey((event) => {
@@ -241,12 +403,14 @@ function boot(): void {
     $('#hint-text').textContent =
       'Tap anywhere to walk there, or tap a building to go in. Drag to turn the camera.';
   const marks = new PathMarks(town.scene);
-  // Life in town; with reduced motion it holds still (SPEC: Quality bar).
-  const life = createLife(world, true);
-  const bodies = new LifeBodies(town.scene, world, life);
   $<HTMLElement>('#loading').hidden = true;
   document.documentElement.dataset.town = 'ready';
-  void shell.boot(still);
+  // Phones open straight to the Today panel, over the town (site.config.ts).
+  const phone = matchMedia('(hover: none) and (max-width: 40rem)').matches;
+  if (phone && site.phonesOpenToday) {
+    shell.play();
+    shell.openToday();
+  } else void shell.boot(still);
 
   startLoop((dt, now) => {
     if (!shell.playing) {
@@ -291,13 +455,23 @@ function boot(): void {
     if (document.documentElement.dataset.place !== inside)
       document.documentElement.dataset.place = inside;
 
-    const L = lighting(simDate(time));
+    const L = lighting(simDate(time), weather.light);
     const night = nightK(L.night);
-    if (!still && shell.playing) {
-      stepLife(life, dt);
-      bodies.sky(dt, rig.target.x, rig.target.z, rig.yaw);
+    if (!still && shell.playing) stepLife(life, dt);
+    // With reduced motion the aircraft hold still between answers, like the rest of the town.
+    if (shell.playing) {
+      bodies.sky(still ? skyHeld : now, rig.target.x, rig.target.z, rig.yaw);
+      if (canvas.dataset.overhead !== String(bodies.inView))
+        canvas.dataset.overhead = String(bodies.inView);
+      const crossing = bodies.overhead?.hex ?? '';
+      if (crossing !== lookUp) {
+        lookUp = crossing;
+        showTicker();
+      }
     }
     player.sync(town, night);
+    sky.update(dt, rig.target.x, rig.target.z, L.day, still || !shell.playing);
+    if (shell.playing) boards.update(now, still);
     bodies.sync(town, still ? 0 : now, night, still);
     marks.update(path, you.x, you.y, now, still);
     town.moving.flush();
@@ -311,4 +485,4 @@ function boot(): void {
   });
 }
 
-boot();
+void boot();

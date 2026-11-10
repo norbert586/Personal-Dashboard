@@ -4,9 +4,10 @@ My personal site as a small 3D pixel-art town you can walk, run and bike around.
 is one of my projects, and the morning update (weather, scores, comics, showtimes and more) lives
 in town and in a Today panel. Loosely based on Romeo and Washington Township, Michigan.
 
-**Status:** the Astro app serves the Today panel: the morning feeds on real data, good on a phone.
-The town exists as prototypes in `prototype/` until it's ported. The plan is in
-[`docs/SPEC.md`](docs/SPEC.md) and [`docs/ROADMAP.md`](docs/ROADMAP.md).
+**Status:** the home page is the town, showing the morning feeds on real data: the cinema's
+marquee, the comic shop, the sports bar's scoreboard, a newspaper box, real aircraft overhead and
+the forecast's weather. The Today panel opens over it with T and has its own page at `/today`.
+The plan is in [`docs/SPEC.md`](docs/SPEC.md) and [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 Built with Astro 7, TypeScript and three.js.
 

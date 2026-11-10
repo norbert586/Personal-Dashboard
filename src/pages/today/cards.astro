@@ -1,0 +1,16 @@
+---
+/**
+ * The Today panel's cards as an HTML fragment, for the town: a building's window shows its feed's
+ * card, rendered by the same components as the Today page. The town's page already carries their
+ * styles, because it imports the same components.
+ */
+import TodayCards from '../../components/TodayCards.astro';
+import { getFeeds } from '../../lib/feeds.ts';
+
+export const partial = true;
+
+const now = new Date();
+const feeds = await getFeeds(now);
+---
+
+<TodayCards feeds={feeds} now={now} />

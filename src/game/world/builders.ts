@@ -11,6 +11,7 @@ import {
   HW,
   backOf,
   centerText,
+  textW,
   corr3,
   facade,
   seam3,
@@ -31,6 +32,8 @@ export interface Door {
   y: number;
   /** How close you must be for the prompt to show. */
   reach: number;
+  /** Nothing to walk into (a newspaper box): you stand where you are and read. */
+  plain?: boolean;
 }
 /** An axis-aligned footprint you can't walk through; `id` is the place whose door it has, or 0. */
 export interface Collider {
@@ -49,6 +52,21 @@ export interface Light {
   r: number;
   c: RGB;
   a: number;
+}
+/** How a board is drawn: a backlit cinema marquee, an LED scoreboard, or neon in a shop front. */
+export type BoardSkin = 'marquee' | 'led' | 'neon' | 'covers';
+/** A board the town writes on while it runs (src/game/signs.ts): `key` is the feed it shows. */
+export interface SignSlot {
+  key: string;
+  skin: BoardSkin;
+  /** Its bottom edge on the ground plan, left to right as seen from outside. */
+  ax: number;
+  ay: number;
+  bx: number;
+  by: number;
+  /** Bottom and top, in 2D-art pixels. */
+  z0: number;
+  z1: number;
 }
 export type TreeSpec =
   | { kind: 'tree'; gx: number; gy: number; r: number; th: number; mats: MatName[] }
@@ -74,6 +92,8 @@ export interface World {
   fixtures: Array<{ x: number; y: number; c: RGB }>;
   /** Wind turbine hubs [x, y, z px]; the scene spins their rotors. */
   turbines: Array<[number, number, number]>;
+  /** Boards that show the feeds. */
+  signs: SignSlot[];
 }
 
 let W: World;
@@ -237,7 +257,15 @@ export interface ShopSpec {
   ntok?: number;
   seed?: number;
   lit?: number;
+  /**
+   * A feed's board over the shop front; with `canopy`, on a marquee that sticks out over the walk.
+   * With `shelves`, the shop window shows the feed's items too, one small cover each.
+   */
+  board?: { key: string; skin: BoardSkin; canopy?: boolean; shelves?: boolean };
 }
+
+/** Board height in pixels: a frame, two lines of the sign font and a status strip (signs.ts). */
+export const BOARD_H = 22;
 
 export function shop(o: ShopSpec): void {
   const { x0, x1, y0, y1, floors = 2, brick = 'brickR', awn = 'awnR', id = 0, name = '', ntok } = o;
@@ -246,6 +274,7 @@ export function shop(o: ShopSpec): void {
   const seed = o.seed ?? 1;
   const lit = o.lit ?? 0.5;
   const one = floors === 1;
+  const canopy = o.board?.canopy === true;
   const H = one ? 31 : 33 + (floors - 1) * 20;
   const wins: Win[] = [
     { u: 5, v: 3, w: len - 22, h: one ? 17 : 18, k: 'store', lit: hash(seed, 2) < lit + 0.2 },
@@ -254,7 +283,8 @@ export function shop(o: ShopSpec): void {
   const gap = (len - cols * 9) / (cols + 1);
   if (!one)
     for (let r = 1; r < floors; r++)
-      for (let c = 0; c < cols; c++)
+      for (let c = 0; c < cols; c++) {
+        if (o.board && r === 1) continue; // the board hangs here
         wins.push({
           u: Math.round(gap + c * (9 + gap)),
           v: 35 + (r - 1) * 20,
@@ -263,6 +293,7 @@ export function shop(o: ShopSpec): void {
           k: 'arch',
           lit: hash(c + r * 5, seed) < lit,
         });
+      }
   const stripe = (u: number) => ((u + seed) >> 2) & 1;
   const awning: Painter = (u, v) =>
     v === 21 ? M[awn] : M[awn] + (stripe(u) ? 2 : 3) - (v > 22 ? 1 : 0);
@@ -276,9 +307,15 @@ export function shop(o: ShopSpec): void {
     seed,
     wins,
     doors: [{ u: len - 16, w: 11, h: 21, mat: 'doorR', glass: true, lit: true }],
-    bands: one ? bands : [{ v0: 21, v1: 26, fn: awning }, ...bands],
+    bands: one || canopy ? bands : [{ v0: 21, v1: 26, fn: awning }, ...bands],
   });
-  if (name) Lp = withText(Lp, [centerText(name, len, one ? 22 : 27, ntok ?? M.neonY + 1)]);
+  const tok = ntok ?? M.neonY + 1;
+  // Over a marquee, the name is written large above it.
+  if (name && canopy)
+    Lp = withText(Lp, [
+      { s: name, u: Math.round((len - textW(name, 2)) / 2), v: 21 + BOARD_H + 2, sc: 2, tok },
+    ]);
+  else if (name) Lp = withText(Lp, [centerText(name, len, one ? 22 : 27, tok)]);
   const sideWins: Win[] = [];
   for (let r = 0; r < floors; r++)
     for (let c = 0; c < 2; c++)
@@ -313,7 +350,67 @@ export function shop(o: ShopSpec): void {
       t: () => M.steel + 2,
     });
   }
-  if (!one) {
+  if (o.board && canopy) {
+    // a marquee: a box over the walk with bulbs around its sides and a lit soffit
+    const out = y1 + 0.34;
+    const bulbs: Painter = (u, v) =>
+      u === 0 || v === 0 || v === BOARD_H - 1
+        ? (u + v) & 1
+          ? M.lampLit + 1
+          : M.dark + 1
+        : M.boardLit + 1;
+    const blank: Painter = (_u, v) => (v < 7 ? M.dark : M.boardLit + 1);
+    A.wall(x0, out, x1, out, 21, 21 + BOARD_H, blank);
+    A.wall(x1, out, x1, y1, 21, 21 + BOARD_H, bulbs);
+    A.wall(x0, y1, x0, out, 21, 21 + BOARD_H, bulbs);
+    A.top(x0, y1, x1, out, 21 + BOARD_H, () => M.flatR + 1);
+    A.slope(
+      V(x0, y1, 21),
+      V(x1, y1, 21),
+      V(x1, out, 21),
+      V(x0, out, 21),
+      (u, v) => (u % 6 === 2 && v % 5 === 2 ? M.lampLit + 1 : M.dark + 2),
+      x1 - x0,
+      out - y1,
+    );
+    W.signs.push({
+      key: o.board.key,
+      skin: o.board.skin,
+      ax: x0,
+      ay: out + 0.012,
+      bx: x1,
+      by: out + 0.012,
+      z0: 21,
+      z1: 21 + BOARD_H,
+    });
+    light((x0 + x1) / 2, out - 0.1, 6, 44, [255, 226, 160], 0.5); // spilling on the walk below
+  } else if (o.board) {
+    if (o.board.shelves)
+      // inside the shop window's frame: two shelves of covers
+      W.signs.push({
+        key: `${o.board.key}-window`,
+        skin: 'covers',
+        ax: x0 + 6 / HW,
+        ay: y1 + 0.012,
+        bx: x0 + (len - 18) / HW,
+        by: y1 + 0.012,
+        z0: 6,
+        z1: 20,
+      });
+    W.signs.push({
+      key: o.board.key,
+      skin: o.board.skin,
+      ax: x0,
+      ay: y1 + 0.02,
+      bx: x1,
+      by: y1 + 0.02,
+      z0: 33,
+      z1: 33 + BOARD_H,
+    });
+    const glow: RGB = o.board.skin === 'led' ? [255, 190, 90] : [120, 180, 255];
+    light((x0 + x1) / 2, y1 + 0.3, 8, 40, glow, 0.45);
+  }
+  if (!one && !canopy) {
     // a real awning that sticks out over the sidewalk
     const a0 = x0 + 0.08;
     const a1 = x1 - 0.08;
@@ -953,6 +1050,28 @@ export function turbine(id: number, gx: number, gy: number, h = 130): void {
   W.turbines.push([gx, gy, h]);
   roundCollide(gx, gy, 0.1);
   door(id, gx + 0.25, gy + 0.25, 0.9);
+}
+
+/** A newspaper box on the walk, facing the street (+y): the headlines live here. */
+export function newsBox(id: number, gx: number, gy: number): void {
+  const x0 = gx - 0.13;
+  const x1 = gx + 0.13;
+  const y0 = gy - 0.1;
+  const y1 = gy + 0.1;
+  // The front: a masthead, then the paper behind glass, with a few lines of headline.
+  const front: Painter = (u, v) => {
+    if (v >= 11) return M.neonY + (v === 12 && u > 1 && u < 6 ? 0 : 1);
+    if (u === 0 || u === 7 || v < 3) return M.doorB + 1;
+    if (v === 9 || v === 6) return u > 1 && u < 6 ? M.dark + 1 : M.boardLit + 1;
+    if (v === 4) return u > 1 && u < 5 ? M.steel + 1 : M.boardLit + 1;
+    return M.boardLit + 1;
+  };
+  const side: Painter = (_u, v) => (v >= 11 ? M.neonY + 1 : M.doorB + (v < 3 ? 0 : 1));
+  A.post(gx - 0.09, gy, 0.015, 0, 4, M.steel);
+  A.post(gx + 0.09, gy, 0.015, 0, 4, M.steel);
+  A.box(x0, y0, x1, y1, 4, 14, { f: front, r: side, b: side, l: side, t: () => M.doorB + 2 });
+  W.colliders.push({ x0, y0, x1, y1, id });
+  W.doors.push({ id, x: gx, y: y1 + 0.14, reach: 0.9, plain: true });
 }
 
 // ---- Trees: recorded here, drawn as instanced meshes by the scene ----

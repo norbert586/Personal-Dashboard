@@ -32,6 +32,8 @@ export interface Windows {
   dim: HTMLElement;
   /** The window's contents for a place, server-rendered. */
   template: (id: number) => HTMLTemplateElement | null;
+  /** Called once the contents are in the window, to fill in what's live (a feed's card). */
+  opened?: (body: HTMLElement) => void;
 }
 
 export class GoingIn {
@@ -114,11 +116,13 @@ export class GoingIn {
     const tpl = this.ui.template(this.id);
     this.ui.title.textContent = tpl?.dataset.title ?? '';
     this.ui.body.replaceChildren(tpl ? tpl.content.cloneNode(true) : document.createTextNode(''));
+    this.ui.opened?.(this.ui.body);
     this.ui.dialog.showModal();
   }
 
   private leave(): void {
     if (this.phase !== 'inside') return;
+    this.ui.body.replaceChildren(); // nothing stays behind to clash with the next window's ids
     this.player.inside = false;
     this.phase = 'leaving';
     this.t = 0;

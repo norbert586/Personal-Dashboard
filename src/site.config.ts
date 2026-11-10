@@ -12,6 +12,11 @@ export interface SiteConfig {
   github: { user: string };
   /** The real place the town is based on. Weather is forecast for this point. */
   place: { name: string; lat: number; lon: number };
+  /**
+   * On a phone, open the town with the Today panel already over it and skip the intro, so the
+   * morning update is the first thing you read; close it and you're in town (ADR-033).
+   */
+  phonesOpenToday: boolean;
   /** How the server introduces itself to the APIs it asks (some refuse anonymous clients). */
   userAgent: string;
   /** The teams on the scoreboard, in the order shown. */
@@ -44,6 +49,8 @@ export interface Team {
   /** Stable id for the town and the saved samples: "red-wings". */
   id: string;
   name: string;
+  /** A shorter name for the town's scoreboard, when the name is long: "Mich FB". */
+  short?: string;
   league: string;
   /** Where ESPN keeps the team: sports/{sport}/{league}/teams/{team}. */
   espn: { sport: string; league: string; team: string };
@@ -60,6 +67,7 @@ export const site: SiteConfig = {
   github: { user: 'norbert586' },
   // About 26 Mile and Van Dyke, the middle of the real grid (docs/SPEC.md, The map).
   place: { name: 'Washington Twp', lat: 42.72, lon: -83.03 },
+  phonesOpenToday: true,
   userAgent: 'RatiuTwp/0.1 (+https://github.com/norbert586/Personal-Dashboard)',
   teams: [
     { id: 'pistons', name: 'Pistons', league: 'NBA', espn: espn('basketball', 'nba', '8') },
@@ -74,6 +82,7 @@ export const site: SiteConfig = {
     {
       id: 'red-wings',
       name: 'Red Wings',
+      short: 'Wings',
       league: 'NHL',
       espn: espn('hockey', 'nhl', '5'),
       backup: { api: 'nhl', team: 'DET' },
@@ -81,18 +90,21 @@ export const site: SiteConfig = {
     {
       id: 'michigan-basketball',
       name: 'Michigan basketball',
+      short: 'Mich BB',
       league: 'NCAA',
       espn: espn('basketball', 'mens-college-basketball', '130'),
     },
     {
       id: 'michigan-football',
       name: 'Michigan football',
+      short: 'Mich FB',
       league: 'NCAA',
       espn: espn('football', 'college-football', '130'),
     },
     {
       id: 'georgia-tech-football',
       name: 'Georgia Tech football',
+      short: 'GT FB',
       league: 'NCAA',
       espn: espn('football', 'college-football', '59'),
     },

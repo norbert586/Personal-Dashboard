@@ -21,6 +21,7 @@ export const PLACE = {
   cinema: 16,
   comicShop: 17,
   sportsBar: 18,
+  newsBox: 19,
 } as const;
 
 export type PlaceId = (typeof PLACE)[keyof typeof PLACE];
@@ -32,7 +33,8 @@ export type PlaceInfo =
   | {
       id: PlaceId;
       kind: 'feed';
-      feed: 'movies' | 'comics' | 'scores';
+      /** The Today panel cards its window shows, by id; none until its feed is wired up. */
+      cards: string[];
       title: string;
       note: string;
     };
@@ -86,22 +88,29 @@ export const PLACES: PlaceInfo[] = [
   {
     id: PLACE.cinema,
     kind: 'feed',
-    feed: 'movies',
+    cards: ['movies'],
     title: 'Cinema',
-    note: "What's playing. Until the marquee is wired up, the films are on Today.",
+    note: "What's playing, as the marquee out front has it.",
   },
   {
     id: PLACE.comicShop,
     kind: 'feed',
-    feed: 'comics',
+    cards: ['comics'],
     title: 'Comic shop',
-    note: "This week's new books. Until the window is wired up, they're on Today.",
+    note: "This week's new books: a cover in the window for each, by publisher.",
   },
   {
     id: PLACE.sportsBar,
     kind: 'feed',
-    feed: 'scores',
+    cards: ['scores'],
     title: 'Sports bar',
-    note: 'Every game on every screen. Until the sign is wired up, the scores are on Today.',
+    note: 'Every game on every screen, and the scoreboard out front.',
+  },
+  {
+    id: PLACE.newsBox,
+    kind: 'feed',
+    cards: ['news-local', 'news-tech', 'news-national', 'news-world'],
+    title: 'Newspaper box',
+    note: "This morning's headlines. Each one links to the paper that ran it.",
   },
 ];

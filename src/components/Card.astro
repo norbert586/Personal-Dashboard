@@ -18,7 +18,7 @@ interface Props {
 const { id, title, reading, wide = false } = Astro.props;
 ---
 
-<section class:list={['card', { wide }]} aria-labelledby={`${id}-title`}>
+<section class:list={['card', { wide }]} data-card={id} aria-labelledby={`${id}-title`}>
   <header class="head">
     <h2 id={`${id}-title`}>{title}</h2>
     <Provenance reading={reading} />
