@@ -3,7 +3,9 @@
  * panel shows. It's where feeds without a building yet (traffic, until M-53 brings the freeway
  * sign) show up in town, and where an offline feed says so and why (SPEC: Data rules). Pure.
  */
+import { compass } from '../lib/geo.ts';
 import type { TownFeeds, WireReading } from './feeds.ts';
+import type { Plane } from './sky-traffic.ts';
 
 const feet = new Intl.NumberFormat('en-US');
 
@@ -15,6 +17,12 @@ function line<T>(
 ) {
   if (reading.provenance === 'offline') return `${name} is offline. ${reading.detail ?? ''}`.trim();
   return `${words(reading.data)}${reading.provenance === 'sample' ? ' (sample data)' : ''}`;
+}
+
+/** A real aircraft is crossing the view: who, how high, and which way it's heading. */
+export function lookUpLine(plane: Plane, sample: boolean): string {
+  const heading = (Math.atan2(-plane.fy, -plane.fx) * 180) / Math.PI;
+  return `Look up: ${plane.label}, ${feet.format(plane.altitudeFt)} ft, heading ${compass(heading)}${sample ? ' (sample data)' : ''}`;
 }
 
 /**

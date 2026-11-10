@@ -120,8 +120,9 @@ export class LifeBodies {
   private skyT0 = 0;
   private skyKey = '';
   private skyLoops = false;
-  /** How many aircraft are in view right now. */
+  /** How many aircraft are in view right now, and the one nearest the middle of the view. */
   inView = 0;
+  overhead: Plane | null = null;
   private readonly life: Life;
 
   constructor(scene: Scene, world: World, life: Life) {
@@ -338,12 +339,20 @@ export class LifeBodies {
     let elapsed = now - this.skyT0;
     if (this.skyLoops) elapsed %= SKY_STALE;
     this.inView = 0;
+    this.overhead = null;
+    let nearest = Infinity;
     for (const flyer of this.flyers.values()) {
       const { plane } = flyer;
       const [x, y] = planeAt(plane, elapsed);
       const mx = cx + Math.cos(yaw) * plane.h * 1.732;
       const my = cz + Math.sin(yaw) * plane.h * 1.732;
-      const near = elapsed < SKY_STALE && Math.hypot(x - mx, y - my) < SKY_RANGE;
+      const off = Math.hypot(x - mx, y - my);
+      const near = elapsed < SKY_STALE && off < SKY_RANGE;
+      // Close enough to the middle of the view to be on screen: worth a "look up".
+      if (near && off < 14 && off < nearest) {
+        nearest = off;
+        this.overhead = plane;
+      }
       if (!near) {
         if (flyer.g) flyer.g.visible = false;
         if (flyer.trail) flyer.trail.visible = false;

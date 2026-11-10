@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { TownFeeds } from './feeds.ts';
-import { tickerLines } from './ticker.ts';
+import { plotAircraft } from './sky-traffic.ts';
+import { lookUpLine, tickerLines } from './ticker.ts';
 
 const reading = <T>(
   data: T,
@@ -109,4 +110,29 @@ test('a weather preview is named as one', () => {
     tickerLines(feeds(), null, 'snow')[0],
     'Weather preview: snow. The real forecast is on Today.',
   );
+});
+
+test('an aircraft crossing the view gets a "look up"', () => {
+  const [plane] = plotAircraft([
+    {
+      hex: 'a6dbf3',
+      callsign: 'DAL1065',
+      registration: 'N541DE',
+      type: 'A21N',
+      onGround: false,
+      altitudeFt: 35_000,
+      speedKt: 480,
+      track: 97,
+      lat: 42.72,
+      lon: -83.03,
+      distanceMi: 0,
+      bearing: 0,
+      direction: 'N',
+      military: false,
+      emergency: undefined,
+    },
+  ]);
+  assert.ok(plane);
+  assert.equal(lookUpLine(plane, false), 'Look up: DAL1065, 35,000 ft, heading E');
+  assert.equal(lookUpLine(plane, true), 'Look up: DAL1065, 35,000 ft, heading E (sample data)');
 });

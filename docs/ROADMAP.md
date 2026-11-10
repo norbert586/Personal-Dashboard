@@ -280,6 +280,22 @@ Floated along the way. Any of them can join the plan once the spec says so.
 - Hangar doors open on days that project got a push
 - Squadron patches for milestones, and a rank that climbs as projects ship
 
+**From wiring the feeds into town (step 4)**
+
+- An orange-barrel message board: a trailer sign by the road that flashes the worst traffic
+  incident, until M-53 has its freeway sign (and afterwards for road work)
+- Tap an aircraft overhead for its window: the flight, the type, how high, and a link to its track
+- Game nights: a score change flashes on the sports bar's board, the bar fills up while a team is
+  live, and a win lights the water tower
+- Opening night: a film that opens today gets searchlights over the cinema, and posters by the
+  door from TMDB's art, pixelled down
+- Wet streets that mirror the neon in rain, snow that builds up and gets ploughed, and footprints
+- Lightning in a storm; the real wind bends the smoke, spins the turbines and fills a windsock at
+  Ratiu Field
+- Repaint the town in place, so snow can settle and melt while you're there (today it's painted
+  when the town is built, ADR-031)
+- The Today line as a car-radio voice once there's sound
+
 **A living town**
 
 - Peach Festival weekend (a parade and car show on Main Street), Lions Thanksgiving, and game

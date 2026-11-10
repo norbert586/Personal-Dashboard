@@ -20,7 +20,7 @@ import { Shell } from './shell.ts';
 import { plotAircraft } from './sky-traffic.ts';
 import { comicCovers, comicPages, moviePages, scorePages, signContent } from './sign-pages.ts';
 import { SignBoards } from './signs.ts';
-import { tickerLines } from './ticker.ts';
+import { lookUpLine, tickerLines } from './ticker.ts';
 import { fillCards } from './windows.ts';
 import { buildNav, findPath, pathLength, type Point } from './nav.ts';
 import type { Door } from './world/builders.ts';
@@ -110,7 +110,9 @@ async function boot(): Promise<void> {
   const season =
     SEASONS.find((name) => name === asked.get('season')) ?? seasonOf(...monthDay(new Date()));
 
-  const world = buildWorld({ season, snow: weather.snowCover });
+  // Ratiu Field lands and takes off into the real wind: runway 36 when it blows from the north.
+  const northbound = weather.drift[0] >= 0;
+  const world = buildWorld({ season, snow: weather.snowCover, northbound });
   const town = buildTown(world);
   const rig = new CameraRig(renderer, canvas, start.x, start.y);
   const player = new Player(town, newYou(start.x, start.y));
@@ -140,7 +142,7 @@ async function boot(): Promise<void> {
   $('#b-out').addEventListener('click', () => rig.zoomBy(-1));
 
   // Life in town; with reduced motion it holds still (SPEC: Quality bar).
-  const life = createLife(world, true);
+  const life = createLife(world, northbound);
   const bodies = new LifeBodies(town.scene, world, life);
 
   // ---- The feeds: the same answers the Today panel shows, read again every half minute ----
@@ -155,9 +157,15 @@ async function boot(): Promise<void> {
   const ticker = $<HTMLElement>('#ticker');
   const tickerText = $<HTMLElement>('#ticker-text');
   let tickerAt = 0;
+  /** The real aircraft crossing the view, if any: the line says to look up while it does. */
+  let lookUp = '';
   const showTicker = () => {
-    const lines = tickerLines(feeds.snapshot?.feeds ?? null, feeds.problem, previewSky);
-    const text = lines[tickerAt % lines.length] ?? '';
+    const now = feeds.snapshot?.feeds ?? null;
+    const lines = tickerLines(now, feeds.problem, previewSky);
+    const plane = bodies.overhead;
+    const text = plane
+      ? lookUpLine(plane, now?.flights.provenance === 'sample')
+      : (lines[tickerAt % lines.length] ?? '');
     if (tickerText.textContent !== text) tickerText.textContent = text;
   };
   setInterval(() => {
@@ -455,6 +463,11 @@ async function boot(): Promise<void> {
       bodies.sky(still ? skyHeld : now, rig.target.x, rig.target.z, rig.yaw);
       if (canvas.dataset.overhead !== String(bodies.inView))
         canvas.dataset.overhead = String(bodies.inView);
+      const crossing = bodies.overhead?.hex ?? '';
+      if (crossing !== lookUp) {
+        lookUp = crossing;
+        showTicker();
+      }
     }
     player.sync(town, night);
     sky.update(dt, rig.target.x, rig.target.z, L.day, still || !shell.playing);

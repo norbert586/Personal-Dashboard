@@ -389,6 +389,10 @@ test('an aircraft over the real town is over the town', async ({ page }) => {
   });
   await enterTown(page);
   await expect(page.locator('#world')).toHaveAttribute('data-overhead', '1');
+  // The Today line tells you to look up, and who it is.
+  await expect(page.locator('#ticker-text')).toHaveText(
+    'Look up: N831VP, 2,650 ft, heading W (sample data)',
+  );
 });
 
 test('the sky follows the forecast, and a preview says it is one', async ({ page }) => {
