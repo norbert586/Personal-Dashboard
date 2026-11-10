@@ -2,7 +2,13 @@
  * The town's entry point, bundled into /town only (SPEC: Quality bar), so the 3D library never
  * loads on the other pages. It starts the renderer, or says plainly that this browser can't.
  */
-import { BasicShadowMap, ColorManagement, LinearSRGBColorSpace, WebGLRenderer } from 'three';
+import {
+  BasicShadowMap,
+  ColorManagement,
+  LinearSRGBColorSpace,
+  WebGLRenderer,
+  type Fog,
+} from 'three';
 import { CameraRig } from './camera.ts';
 import { nearestDoor, walksIn } from './entrance.ts';
 import { FeedClient, ageAtAnswer } from './feeds.ts';
@@ -20,9 +26,11 @@ import type { Door } from './world/builders.ts';
 import { keys, listen, onKey, startLoop } from './loop.ts';
 import { applyLight } from './light.ts';
 import { Player } from './player.ts';
-import { buildTown } from './scene.ts';
+import { CAM_DISTANCE, buildTown } from './scene.ts';
+import { FEED_SKIES, townWeather } from './weather.ts';
+import { WeatherBodies } from './weather-bodies.ts';
 import { START, buildWorld } from './world/layout.ts';
-import { nightK, seasonOf } from './world/materials.ts';
+import { nightK, seasonOf, type Season } from './world/materials.ts';
 import { TIMES, lighting, simDate, type TimeOfDay } from './world/sun.ts';
 import { keyDirection, newYou, step } from './you.ts';
 import { site } from '../site.config.ts';
@@ -66,8 +74,11 @@ function monthDay(now: Date): [number, number] {
 }
 
 const held = (...codes: string[]) => codes.some((c) => keys.has(c));
+const SEASONS: readonly Season[] = ['spring', 'summer', 'fall', 'latefall', 'winter'];
+/** How long the town waits for its feeds before it builds itself without them, in ms. */
+const FEEDS_WAIT = 1500;
 
-function boot(): void {
+async function boot(): Promise<void> {
   const canvas = $<HTMLCanvasElement>('#world');
   const renderer = createRenderer(canvas);
   if (!renderer) {
@@ -77,7 +88,8 @@ function boot(): void {
     return;
   }
 
-  // For screenshots and tests: ?at=x,y starts you somewhere else, ?time=night picks the light.
+  // For screenshots and tests: ?at=x,y starts you somewhere else, ?time=night picks the light,
+  // and ?sky=snow or ?season=spring previews weather and seasons (the heads-up says it's a preview).
   const asked = new URLSearchParams(location.search);
   const [atX, atY] = (asked.get('at') ?? '').split(',').map(Number);
   const start =
@@ -85,7 +97,19 @@ function boot(): void {
       ? { x: atX!, y: atY! }
       : { x: START.x, y: START.y };
 
-  const world = buildWorld({ season: seasonOf(...monthDay(new Date())) });
+  // The town asks for its feeds first, and waits a moment: snow on the ground is painted when the
+  // world is built, so it needs the forecast. A slow answer is used when it lands, without the snow.
+  const feeds = new FeedClient();
+  await Promise.race([
+    feeds.refresh(true),
+    new Promise((resolve) => setTimeout(resolve, FEEDS_WAIT)),
+  ]);
+  const previewSky = FEED_SKIES.find((sky) => sky === asked.get('sky')) ?? null;
+  let weather = townWeather(feeds.snapshot?.feeds.weather, previewSky);
+  const season =
+    SEASONS.find((name) => name === asked.get('season')) ?? seasonOf(...monthDay(new Date()));
+
+  const world = buildWorld({ season, snow: weather.snowCover });
   const town = buildTown(world);
   const rig = new CameraRig(renderer, canvas, start.x, start.y);
   const player = new Player(town, newYou(start.x, start.y));
@@ -119,14 +143,25 @@ function boot(): void {
   const bodies = new LifeBodies(town.scene, world, life);
 
   // ---- The feeds: the same answers the Today panel shows, read again every half minute ----
-  const feeds = new FeedClient();
   const boards = new SignBoards(town, world);
+  const sky = new WeatherBodies(town.scene, rig.camera);
   /** When the latest answer arrived, on the frame clock (seconds). */
   let skyHeld = 0;
   const windowBody = $<HTMLElement>('#window-body');
-  feeds.onChange(() => {
+  const showFeeds = () => {
     const now = feeds.snapshot?.feeds;
     const down = !now && feeds.problem !== null;
+    // The weather: cloud, rain or snow from the forecast, and fog that closes in.
+    weather = townWeather(now?.weather, previewSky);
+    sky.set(weather);
+    const fog = town.scene.fog as Fog;
+    fog.near = CAM_DISTANCE + (weather.fog ? -16 : 14);
+    fog.far = CAM_DISTANCE + (weather.fog ? 24 : 62);
+    canvas.dataset.weather = [
+      weather.sky ?? 'unknown',
+      ...(previewSky ? ['preview'] : []),
+      ...(world.palette.snow ? ['snow on the ground'] : []),
+    ].join(', ');
     const show = <T>(key: string, content: ReturnType<typeof signContent<T>>) => {
       boards.set(key, content);
       canvas.dataset[`sign${key[0]!.toUpperCase()}${key.slice(1)}`] = [
@@ -171,8 +206,9 @@ function boot(): void {
     }
     fillCards(windowBody, feeds);
     document.documentElement.dataset.feeds = now ? 'ready' : down ? 'unreachable' : 'loading';
-  });
-  void feeds.refresh(true);
+  };
+  feeds.onChange(showFeeds);
+  showFeeds();
   setInterval(() => {
     if (!document.hidden) void feeds.refresh();
   }, 30_000);
@@ -370,7 +406,7 @@ function boot(): void {
     if (document.documentElement.dataset.place !== inside)
       document.documentElement.dataset.place = inside;
 
-    const L = lighting(simDate(time));
+    const L = lighting(simDate(time), weather.light);
     const night = nightK(L.night);
     if (!still && shell.playing) stepLife(life, dt);
     // With reduced motion the aircraft hold still between answers, like the rest of the town.
@@ -380,6 +416,7 @@ function boot(): void {
         canvas.dataset.overhead = String(bodies.inView);
     }
     player.sync(town, night);
+    sky.update(dt, rig.target.x, rig.target.z, L.day, still || !shell.playing);
     if (shell.playing) boards.update(now, still);
     bodies.sync(town, still ? 0 : now, night, still);
     marks.update(path, you.x, you.y, now, still);
@@ -394,4 +431,4 @@ function boot(): void {
   });
 }
 
-boot();
+void boot();

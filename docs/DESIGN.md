@@ -66,8 +66,12 @@ copy values here.
   down. Halos are screen-space points nudged toward the camera so nearby walls don't clip them.
 - The bike has a headlight. Cars have headlights and tail lights.
 - Fog only touches the far edges of the world.
-- Weather comes from the forecast: overcast dims the sun and adds cloud, rain and snow fall, and
-  snow covers the ground.
+- Weather comes from the forecast: overcast dims the sun and adds cloud, rain and snow fall, fog
+  closes in, and snow covers the ground and the roofs. Clouds are low-poly heaps that drift on the
+  real wind and throw shadows on a fair day. Rain and snow fall in front of the camera, a pixel at
+  a time.
+- Seasons come from the date: blossom in the orchard in spring, fall colour, and bare branches
+  and dormant grass in winter. Snow never comes from the date, only from the forecast (ADR-031).
 
 ## Interface
 

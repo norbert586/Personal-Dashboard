@@ -285,3 +285,18 @@ test('an aircraft over the real town is over the town', async ({ page }) => {
   await enterTown(page);
   await expect(page.locator('#world')).toHaveAttribute('data-overhead', '1');
 });
+
+test('the sky follows the forecast, and a preview says it is one', async ({ page }) => {
+  const errors = collectErrors(page);
+  await enterTown(page);
+  // The saved sample: 52°F and mostly cloudy.
+  await expect(page.locator('#world')).toHaveAttribute('data-weather', 'cloudy');
+
+  await enterTown(page, '?sky=snow&season=winter');
+  await expect(page.locator('#world')).toHaveAttribute(
+    'data-weather',
+    'snow, preview, snow on the ground',
+  );
+  await page.waitForTimeout(500);
+  expect(errors, 'console errors, including CSP violations').toEqual([]);
+});

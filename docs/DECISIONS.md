@@ -395,3 +395,18 @@ Consequences: at 32 tiles to the mile an aircraft is in view only when it really
 half a mile, so the sky is often empty until the big world (step 7) gives more sky to watch. A
 saved sample has no clock, so it replays from the moment the page opened. If step 7 moves the
 town's centre, it moves the hand-placed town on this projection, not the projection.
+
+## ADR-031: Snow cover is the town's guess from the forecast, painted when the town is built
+
+**Accepted · 2026-11-10**
+Context: the feel test's winter was white by date. The roadmap wants snow cover from the forecast
+and bare trees from the date, but the weather service's forecast doesn't report snow depth.
+Decision: winter by date is bare branches and dormant grass. Snow lies when it's snowing at or
+near freezing, or when it's well below freezing with snow in the next day's forecast
+(`src/game/weather.ts`); roads and walks stay clear. The ground and roofs are painted when the
+town is built, so the town asks for its feeds first and waits up to a second and a half for them.
+Clouds, rain, snow and fog follow each new answer while you play.
+Consequences: snow can linger or melt a little out of step with the real ground. Snow that
+starts while you're in town falls at once but only lies after a reload, and a server that answers
+slowly builds the town without it. `?sky=` and `?season=` preview any weather or season, and the
+canvas says it's a preview.

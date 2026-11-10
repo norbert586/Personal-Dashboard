@@ -71,12 +71,14 @@ const RWYFONT: Record<string, string[]> = {
 
 export interface Options {
   season: Season;
+  /** Snow lies on the ground (from the forecast). */
+  snow?: boolean;
   /** Land and take off into the wind: true when it blows from the north. */
   northbound?: boolean;
 }
 
-export function buildWorld({ season, northbound = true }: Options): World {
-  const pal = palette(season);
+export function buildWorld({ season, snow = false, northbound = true }: Options): World {
+  const pal = palette(season, snow);
   const ground = new Ground(-4, 40, { x0: -0.6, x1: G + 0.6, paint: grassP, outside: farP });
   const W: World = {
     season,
@@ -325,7 +327,9 @@ export function buildWorld({ season, northbound = true }: Options): World {
       const x = 2.3 + c * 0.95 + (r & 1) * 0.35;
       const y = 26.4 + r * 0.9;
       keep(x - 0.3, y - 0.3, x + 0.3, y + 0.3);
-      obj(PLACE.orchard, () => tree(x, y, { r: 11, th: 11, mats: ['leafA', 'leafC'] }));
+      // In spring the orchard is in blossom.
+      const mats: MatName[] = season === 'spring' ? ['blossom', 'blossomW'] : ['leafA', 'leafC'];
+      obj(PLACE.orchard, () => tree(x, y, { r: 11, th: 11, mats }));
     }
   farmStand(PLACE.orchard, 5.0, 24.7);
   keep(4.8, 24.5, 6.4, 25.8);

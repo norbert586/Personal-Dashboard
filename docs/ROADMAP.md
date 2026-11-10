@@ -86,7 +86,7 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
    - [x] Sports bar sign: live and final scores and the next games for the seven teams.
    - [x] Real aircraft from ADS-B fly over at their real positions, heights and headings. This step
          adds the world's one projection (ADR-019), which step 7 builds the map on.
-   - [ ] Weather and seasons: the forecast brings cloud, rain, snow and snow cover; the date brings
+   - [x] Weather and seasons: the forecast brings cloud, rain, snow and snow cover; the date brings
          blossom in the orchards, fall leaves and bare winter trees (DESIGN: Light, time and
          weather).
    - [ ] Headlines and traffic in town. Proposed: headlines in a newspaper box on Main Street, and
