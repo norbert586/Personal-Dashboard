@@ -269,6 +269,7 @@ export function buildWorld({ season, northbound = true }: Options): World {
   // The feed shops are a floor taller, to carry the boards that show their feeds (signs.ts).
   const boards: Record<number, ShopSpec['board']> = {
     [PLACE.cinema]: { key: 'movies', skin: 'marquee', canopy: true },
+    [PLACE.comicShop]: { key: 'comics', skin: 'neon', shelves: true },
   };
   row.forEach(([id, x0, x1, brick, awn, name], i) => {
     const board = boards[id];

@@ -181,40 +181,61 @@ test('with reduced motion, the intro is skipped', async ({ page }) => {
 
 // The e2e server answers every feed from its saved sample (serve.mjs).
 const AT_CINEMA = '?at=3.6,19.75';
+const FEED_SHOPS = [
+  {
+    place: 'Cinema',
+    at: AT_CINEMA,
+    sign: ['data-sign-movies', /^SAMPLE DATA\|WILDWOOD\|PG-13\|THE MONGOOSE\|R\|/],
+    card: 'Movies',
+    has: 'Wildwood',
+  },
+  {
+    place: 'Comic shop',
+    at: '?at=5.0,19.75',
+    sign: ['data-sign-comics', /^SAMPLE DATA\|NEW COMICS\|32 THIS WEEK\|/],
+    card: 'New comics',
+    has: 'Batman #15',
+  },
+] as const;
 
-test('the cinema marquee and its window show what is playing, as Today does', async ({
-  page,
-  context,
-}) => {
+for (const shop of FEED_SHOPS)
+  test(`the ${shop.place.toLowerCase()}'s board and window show its feed, as Today does`, async ({
+    page,
+    context,
+  }) => {
+    await enterTown(page, shop.at);
+    await expect(page.locator('html')).toHaveAttribute('data-feeds', 'ready');
+    // The board: where the data came from, then what the feed has.
+    await expect(page.locator('#world')).toHaveAttribute(shop.sign[0], shop.sign[1]);
+
+    await page.locator('#world').focus();
+    await expect(page.getByRole('button', { name: shop.place })).toBeVisible();
+    await page.keyboard.press('f');
+    const window = page.getByRole('dialog', { name: shop.place });
+    await expect(window).toBeVisible();
+    const card = window.getByRole('region', { name: shop.card });
+    await expect(card).toContainText('Sample data');
+    await expect(card).toContainText(shop.has);
+    const results = await new AxeBuilder({ page }).include('#window').analyze();
+    expect(results.violations).toEqual([]);
+
+    // The window's card is the Today panel's card, word for word.
+    const today = await context.newPage();
+    await today.goto('/');
+    expect(await card.innerText()).toBe(
+      await today.getByRole('region', { name: shop.card }).innerText(),
+    );
+  });
+
+test("the cinema's window links to Emagine Macomb's showtimes", async ({ page }) => {
   await enterTown(page, AT_CINEMA);
-  await expect(page.locator('html')).toHaveAttribute('data-feeds', 'ready');
-  // The marquee: where the data came from, then the films, most popular first.
-  await expect(page.locator('#world')).toHaveAttribute(
-    'data-sign-movies',
-    /^SAMPLE DATA\|WILDWOOD\|PG-13\|THE MONGOOSE\|R\|/,
-  );
-
   await page.locator('#world').focus();
-  await expect(page.getByRole('button', { name: /Cinema/ })).toBeVisible();
   await page.keyboard.press('f');
-  const window = page.getByRole('dialog', { name: 'Cinema' });
-  await expect(window).toBeVisible();
-  const movies = window.getByRole('region', { name: 'Movies' });
-  await expect(movies).toContainText('Sample data');
-  await expect(movies.getByRole('listitem').first()).toContainText('Wildwood');
-  await expect(movies.getByRole('link', { name: 'Showtimes at Emagine Macomb' })).toHaveAttribute(
-    'href',
-    /emagine/,
-  );
-  const results = await new AxeBuilder({ page }).include('#window').analyze();
-  expect(results.violations).toEqual([]);
-
-  // The window's card is the Today panel's card, word for word.
-  const today = await context.newPage();
-  await today.goto('/');
-  expect(await movies.innerText()).toBe(
-    await today.getByRole('region', { name: 'Movies' }).innerText(),
-  );
+  await expect(
+    page
+      .getByRole('dialog', { name: 'Cinema' })
+      .getByRole('link', { name: 'Showtimes at Emagine Macomb' }),
+  ).toHaveAttribute('href', /emagine/);
 });
 
 test('when the town cannot reach its feeds, the marquee goes dark and the window says why', async ({

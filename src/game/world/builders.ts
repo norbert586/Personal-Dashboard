@@ -52,7 +52,7 @@ export interface Light {
   a: number;
 }
 /** How a board is drawn: a backlit cinema marquee, an LED scoreboard, or neon in a shop front. */
-export type BoardSkin = 'marquee' | 'led' | 'neon';
+export type BoardSkin = 'marquee' | 'led' | 'neon' | 'covers';
 /** A board the town writes on while it runs (src/game/signs.ts): `key` is the feed it shows. */
 export interface SignSlot {
   key: string;
@@ -255,8 +255,11 @@ export interface ShopSpec {
   ntok?: number;
   seed?: number;
   lit?: number;
-  /** A feed's board over the shop front; with `canopy`, on a marquee that sticks out over the walk. */
-  board?: { key: string; skin: BoardSkin; canopy?: boolean };
+  /**
+   * A feed's board over the shop front; with `canopy`, on a marquee that sticks out over the walk.
+   * With `shelves`, the shop window shows the feed's items too, one small cover each.
+   */
+  board?: { key: string; skin: BoardSkin; canopy?: boolean; shelves?: boolean };
 }
 
 /** Board height in pixels: a frame, two lines of the sign font and a status strip (signs.ts). */
@@ -369,7 +372,8 @@ export function shop(o: ShopSpec): void {
       out - y1,
     );
     W.signs.push({
-      ...o.board,
+      key: o.board.key,
+      skin: o.board.skin,
       ax: x0,
       ay: out + 0.012,
       bx: x1,
@@ -379,8 +383,21 @@ export function shop(o: ShopSpec): void {
     });
     light((x0 + x1) / 2, out - 0.1, 6, 44, [255, 226, 160], 0.5); // spilling on the walk below
   } else if (o.board) {
+    if (o.board.shelves)
+      // inside the shop window's frame: two shelves of covers
+      W.signs.push({
+        key: `${o.board.key}-window`,
+        skin: 'covers',
+        ax: x0 + 6 / HW,
+        ay: y1 + 0.012,
+        bx: x0 + (len - 18) / HW,
+        by: y1 + 0.012,
+        z0: 6,
+        z1: 20,
+      });
     W.signs.push({
-      ...o.board,
+      key: o.board.key,
+      skin: o.board.skin,
       ax: x0,
       ay: y1 + 0.02,
       bx: x1,

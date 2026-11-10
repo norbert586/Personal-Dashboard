@@ -94,9 +94,9 @@ export const PLACES: PlaceInfo[] = [
   {
     id: PLACE.comicShop,
     kind: 'feed',
-    cards: [],
+    cards: ['comics'],
     title: 'Comic shop',
-    note: "This week's new books. Until the window is wired up, they're on Today.",
+    note: "This week's new books: a cover in the window for each, by publisher.",
   },
   {
     id: PLACE.sportsBar,

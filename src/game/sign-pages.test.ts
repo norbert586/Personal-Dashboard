@@ -6,6 +6,7 @@ import type { Game, TeamScores } from '../lib/sources/scores.ts';
 import type { Wire, WireReading } from './feeds.ts';
 import {
   COLS,
+  comicCovers,
   comicPages,
   moviePages,
   scorePages,
@@ -40,7 +41,7 @@ test('sign text is capitals the sign font can draw', () => {
   assert.equal(signText('  Tom & Jerry’s  '), "TOM & JERRY'S");
 });
 
-test('text wraps by the word and drops what does not fit', () => {
+test('text wraps by the word', () => {
   assert.deepEqual(wrap('GODZILLA MINUS ZERO'), ['GODZILLA', 'MINUS ZERO']);
   assert.deepEqual(wrap('ABSOLUTE WONDER WOMAN #14'), ['ABSOLUTE', 'WONDER WOMAN']);
   assert.deepEqual(wrap('SUPERCALIFRAGILISTIC'), ['SUPERCALIFRA']);
@@ -62,7 +63,8 @@ test('the marquee lists films with a rating when there is room', () => {
     [
       ['WILDWOOD', 'PG-13'],
       ['GODZILLA', 'MINUS ZERO'],
-      ['RAMAYANA', 'PG-13'], // too long whole, so the part before the colon
+      ['RAMAYANA:', 'RISE OF A'], // a long title carries on to the next page
+      ['LEGEND', 'PG-13'],
     ],
   );
   for (const p of pages) for (const line of p.lines) assert.ok(line.length <= COLS, line);
@@ -109,6 +111,7 @@ test("the comic shop counts the week's books, then names a few from each publish
       ['NEW COMICS', '3 THIS WEEK'],
       ['BATMAN #15', 'DC'],
       ['ABSOLUTE', 'WONDER WOMAN'],
+      ['#14', 'DC'],
       ['LAKE EFFECT', '#3'],
     ],
   );
@@ -120,6 +123,8 @@ test("the comic shop counts the week's books, then names a few from each publish
     'NO NEW BOOKS',
     'THIS WEEK',
   ]);
+  // The window: a cover for every book, a publisher at a time.
+  assert.deepEqual(comicCovers(reading(data)), [0, 1, 0]);
 });
 
 test('the scoreboard shows live games first, then last results and next games', () => {

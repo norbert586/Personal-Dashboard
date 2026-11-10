@@ -2,7 +2,7 @@
  * What the town's boards say (SPEC: Feeds in town): the cinema marquee, the comic shop's board and
  * the sports bar's scoreboard. Pure: a feed's reading in, pages of two short lines out, plus a
  * status strip that says where the data came from, as the Today panel's cards do (SPEC: Data
- * rules). Boards are narrow, so text is fitted, never invented: a line that can't fit is dropped.
+ * rules). Boards are narrow, so a long title carries on to the next page.
  */
 import type { Provenance } from '../lib/readings.ts';
 import type { Comics } from '../lib/sources/comics.ts';
@@ -29,6 +29,8 @@ export interface SignContent {
   /** The status strip: "LIVE 22:58", "SAMPLE DATA", "OFFLINE". */
   status: string;
   pages: SignPage[];
+  /** For a shop window's shelves: one entry per item, the index of its group (publisher). */
+  covers?: number[];
 }
 
 /** Text in the sign font: capitals, no accents, and only the characters it can draw. */
@@ -44,7 +46,7 @@ export function signText(text: string): string {
   return out.replace(/\s+/g, ' ').trim();
 }
 
-/** Greedy word wrap; words that don't fit in the rows are left out, and a too-long word is cut. */
+/** Greedy word wrap into at most `rows` lines; a word longer than a line is cut. */
 export function wrap(text: string, cols = COLS, rows = 2): string[] {
   const out: string[] = [];
   let line = '';
@@ -62,16 +64,24 @@ export function wrap(text: string, cols = COLS, rows = 2): string[] {
   return out;
 }
 
-/** A title on two lines; when it's too long, the part before its colon or dash. */
-function titleLines(title: string): string[] {
-  const full = signText(title);
-  const lines = wrap(full);
-  if (lines.join(' ') === full) return lines;
-  return wrap(signText(title.split(/:| [-–—] /)[0] ?? title));
-}
-
 const page = (a = '', b = '', tones?: [Tone, Tone]): SignPage =>
   tones ? { lines: [a, b], tones } : { lines: [a, b] };
+
+/**
+ * A title as pages of two lines: a long one carries on to the next page rather than being cut.
+ * When the last page has a line to spare, `tail` goes there, dimmed (a rating, a publisher).
+ */
+function titlePages(title: string, tail = ''): SignPage[] {
+  const lines = wrap(signText(title), COLS, 6);
+  const pages: SignPage[] = [];
+  for (let i = 0; i < lines.length; i += 2) {
+    const second = lines[i + 1];
+    pages.push(
+      page(lines[i], second ?? signText(tail), ['plain', second === undefined ? 'dim' : 'plain']),
+    );
+  }
+  return pages;
+}
 
 /** The first candidate that fits the board, or the last one cut short. */
 const fit = (...candidates: string[]): string =>
@@ -97,10 +107,9 @@ export function signContent<T>(
 
 /** The cinema marquee: what's playing, most popular first, with the rating when there's room. */
 export function moviePages(reading: WireReading<Movies>, limit = 6): SignPage[] {
-  const pages = reading.data.movies.slice(0, limit).map((movie) => {
-    const [a = '', b] = titleLines(movie.title);
-    return page(a, b ?? signText(movie.rating ?? ''), ['plain', b ? 'plain' : 'dim']);
-  });
+  const pages = reading.data.movies
+    .slice(0, limit)
+    .flatMap((movie) => titlePages(movie.title, movie.rating));
   return pages.length ? pages : [page('NO FILMS', 'LISTED')];
 }
 
@@ -116,11 +125,25 @@ export function comicPages(reading: WireReading<Comics>, perPublisher = 3): Sign
       : page('LAST WEEK', books, ['hot', 'plain']),
   ];
   for (const group of groups)
-    for (const comic of group.comics.slice(0, perPublisher)) {
-      const [a = '', b] = titleLines(comic.title);
-      pages.push(page(a, b ?? signText(group.publisher), ['plain', b ? 'plain' : 'dim']));
-    }
+    for (const comic of group.comics.slice(0, perPublisher))
+      pages.push(...titlePages(comic.title, group.publisher));
   return pages;
+}
+
+/**
+ * The comic shop's window: one cover per book, dealt a publisher at a time so a small window
+ * still shows every publisher. Each entry is the publisher's place in the feed's groups.
+ */
+export function comicCovers(reading: WireReading<Comics>): number[] {
+  const left = reading.data.groups.map((group) => group.comics.length);
+  const covers: number[] = [];
+  while (left.some((n) => n > 0))
+    left.forEach((n, i) => {
+      if (n <= 0) return;
+      covers.push(i);
+      left[i] = n - 1;
+    });
+  return covers;
 }
 
 /** Board names for the teams (site.config.ts), by id. */

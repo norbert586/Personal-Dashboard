@@ -18,6 +18,7 @@ import { PAGE_SECONDS, type SignContent, type Tone } from './sign-pages.ts';
 import { V } from './world/atlas.ts';
 import type { BoardSkin, SignSlot, World } from './world/builders.ts';
 import { M, type Palette } from './world/materials.ts';
+import { hash } from './world/noise.ts';
 import { textW, withText, type Painter, type SignText } from './world/painters.ts';
 
 /** Rows of the status strip at the foot of a board, rule included. */
@@ -29,7 +30,7 @@ interface Look {
   /** The frame around the lines; `tick` steps twice a second so bulbs can chase. */
   frame: (along: number, tick: number) => number;
 }
-const LOOKS: Record<BoardSkin, Look> = {
+const LOOKS: Record<Exclude<BoardSkin, 'covers'>, Look> = {
   marquee: {
     bg: M.boardLit + 1,
     ink: { plain: M.dark, hot: M.red + 1, good: M.dark, bad: M.dark, dim: M.steel + 1 },
@@ -49,7 +50,7 @@ const LOOKS: Record<BoardSkin, Look> = {
   neon: {
     bg: M.doorB,
     ink: {
-      plain: M.trim + 2,
+      plain: M.boardLit + 1,
       hot: M.neonY + 1,
       good: M.ledG + 1,
       bad: M.neonR + 1,
@@ -58,6 +59,37 @@ const LOOKS: Record<BoardSkin, Look> = {
     frame: () => M.neonB + 1,
   },
 };
+
+/** Cover colours by group: the first publisher's books are blue, the next yellow, then red. */
+const COVER = [M.neonB, M.neonY, M.neonR, M.ledG];
+
+/**
+ * A shop window's shelves: two rows of small covers, one per item, in its group's colour. The
+ * board over the door has the words; an unlit, empty window means no data.
+ */
+function shelfPainter(w: number, content: SignContent): Painter {
+  const covers = content.covers ?? [];
+  const perRow = Math.floor((w + 1) / 5);
+  const pad = Math.floor((w + 1 - perRow * 5) / 2);
+  const glass = covers.length ? M.glassLit + 1 : M.glass;
+  return (u, v) => {
+    if (v === 6) return M.wood + 2; // the shelf between the rows
+    if (v > 12) return glass;
+    const row = v > 6 ? 0 : 1;
+    const dv = v > 6 ? v - 7 : v;
+    const i = Math.floor((u - pad) / 5);
+    const du = u - pad - i * 5;
+    const k = row * perRow + i;
+    const group = covers[k];
+    if (u < pad || i >= perRow || du === 4 || group === undefined) return glass;
+    const base = COVER[group % COVER.length]!;
+    if (dv === 5) return M.trim + 2; // the masthead
+    // a figure on the cover, different for every book
+    if (dv >= 1 && dv <= 3 && du >= 1 && du <= 2 && hash(k * 5 + du, dv + 3) < 0.6)
+      return M.dark + 1;
+    return base + (dv === 0 ? 0 : 1);
+  };
+}
 
 /** The token at each texel of a w×h board showing one page of its content. */
 export function boardPainter(
@@ -68,6 +100,7 @@ export function boardPainter(
   pageIndex: number,
   tick = 0,
 ): Painter {
+  if (skin === 'covers') return shelfPainter(w, content);
   const look = LOOKS[skin];
   const off = content.state === 'offline' || content.state === 'loading';
   const page = content.pages[pageIndex % Math.max(1, content.pages.length)];

@@ -82,7 +82,7 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
        so the two never disagree (SPEC: Feeds in town). A spot whose feed is offline says so and
        why, like the panel's cards (SPEC: Data rules).
    - [x] Cinema marquee: what's playing (TMDB), with Emagine Macomb's showtimes link in its window.
-   - [ ] Comic shop window: this week's DC, Image and Marvel books (ADR-026).
+   - [x] Comic shop window: this week's DC, Image and Marvel books (ADR-026).
    - [ ] Sports bar sign: live and final scores and the next games for the seven teams.
    - [ ] Real aircraft from ADS-B fly over at their real positions, heights and headings. This step
          adds the world's one projection (ADR-019), which step 7 builds the map on.

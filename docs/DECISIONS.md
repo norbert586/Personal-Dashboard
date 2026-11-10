@@ -374,5 +374,6 @@ sign font and a status strip that names where its data came from (live with the 
 offline); an offline board goes dark and the window says why. The town boots first and asks for
 the feeds after, so a slow feed never holds up the first frame.
 Consequences: one more route, and the town's page carries the cards' styles. Boards are 12
-characters wide, so long titles are cut at a word; the window always has the whole list. The feed
-shops are a floor taller than in the feel test, to carry their boards.
+characters wide, so a long title carries on to the next page, and a board shows the first few
+items; the window always has the whole list. The feed shops are a floor taller than in the feel
+test, to carry their boards.
