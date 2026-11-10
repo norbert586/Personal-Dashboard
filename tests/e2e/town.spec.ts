@@ -196,6 +196,14 @@ const FEED_SHOPS = [
     card: 'New comics',
     has: 'Batman #15',
   },
+  {
+    place: 'Sports bar',
+    at: '?at=6.6,19.75',
+    // Samples read as they did when saved: the Lions won at Miami that Sunday.
+    sign: ['data-sign-scores', /^SAMPLE DATA\|.*\|LIONS @MIA\|W 19-9 TODAY\|/],
+    card: 'Scores',
+    has: '19–9 at MIA',
+  },
 ] as const;
 
 for (const shop of FEED_SHOPS)

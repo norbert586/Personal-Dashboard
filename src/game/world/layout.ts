@@ -270,6 +270,7 @@ export function buildWorld({ season, northbound = true }: Options): World {
   const boards: Record<number, ShopSpec['board']> = {
     [PLACE.cinema]: { key: 'movies', skin: 'marquee', canopy: true },
     [PLACE.comicShop]: { key: 'comics', skin: 'neon', shelves: true },
+    [PLACE.sportsBar]: { key: 'scores', skin: 'led' },
   };
   row.forEach(([id, x0, x1, brick, awn, name], i) => {
     const board = boards[id];

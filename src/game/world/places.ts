@@ -101,8 +101,8 @@ export const PLACES: PlaceInfo[] = [
   {
     id: PLACE.sportsBar,
     kind: 'feed',
-    cards: [],
+    cards: ['scores'],
     title: 'Sports bar',
-    note: 'Every game on every screen. Until the sign is wired up, the scores are on Today.',
+    note: 'Every game on every screen, and the scoreboard out front.',
   },
 ];

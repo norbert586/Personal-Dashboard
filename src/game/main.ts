@@ -11,7 +11,7 @@ import { createLife, stepLife } from './life.ts';
 import { LifeBodies } from './life-bodies.ts';
 import { PathMarks } from './marks.ts';
 import { Shell } from './shell.ts';
-import { comicCovers, comicPages, moviePages, signContent } from './sign-pages.ts';
+import { comicCovers, comicPages, moviePages, scorePages, signContent } from './sign-pages.ts';
 import { SignBoards } from './signs.ts';
 import { fillCards } from './windows.ts';
 import { buildNav, findPath, pathLength, type Point } from './nav.ts';
@@ -128,6 +128,19 @@ function boot(): void {
       ].join('|');
     };
     show('movies', signContent(now?.movies, moviePages, down));
+    show(
+      'scores',
+      // Like the panel, a saved sample counts its days from when it was saved.
+      signContent(
+        now?.scores,
+        (reading) =>
+          scorePages(
+            reading,
+            reading.provenance === 'sample' ? new Date(reading.fetchedAt) : new Date(),
+          ),
+        down,
+      ),
+    );
     const comics = signContent(now?.comics, comicPages, down);
     show('comics', comics);
     // The shop window has a cover for every book; it's empty when there's no data.

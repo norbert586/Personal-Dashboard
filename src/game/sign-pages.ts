@@ -152,7 +152,7 @@ const SHORT = new Map(site.teams.map((team) => [team.id, signText(team.short ?? 
 /** "GB @LIONS": the visitors at the home team, as tickers write it. */
 function matchup(us: string, game: Wire<Game>): string {
   const them = signText(game.opponent.abbreviation);
-  if (game.neutral) return fit(`${us} VS ${them}`, `${us} V ${them}`);
+  if (game.neutral) return fit(`${us} VS ${them}`, `${us} V ${them}`, `${us}-${them}`);
   const [away, home] = game.home ? [them, us] : [us, them];
   return fit(`${away} @${home}`, `${away}@${home}`);
 }
