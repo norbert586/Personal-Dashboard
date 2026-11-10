@@ -21,6 +21,7 @@ export const PLACE = {
   cinema: 16,
   comicShop: 17,
   sportsBar: 18,
+  newsBox: 19,
 } as const;
 
 export type PlaceId = (typeof PLACE)[keyof typeof PLACE];
@@ -104,5 +105,12 @@ export const PLACES: PlaceInfo[] = [
     cards: ['scores'],
     title: 'Sports bar',
     note: 'Every game on every screen, and the scoreboard out front.',
+  },
+  {
+    id: PLACE.newsBox,
+    kind: 'feed',
+    cards: ['news-local', 'news-tech', 'news-national', 'news-world'],
+    title: 'Newspaper box',
+    note: "This morning's headlines. Each one links to the paper that ran it.",
   },
 ];

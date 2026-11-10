@@ -21,6 +21,7 @@ import {
   lampPost,
   light,
   mailbox,
+  newsBox,
   obj,
   pineTree,
   pole,
@@ -292,6 +293,10 @@ export function buildWorld({ season, snow = false, northbound = true }: Options)
     });
   });
   church(12.2, 16.9);
+  // The newspaper box stands by the walk where you start, so the headlines are the first thing
+  // you can read.
+  newsBox(PLACE.newsBox, 15.15, 18.9);
+  keep(14.9, 18.7, 15.4, 19.1);
   diner(PLACE.coney, 16.6, 17.5, 18.8, 18.7);
   kiosk(PLACE.kiosk, 19.3, 17.9, 20.2, 18.65);
   (['PIZZA', 'NAILS', 'VAPE', 'LOANS'] as const).forEach((name, i) =>

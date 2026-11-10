@@ -17,6 +17,7 @@ export interface Doorway {
 /** The doorway for a door: the wall face it sits in front of, if any. */
 export function doorway(world: World, door: Door): Doorway {
   const step: [number, number] = [door.x, door.y];
+  if (door.plain) return { step, sill: step, inside: step, normal: null };
   let best = null;
   let bd = 0.7;
   for (const c of world.colliders) {

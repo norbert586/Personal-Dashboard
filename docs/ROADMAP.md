@@ -89,8 +89,10 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
    - [x] Weather and seasons: the forecast brings cloud, rain, snow and snow cover; the date brings
          blossom in the orchards, fall leaves and bare winter trees (DESIGN: Light, time and
          weather).
-   - [ ] Headlines and traffic in town. Proposed: headlines in a newspaper box on Main Street, and
-         traffic on a freeway sign once step 7 brings M-53. Confirm with Norbert first.
+   - [x] Headlines and traffic in town: the headlines are in a newspaper box on Main Street, where
+         you start. Traffic gets its freeway sign when step 7 brings M-53; until then it's on the
+         Today line at the foot of the screen, with every other feed (ADR-032). This follows the
+         proposal, because Norbert left the choice open: he can still ask for something else.
    - [ ] The town becomes the home page. The Today panel keeps its own page and opens over the town
          with T (ADR-022). Ask Norbert whether phones should open straight to the panel.
 5. [ ] **Town Hall.** The to-do list and calendar live in the Town Hall (ADR-014). Add the building
@@ -142,6 +144,8 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
          tune tiles per mile (SPEC open question 2).
    - [ ] Life on the network: chill traffic drives the road graph, and people walk the sidewalks
          and the trail.
+   - [ ] The freeway sign over M-53 shows the worst of the area's traffic (TomTom), with the
+         Traffic card in its window, like the boards on Main Street (ADR-029, ADR-032).
    - [ ] The Map pane shows the real grid and where you are (`paneMap` in `prototype/2d/p6-ui.js`).
    - [ ] More than one area: the generator takes an area, so the delivery zone (M6) drops in later
          without touching the town.

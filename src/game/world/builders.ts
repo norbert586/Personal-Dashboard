@@ -32,6 +32,8 @@ export interface Door {
   y: number;
   /** How close you must be for the prompt to show. */
   reach: number;
+  /** Nothing to walk into (a newspaper box): you stand where you are and read. */
+  plain?: boolean;
 }
 /** An axis-aligned footprint you can't walk through; `id` is the place whose door it has, or 0. */
 export interface Collider {
@@ -1048,6 +1050,28 @@ export function turbine(id: number, gx: number, gy: number, h = 130): void {
   W.turbines.push([gx, gy, h]);
   roundCollide(gx, gy, 0.1);
   door(id, gx + 0.25, gy + 0.25, 0.9);
+}
+
+/** A newspaper box on the walk, facing the street (+y): the headlines live here. */
+export function newsBox(id: number, gx: number, gy: number): void {
+  const x0 = gx - 0.13;
+  const x1 = gx + 0.13;
+  const y0 = gy - 0.1;
+  const y1 = gy + 0.1;
+  // The front: a masthead, then the paper behind glass, with a few lines of headline.
+  const front: Painter = (u, v) => {
+    if (v >= 11) return M.neonY + (v === 12 && u > 1 && u < 6 ? 0 : 1);
+    if (u === 0 || u === 7 || v < 3) return M.doorB + 1;
+    if (v === 9 || v === 6) return u > 1 && u < 6 ? M.dark + 1 : M.boardLit + 1;
+    if (v === 4) return u > 1 && u < 5 ? M.steel + 1 : M.boardLit + 1;
+    return M.boardLit + 1;
+  };
+  const side: Painter = (_u, v) => (v >= 11 ? M.neonY + 1 : M.doorB + (v < 3 ? 0 : 1));
+  A.post(gx - 0.09, gy, 0.015, 0, 4, M.steel);
+  A.post(gx + 0.09, gy, 0.015, 0, 4, M.steel);
+  A.box(x0, y0, x1, y1, 4, 14, { f: front, r: side, b: side, l: side, t: () => M.doorB + 2 });
+  W.colliders.push({ x0, y0, x1, y1, id });
+  W.doors.push({ id, x: gx, y: y1 + 0.14, reach: 0.9, plain: true });
 }
 
 // ---- Trees: recorded here, drawn as instanced meshes by the scene ----

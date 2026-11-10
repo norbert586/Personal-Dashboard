@@ -246,12 +246,42 @@ test("the cinema's window links to Emagine Macomb's showtimes", async ({ page })
   ).toHaveAttribute('href', /emagine/);
 });
 
+test('the newspaper box where you start has the headlines, and the Today line the rest', async ({
+  page,
+}) => {
+  // The Today line starts with the weather, and says the sample is a sample. It only moves on
+  // once you're playing, so read it behind the intro.
+  await page.goto('/town');
+  await expect(page.locator('html')).toHaveAttribute('data-feeds', 'ready', { timeout: 20_000 });
+  await expect(page.locator('#ticker-text')).toHaveText(
+    '52°F, mostly cloudy, wind W 5 mph (sample data)',
+  );
+  await page.getByRole('button', { name: 'Skip intro' }).click();
+  await expect(page.getByRole('link', { name: /^Today/ })).toBeVisible();
+
+  await page.locator('#world').focus();
+  await expect(page.getByRole('button', { name: 'Newspaper box' })).toBeVisible();
+  await page.keyboard.press('f');
+  const window = page.getByRole('dialog', { name: 'Newspaper box' });
+  await expect(window).toBeVisible();
+  for (const section of ['Local news', 'Tech news', 'National news', 'World news'])
+    await expect(window.getByRole('region', { name: section })).toContainText('Sample data');
+  await expect(
+    window.getByRole('region', { name: 'Local news' }).getByRole('link').first(),
+  ).toHaveAttribute('href', /^https:\/\/www\.clickondetroit\.com\//);
+  const results = await new AxeBuilder({ page }).include('#window').analyze();
+  expect(results.violations).toEqual([]);
+});
+
 test('when the town cannot reach its feeds, the marquee goes dark and the window says why', async ({
   page,
 }) => {
   await page.route('**/api/feeds.json', (route) => route.fulfill({ status: 503, body: 'down' }));
   await enterTown(page, AT_CINEMA);
   await expect(page.locator('html')).toHaveAttribute('data-feeds', 'unreachable');
+  await expect(page.locator('#ticker-text')).toHaveText(
+    "The town couldn't reach its feeds: the server answered 503.",
+  );
   await expect(page.locator('#world')).toHaveAttribute(
     'data-sign-movies',
     'OFFLINE|NO SIGNAL|ASK INSIDE',

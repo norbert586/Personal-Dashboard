@@ -80,7 +80,7 @@ copy values here.
   Esc opens a pause menu in the same style.
 - Type: Jersey 10 for display (names, titles), Pixelify Sans for the interface.
 - On screen: a name badge, camera and bike controls, a compass, a door prompt that names its key,
-  and a hint bar. Windows open in the centre on desktop and as a bottom sheet on phones.
+  and a hint bar with a Today line that shows one feed at a time in plain words. Windows open in the centre on desktop and as a bottom sheet on phones.
 - Plain words, sentence case. Buttons say what happens. Status is always a word as well as a colour.
 
 ## Sound

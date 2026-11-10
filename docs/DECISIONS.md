@@ -410,3 +410,18 @@ Consequences: snow can linger or melt a little out of step with the real ground.
 starts while you're in town falls at once but only lies after a reload, and a server that answers
 slowly builds the town without it. `?sky=` and `?season=` preview any weather or season, and the
 canvas says it's a preview.
+
+## ADR-032: Headlines in a newspaper box, traffic on the Today line until M-53
+
+**Accepted · 2026-11-10 · follows the roadmap's proposal; Norbert left the choice open**
+Context: headlines and traffic had no place in town. The roadmap proposed a newspaper box on Main
+Street and a freeway sign once the big world brings M-53, and asked to confirm with Norbert. He
+started the step without picking, so the proposal stands until he says otherwise.
+Decision: a newspaper box stands by the walk where you start; its window has the four news cards.
+The foot of the screen gets a Today line: one feed at a time in plain words (weather, traffic,
+scores, a headline, films, comics, aircraft), from the same answers as the Today panel. It's
+where traffic shows in town until the freeway sign exists, where an offline feed says so and why
+even without a building, and it opens Today. It waits while you hover or focus it, and while the
+town is paused.
+Consequences: the freeway sign is now a step 7 box. The Today line is a second place for words
+the boards also show, so it reuses the feed's own text and never invents any.

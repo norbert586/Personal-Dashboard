@@ -95,21 +95,24 @@ const windows = PLACES.map((place) => {
       </i>
     </div>
   </nav>
-  <footer id="help" class="hud hint">
-    <p>
-      <span id="hint-text">
+  <div class="hud dock">
+    <button id="prompt" class="key" type="button" hidden>
+      <span class="k" id="prompt-key">
+        F
+      </span>
+      <span id="prompt-text"></span>
+    </button>
+    <footer id="help" class="hint">
+      <a id="ticker" class="ticker" href="/">
+        <span class="tag">Today</span>
+        <span id="ticker-text">The morning update</span>
+      </a>
+      <p id="hint-text">
         WASD or the arrows walk along the streets. Shift runs, B rides the bike and Space rings its
         bell, Q/E or drag turns the camera, N changes the time.
-      </span>{' '}
-      <a href="/">Today</a> has the morning update.
-    </p>
-  </footer>
-  <button id="prompt" class="hud key" type="button" hidden>
-    <span class="k" id="prompt-key">
-      F
-    </span>
-    <span id="prompt-text"></span>
-  </button>
+      </p>
+    </footer>
+  </div>
   <div id="dim" class="hud" aria-hidden="true"></div>
   <dialog id="window" class="win" aria-labelledby="window-title">
     <header>
@@ -438,9 +441,25 @@ const windows = PLACES.map((place) => {
     box-shadow: var(--bevel-down);
   }
 
-  .hint {
+  /* The foot of the screen: the door prompt, then the Today line and the key help. */
+  .dock {
     inset-inline: 0;
     inset-block-end: 0;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3);
+    pointer-events: none;
+  }
+
+  .dock > * {
+    pointer-events: auto;
+  }
+
+  .hint {
+    width: 100%;
+    display: grid;
+    gap: var(--space-1);
+    justify-items: center;
     padding: var(--space-2) max(var(--space-4), env(safe-area-inset-right, 0px))
       calc(env(safe-area-inset-bottom, 0px) + var(--space-2));
     background: rgb(4 7 15 / 0.82);
@@ -449,10 +468,28 @@ const windows = PLACES.map((place) => {
     text-align: center;
   }
 
+  /* One feed at a time, in words; it opens Today. */
+  .ticker {
+    max-width: 100%;
+    color: var(--ink);
+    font-size: var(--size-16);
+    text-decoration: none;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .ticker .tag {
+    margin-inline-end: 0.35em;
+    padding: 0 0.4em;
+    background: var(--maize);
+    color: var(--night);
+    font-weight: 600;
+  }
+
   #prompt {
-    inset-inline-start: 50%;
-    inset-block-end: calc(env(safe-area-inset-bottom, 0px) + 4.5rem);
-    transform: translateX(-50%);
     max-width: calc(100vw - 2rem);
   }
 

@@ -20,6 +20,7 @@ import { Shell } from './shell.ts';
 import { plotAircraft } from './sky-traffic.ts';
 import { comicCovers, comicPages, moviePages, scorePages, signContent } from './sign-pages.ts';
 import { SignBoards } from './signs.ts';
+import { tickerLines } from './ticker.ts';
 import { fillCards } from './windows.ts';
 import { buildNav, findPath, pathLength, type Point } from './nav.ts';
 import type { Door } from './world/builders.ts';
@@ -148,9 +149,26 @@ async function boot(): Promise<void> {
   /** When the latest answer arrived, on the frame clock (seconds). */
   let skyHeld = 0;
   const windowBody = $<HTMLElement>('#window-body');
+  // The Today line at the foot of the screen: one feed at a time, in words.
+  const ticker = $<HTMLElement>('#ticker');
+  const tickerText = $<HTMLElement>('#ticker-text');
+  let tickerAt = 0;
+  const showTicker = () => {
+    const lines = tickerLines(feeds.snapshot?.feeds ?? null, feeds.problem, previewSky);
+    const text = lines[tickerAt % lines.length] ?? '';
+    if (tickerText.textContent !== text) tickerText.textContent = text;
+  };
+  setInterval(() => {
+    // It waits while you're reading it, and while the town is paused.
+    if (document.hidden || !shell.playing || ticker.matches(':hover, :focus-visible')) return;
+    tickerAt++;
+    showTicker();
+  }, 6000);
+
   const showFeeds = () => {
     const now = feeds.snapshot?.feeds;
     const down = !now && feeds.problem !== null;
+    showTicker();
     // The weather: cloud, rain or snow from the forecast, and fog that closes in.
     weather = townWeather(now?.weather, previewSky);
     sky.set(weather);

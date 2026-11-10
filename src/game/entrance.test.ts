@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { doorway, nearestDoor, walksIn } from './entrance.ts';
-import { buildWorld } from './world/layout.ts';
+import { START, buildWorld } from './world/layout.ts';
 import { PLACE, PLACES } from './world/places.ts';
 
 const world = buildWorld({ season: 'fall' });
@@ -24,6 +24,15 @@ test("the terminal's front door is in its front wall, and you step inside it", (
 
 test('places without a wall have no doorway to walk through', () => {
   assert.equal(doorway(world, doorOf(PLACE.waterTower)).normal, null);
+});
+
+test('the newspaper box is read from where you stand, right where you start', () => {
+  const box = doorOf(PLACE.newsBox);
+  const way = doorway(world, box);
+  assert.equal(way.normal, null);
+  assert.deepEqual(way.inside, way.step);
+  assert.equal(walksIn(world, box, box.x, box.y, 0, -1), false);
+  assert.equal(nearestDoor(world, START.x, START.y)?.id, PLACE.newsBox);
 });
 
 test('walking into a door goes in; walking past it does not', () => {

@@ -1,6 +1,6 @@
 # Spec: Ratiu Twp
 
-**Status:** v1.2, MVP defined · **Updated:** 2026-11-09
+**Status:** v1.2, MVP defined · **Updated:** 2026-11-10
 
 This is the only spec. Change it here, in place; don't fork it.
 
@@ -102,7 +102,7 @@ network (ADR-018), and goes public only when it's polished. Everything in the ta
 | Coding activity    | Loud: fireworks over a building on days its repo got a push; a crane on the empty lot when a new repo appears                                        | Driven by GitHub, with an offline state                                               |
 | Today panel        | One key (T) or button away, readable on a phone                                                                                                      | Every feed shows its provenance (live, sample, offline)                               |
 | Feeds              | Weather, scores (live and final), schedules, new comics, movies, news, traffic, flights overhead. No stocks                                          | Each is a `Reading<T>` source with a unit test and an offline state                   |
-| Feeds in town      | Cinema marquee, comic shop window, sports bar sign, real aircraft overhead, weather in the sky                                                       | The town and the panel never disagree                                                 |
+| Feeds in town      | Cinema marquee, comic shop window, sports bar sign, a newspaper box, real aircraft overhead, weather in the sky, and a Today line for the rest       | The town and the panel never disagree                                                 |
 | Time, sky, seasons | Real sun and shadows; weather from the forecast; seasons by date                                                                                     | Matches the feel test at day, dusk and night                                          |
 | Sound              | Music on by default, starting at the first key press or click; tracks change with place and time                                                     | Mute and volume are one key away                                                      |
 | Menus              | A DOS boot, a sound-card setup and a title; Esc opens a pause menu: map, projects, tools inventory, Today, jukebox, options, Quit to DOS             | Every menu works by keyboard alone; reduced motion skips the boot                     |
