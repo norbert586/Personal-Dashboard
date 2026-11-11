@@ -441,3 +441,24 @@ Windows keep their own keys now: arrows and Space scroll them instead of walking
 Consequences: a phone loads the 3D town even when you only wanted the update; `/today` is the
 light way in, and worth bookmarking. `/town` is gone. If Norbert prefers the town first on
 phones, flip the setting; nothing else changes.
+
+## ADR-034: A public copy on GitHub Pages, rebuilt on a timer
+
+**Accepted · 2026-11-10**
+Context: Norbert wants to play the town on his phone, away from home, so he can give better
+feedback, and to host it on his GitHub page the way Tetris Plus is. GitHub Pages serves files
+only: no server, no gate, no login, no storage. ADR-018 kept everything local until it was
+polished; he chose to go early.
+Decision: one codebase, two builds. `npm run build` is still the Node server for home, behind
+the gate (ADR-002, ADR-004). `npm run build:pages` (`DEPLOY_TARGET=pages`) renders every page and
+`/api/feeds.json` once into `dist-pages/`, under the repository's name, and
+`.github/workflows/pages.yml` publishes it on every push to `main` and about every half hour.
+The feed keys are Actions secrets, read at build time, so they never reach the browser. Internal
+links go through `src/lib/paths.ts`. The gate lets build-time pages through, because a file can't
+be gated; the server build has none, so it still fails closed. The public copy leaves aircraft
+out and says why: a position that's minutes old is wrong.
+Consequences: the town is public before it's finished, and its pages still ask search engines
+not to index it. Feeds there are as old as the last build, and a feed that refuses GitHub's
+build machines shows offline. Editing the Town Hall (ADR-014) can't live on Pages; it needs the
+home server or a real host, which is still the roadmap's going-public step. Supersedes the
+"local only" part of ADR-018.

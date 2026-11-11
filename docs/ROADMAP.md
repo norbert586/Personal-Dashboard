@@ -179,6 +179,9 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
           when storage is blocked.
     - [ ] The Options pane: sound, volume, detail and motion (`paneOptions` in the 2D prototype).
 11. [ ] **Going public.** The game and the real data go live together.
+    - [x] A public copy on GitHub Pages for playtesting on the go, rebuilt on a timer (ADR-034).
+          Norbert turns it on once: Pages source set to GitHub Actions, and the three feed keys
+          as Actions secrets.
     - [ ] Hosting: Claude proposes it, with storage that lasts for the Town Hall (SPEC open
           question 4, ADR-014). Norbert reaches it from home, at work and on the go, behind a
           login. A new decision entry.

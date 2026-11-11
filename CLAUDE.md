@@ -21,6 +21,7 @@ npm run dev          # dev server on :4321 (no CSP, no access gate)
 npm run check        # astro check (types + .astro diagnostics)
 npm run test:unit    # node:test, no framework (src/**/*.test.ts)
 npm run build        # production build into dist/
+npm run build:pages  # the plain-files build for GitHub Pages, into dist-pages/ (ADR-034)
 npm run test:e2e     # Playwright + axe against the built server (run build first)
 npm run verify       # all of the above + prettier --check. The definition of done.
 npm run format       # prettier --write .
@@ -83,6 +84,9 @@ npm run format       # prettier --write .
 - The CSP only applies to `build` + `preview`/server, never `dev`. e2e tests run against the
   built server, so they catch CSP violations.
 - e2e tests run the server with `FEEDS=sample`, so they never touch the network.
+- The GitHub Pages build lives under `/Personal-Dashboard/`, not `/`. Internal links and requests
+  go through `path()` in `src/lib/paths.ts`; a bare `href="/today"` works at home and breaks
+  there. `tests/e2e/pages.spec.ts` runs against that build.
 - In Claude cloud sandboxes, start a live server with `NODE_USE_ENV_PROXY=1`: Node's `fetch`
   otherwise skips the sandbox proxy, and its direct route answers some feeds with "Blocked by
   egress policy". The GitHub user API (coding activity) and airplanes.live are unreachable

@@ -41,6 +41,13 @@ HOST=0.0.0.0 PORT=4321 node --env-file=.env dist/server/entry.mjs
 `--env-file` loads `ACCESS_MODE` and the feed keys; the built server doesn't read `.env` by
 itself.
 
+## The public copy
+
+`npm run build:pages` writes the town as plain files into `dist-pages/`, with the feeds as they
+were at build time. [`.github/workflows/pages.yml`](.github/workflows/pages.yml) publishes it to
+GitHub Pages on every push to `main` and about every half hour (ADR-034); its one-time setup is
+at the top of that file.
+
 ## Check it
 
 ```sh

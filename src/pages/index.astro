@@ -9,6 +9,7 @@ import Page from '../layouts/Page.astro';
 // For its styles only: the windows show the Today panel's cards, fetched from /today/cards.
 import '../components/TodayCards.astro';
 import { PLACES } from '../game/world/places.ts';
+import { path } from '../lib/paths.ts';
 import { formatRelative } from '../lib/time.ts';
 
 // Each place's window, rendered here from the same content the project pages will use, and
@@ -104,7 +105,7 @@ const windows = PLACES.map((place) => {
       <span id="prompt-text"></span>
     </button>
     <footer id="help" class="hint">
-      <a id="ticker" class="ticker" href="/today" aria-keyshortcuts="T">
+      <a id="ticker" class="ticker" href={path('/today')} aria-keyshortcuts="T">
         <span class="tag">Today</span>
         <span id="ticker-text">The morning update</span>
       </a>
@@ -164,7 +165,7 @@ const windows = PLACES.map((place) => {
             </div>
           )}
           <p>
-            <a class="key" href="/today">
+            <a class="key" href={path('/today')}>
               Open Today
             </a>
           </p>
@@ -269,7 +270,7 @@ const windows = PLACES.map((place) => {
           </button>
         </p>
         <p>
-          <a href="/today">Open it as a page</a>
+          <a href={path('/today')}>Open it as a page</a>
         </p>
       </section>
       <section class="pane" data-pane-body="jukebox" aria-label="Jukebox" hidden>
@@ -306,7 +307,7 @@ const windows = PLACES.map((place) => {
     </header>
     <div id="today-body">
       <p class="dim">
-        The morning update, as the town has it. <a href="/today">Open it as a page</a>
+        The morning update, as the town has it. <a href={path('/today')}>Open it as a page</a>
       </p>
       <div class="cards" data-cards="*"></div>
     </div>
@@ -354,7 +355,7 @@ const windows = PLACES.map((place) => {
       <h2 id="no-webgl-title">The town needs WebGL</h2>
       <p>This browser couldn't start it, so the 3D town can't open here.</p>
       <p>
-        <a class="key" href="/today">
+        <a class="key" href={path('/today')}>
           Read Today instead
         </a>
       </p>

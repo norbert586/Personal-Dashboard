@@ -158,6 +158,9 @@ machine (ADR-018).
 The access gate (ADR-004) stays in the code and still fails closed when no mode is set. Launch adds a
 `public` mode.
 
+Until then there's a public copy on GitHub Pages so I can play it on my phone (ADR-034): the same
+town as plain files, rebuilt about every half hour, with no aircraft and no editing.
+
 ## Quality bar
 
 - **Performance:** 60 fps at default detail on a 2020-era laptop, and the first playable frame in
@@ -175,8 +178,8 @@ The access gate (ADR-004) stays in the code and still fails closed when no mode 
 3. **Traffic:** area traffic on the main roads (no personal information), or your own drive, from
    a start to an end such as home to work? A personal route is public too unless `PRIVATE_FEEDS`
    is on.
-4. **Hosting:** it stays local for now (ADR-018; Norbert confirmed on 2026-11-09). When it's
-   deployed, he wants to reach it from home, at work and on the go, behind a login (a password or
+4. **Hosting:** a read-only copy is on GitHub Pages for playtesting (ADR-034). For the real
+   launch, he wants to reach it from home, at work and on the go, behind a login (a password or
    similar). Claude proposes the setup then (ADR to come).
 5. **The pizzeria's sign:** a stand-in name on the real corner, with no real brand or logo in the
    product. Norbert picks one, or Claude does.

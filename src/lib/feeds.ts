@@ -4,7 +4,13 @@
  * everything from the saved samples, with no network.
  */
 import { getCollection } from 'astro:content';
-import { COMIC_VINE_API_KEY, FEEDS, TMDB_READ_TOKEN, TOMTOM_API_KEY } from 'astro:env/server';
+import {
+  COMIC_VINE_API_KEY,
+  DEPLOY_TARGET,
+  FEEDS,
+  TMDB_READ_TOKEN,
+  TOMTOM_API_KEY,
+} from 'astro:env/server';
 import { UpstreamCache, sampleFetcher } from './fetcher.ts';
 import { readSource, type ReadOptions, type Source } from './readings.ts';
 import { activity, titlesByRepo } from './sources/activity.ts';
@@ -50,12 +56,26 @@ export async function getFeeds(now: Date = new Date()) {
     }),
     comics: read(comics(COMIC_VINE_API_KEY)),
     movies: read(movies(TMDB_READ_TOKEN)),
-    flights: read(flights()),
+    // Aircraft move on in seconds, and the GitHub Pages build is minutes old by the time it's
+    // read, so that build leaves them out and says why (ADR-034).
+    flights: read(
+      DEPLOY_TARGET === 'pages'
+        ? notAsked(
+            flights(),
+            'Aircraft are only tracked on the home server. This copy of the town is rebuilt about every half hour, and they would have flown on.',
+          )
+        : flights(),
+    ),
     activity: read(activity(site.github.user, titles)),
   });
 }
 
 export type Feeds = Awaited<ReturnType<typeof getFeeds>>;
+
+/** A source this build doesn't ask: its reading comes back offline, with the reason. */
+function notAsked<T>(source: Source<T>, why: string): Source<T> {
+  return { ...source, unconfigured: undefined, load: () => Promise.reject(new Error(why)) };
+}
 
 /** Await a record of promises in parallel, keeping its keys and types. */
 async function together<T extends Record<string, Promise<unknown>>>(

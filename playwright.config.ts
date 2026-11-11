@@ -4,6 +4,8 @@ import { defineConfig, devices } from '@playwright/test';
 export const OPEN_PORT = 4329;
 /** No ACCESS_MODE at all: must refuse every request (fail closed). */
 export const CLOSED_PORT = 4330;
+/** The GitHub Pages build (`npm run build:pages`), served as plain files under its base path. */
+export const PAGES_PORT = 4331;
 
 // e2e runs against the real production build (`npm run build` first), because the CSP and
 // the access gate only exist there, never in `astro dev`.
@@ -32,6 +34,12 @@ export default defineConfig({
       command: 'node tests/e2e/serve.mjs none',
       env: { HOST: '127.0.0.1', PORT: String(CLOSED_PORT) },
       url: `http://127.0.0.1:${CLOSED_PORT}/`,
+      reuseExistingServer: !process.env.CI,
+    },
+    {
+      command: 'node tests/e2e/serve-pages.mjs',
+      env: { HOST: '127.0.0.1', PORT: String(PAGES_PORT) },
+      url: `http://127.0.0.1:${PAGES_PORT}/Personal-Dashboard/`,
       reuseExistingServer: !process.env.CI,
     },
   ],

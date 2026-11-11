@@ -5,6 +5,7 @@
  * throws: when the town can't reach its server, `problem` says why and the last answer stands.
  */
 import type { Feeds } from '../lib/feeds.ts';
+import { path } from '../lib/paths.ts';
 import type { Provenance, Reading } from '../lib/readings.ts';
 
 /** A value as JSON carries it: dates arrive as ISO strings. */
@@ -87,10 +88,10 @@ export class FeedClient {
   private async load(cards: boolean): Promise<void> {
     try {
       const [json, html] = await Promise.all([
-        ask('/api/feeds.json').then(
+        ask(path('/api/feeds.json')).then(
           (r) => r.json() as Promise<{ generatedAt: string; feeds: TownFeeds }>,
         ),
-        cards ? ask('/today/cards').then((r) => r.text()) : null,
+        cards ? ask(path('/today/cards')).then((r) => r.text()) : null,
       ]);
       this.snapshot = {
         feeds: json.feeds,
