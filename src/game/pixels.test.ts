@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { pixelScale, zoomStep } from './pixels.ts';
+import { driveScale, pixelScale, zoomStep } from './pixels.ts';
 
 test('scales a desktop window by whole device pixels to a view about a third as wide', () => {
   const s = pixelScale(1440, 900, 1);
@@ -28,3 +28,17 @@ test('a chosen zoom wins, and zoom steps stay in range', () => {
   assert.equal(zoomStep(7, 1, 1), 7);
   assert.equal(zoomStep(3, 1, 2), 4);
 });
+
+test('the delivery view is about 360 lines on the short side, whatever the screen', () => {
+  assert.deepEqual(pick(driveScale(1920, 1080, 1)), [3, 640, 360]);
+  assert.deepEqual(pick(driveScale(1366, 768, 1)), [2, 683, 384]);
+  // A phone held upright: the short side is its width.
+  const phone = driveScale(390, 844, 3);
+  assert.deepEqual(pick(phone), [3, 390, 844]);
+  assert.equal(phone.css, 1);
+  assert.equal(driveScale(200, 120, 1).device, 1);
+});
+
+function pick(s: { device: number; width: number; height: number }): number[] {
+  return [s.device, s.width, s.height];
+}

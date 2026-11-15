@@ -73,6 +73,31 @@ copy values here.
 - Seasons come from the date: blossom in the orchard in spring, fall colour, and bare branches
   and dormant grass in winter. Snow never comes from the date, only from the forecast (ADR-031).
 
+## Delivery mode
+
+The same 16-bit textures and code-painted materials as the town, seen the way a 32-bit console
+drew a driving game: low-poly streets at true scale, from behind the car. Values live in
+`src/game/delivery/`.
+
+- **Camera:** perspective, behind and above the car, on a spring. It widens a little with speed.
+  On foot it follows you the same way.
+- **Pixels:** the scene renders at about 360 lines on the screen's short side and is scaled up by
+  whole device pixels, like the town. Up close a texel is a clear square; in the distance textures
+  average out instead of sparkling. The town's "no mipmaps" rule is for its fixed camera and
+  doesn't hold in perspective; this mode must stay easy on the eyes at speed.
+- **Detail:** real footprints with windows fitted to each wall, shingled gable and hip roofs,
+  flat-roofed shops, sidewalks where the map has them, lane lines that stop at intersections,
+  trees in yards and woods. Detail comes from many simple shapes, never from smooth ones.
+- **Sky:** a dome with a dithered gradient for the hour, the real sun where it really is, pixel
+  clouds that drift, and stars at night. Fog at the far edge takes the sky's colour.
+- **Night:** headlights throw real light, windows glow and the topper sign is lit.
+- **The car:** boxy and low-poly. It rolls in corners, dives under braking, squats when it pulls
+  away and nudges on each gear shift, so you feel what it's doing.
+- **On screen:** speed, gear and revs, the street you're on and its limit, a small heading-up map
+  and the real clock, in the game's bevelled panels. Phones get steering buttons on the left and
+  pedals on the right.
+- **Reduced motion:** no camera roll or shake.
+
 ## Interface
 
 - Old PC game: bevelled navy panels, maize accent, ink-coloured text. One dark look for the game.

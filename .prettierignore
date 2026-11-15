@@ -7,3 +7,6 @@ test-results
 playwright-report
 prototype
 src/lib/sources/fixtures
+src/lib/zone/fixtures
+public/zone
+.cache

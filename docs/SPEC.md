@@ -1,6 +1,6 @@
 # Spec: Ratiu Twp
 
-**Status:** v1.2, MVP defined · **Updated:** 2026-11-10
+**Status:** v1.3, MVP defined, delivery mode in progress · **Updated:** 2026-11-15
 
 This is the only spec. Change it here, in place; don't fork it.
 
@@ -13,6 +13,9 @@ Michigan: a rust-belt small town with an airfield, a brick Main Street, a subdiv
 die shop, a grain elevator by the tracks and orchards at the edge. Its streets follow the real
 road grid between 23 and 29 Mile and Mound to Romeo Plank, compressed rather than to scale (see
 The map).
+
+Beside the town there's a second game mode, the delivery mode: a pizza delivery sim on the real
+streets around the pizzeria where I work, at true scale (see Delivery mode).
 
 Prototypes that define the look and feel live in `prototype/` (see ADR-013).
 
@@ -41,8 +44,9 @@ the site's credits, per its licence). It isn't 1:1; the town keeps the pattern, 
 
 ### World data: built for driving, deliveries and growth
 
-The world is data first and pixels second, so later features (the car, traffic, the pizza delivery
-sim, new areas) plug in without regenerating it (ADR-019).
+The world is data first and pixels second, so later features (the car, traffic, new areas) plug in
+without regenerating it (ADR-019). The delivery mode's zone is built the same way, as its own
+world at true scale (ADR-035).
 
 - **One fixed projection** turns real latitude and longitude into world tiles: one origin and one
   tiles-per-mile constant, defined in one place. New areas generated later line up with old ones.
@@ -54,16 +58,45 @@ sim, new areas) plug in without regenerating it (ADR-019).
   shop, civic, industrial). The same seed always gives the same address.
 - **Sections** (one per real square mile) have stable IDs. Expanding the world adds sections past
   the edge without moving anything that exists.
-- **Places of interest** (project buildings, feed buildings, the Town Hall, the pizzeria) are placed
-  by hand and referenced by ID.
-- **The delivery zone** (ADR-020) is a second real area: a 2.5-mile radius around the pizzeria at
-  Auburn and Dequindre, built as close to real as the map allows. It uses the area's roughly 11,650
-  OpenStreetMap building footprints as they are, grouped by block, with heights and styles by type:
-  houses, strip malls, industrial, schools and churches. Its roads, ponds and parks are real too,
-  M-59 included. It sits on the same projection as the town, just south-west of 23 Mile and Mound,
-  so later expansion can join the two.
-- **The pizza delivery sim** (after launch) uses all of it: an order is an address, the route comes
-  from the road graph, and you drive it in the car against the clock and real traffic.
+- **Places of interest** (project buildings, feed buildings, the Town Hall) are placed by hand and
+  referenced by ID.
+
+## Delivery mode
+
+A pizza delivery sim, and its own game mode on its own page (`/delivery`): the town squeezes a
+mile into a few seconds' walk, and a delivery needs the real distances (ADR-035). I work at the
+pizzeria at Auburn and Dequindre and know these streets, so the test is whether it feels like my
+drive.
+
+- **The zone** is everything within 2.5 miles of the store, at true scale: one unit is one real
+  metre. Every street is real, with its real name, shape, lanes and speed limit, from
+  OpenStreetMap: about 235 miles of streets, 145 more of parking lots, apartment lanes and
+  driveways, M-59 with its ramps, and about 11,600 real building footprints, with heights and
+  styles by type (houses, apartments, mobile homes, strip malls, schools, churches). Ponds, parks
+  and woods come too. A script bakes it into one file in the repo, so builds never touch the
+  network (ADR-037).
+- **Real time.** A mile takes as long as a mile takes, the clock is the real clock, and the sun,
+  seasons and weather are the real ones.
+- **Driving** is light and fun, in the spirit of Schedule I and GTA rather than a hard sim. The car
+  is an automatic whose gear shifts you can hear and feel. Steering is all yours: nothing steers,
+  brakes or corrects for you. It grips, slides when pushed and can be caught. It's a hand-written
+  model with no physics engine (ADR-036).
+- **A delivery:** drive there, park, get out and walk to the door, and knock. The customer answers
+  in an RPG-style dialogue: a character portrait and text.
+- **A shift:** orders arrive by the real clock, each one an address on a ticket. You take singles,
+  doubles and triples, a GPS route shows the way, the clock runs, and the shift ends with how it
+  went (times, tips), with your best shift saved on the device.
+- **Addresses:** every building gets a street address on its real street, with a house number
+  from the Census Bureau's public block ranges, so numbers sit in the right block on the right side
+  of the street. They are not the real houses' exact numbers, and no order is a real person's.
+- **The pizzeria** stands on its real corner under a stand-in name, with no real brand or logo.
+- **Traffic** comes after the first playable: working signals first, then other cars.
+- **The look** is detailed, with a proper sky, in the 32-bit (PlayStation-era) pixel style. See
+  `DESIGN.md`.
+- **Where it plays:** desktop first, with a keyboard or a controller; phones get on-screen
+  controls. It needs WebGL, like the town.
+- **Later:** a pizzeria door in town opens the mode, the radio, real rain and snow that change
+  the grip, and M-59's bridges. Order lives in `ROADMAP.md`.
 
 ## Why, in order
 
@@ -128,13 +161,13 @@ The car (start-up sequence, radio, gears), the plane and the landing challenge, 
 from real airport weather, recurring characters
 who talk, the guestbook (visitors leave a plane or a name), places past the grid's edges (north toward
 Romeo, a cider mill, a drive-in, a high-school field, a mall, a base), the helicopter, train rides, skateboard and winter
-vehicles, and interiors. Much later, a pizza delivery sim based on where I work (see World data). Order lives in
-`ROADMAP.md`.
+vehicles, and interiors. Order lives in `ROADMAP.md`. The delivery mode is being built now, ahead
+of the rest of the MVP (ADR-035).
 
 ## Not planned
 
-Stocks. Accounts or logins for visitors. Multiplayer. A "skip the game" button. Minigames other
-than the landing challenge.
+Stocks. Accounts or logins for visitors. Multiplayer. A "skip the game" button. Minigames in town
+other than the landing challenge (the delivery mode is its own game mode, not a minigame).
 
 ## Data rules
 
@@ -182,7 +215,8 @@ town as plain files, rebuilt about every half hour, with no aircraft and no edit
    launch, he wants to reach it from home, at work and on the go, behind a login (a password or
    similar). Claude proposes the setup then (ADR to come).
 5. **The pizzeria's sign:** a stand-in name on the real corner, with no real brand or logo in the
-   product. Norbert picks one, or Claude does.
+   product. It's "Ratiu's Pizza" until Norbert picks one (`delivery.storeName` in
+   `site.config.ts`).
 6. **Going inside, in 3D:** settled on 2026-11-09 (ADR-027). Norbert chose the short entrance:
    the door opens, you walk through and the camera follows, then the building's window opens.
    Walking into a door goes in too. Rooms per building type are not planned; hero interiors stay
@@ -194,3 +228,11 @@ town as plain files, rebuilt about every half hour, with no aircraft and no edit
    open the town like a desktop does? It's one setting, `phonesOpenToday` in `site.config.ts`.
 9. **Headlines and traffic in town:** built as proposed (a newspaper box now, a freeway sign with
    M-53; ADR-032). Norbert hasn't confirmed either, so say so if something else would be better.
+10. **Traffic in the delivery mode:** Norbert hasn't said whether the first playable needs it.
+    Built without: empty streets first, then signals, then other cars.
+11. **How a shift plays:** tips, what counts as late, how orders are paced, and what happens at
+    the store between runs. Norbert knows the job; walk him through it before building the
+    delivery loop.
+12. **The store and the car:** which corner of Auburn and Dequindre the pizzeria stands on (the
+    drive starts on Auburn Road beside the intersection until then), and which car Norbert
+    drives, for the model and its colour.

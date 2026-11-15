@@ -1,0 +1,576 @@
+---
+/**
+ * The delivery mode (ADR-035): a pizza delivery sim on the real streets around the store, at true
+ * scale. A three.js island fills the screen, like the town's, with the dashboard floating over it.
+ */
+import Page from '../layouts/Page.astro';
+import { path } from '../lib/paths.ts';
+import { site } from '../site.config.ts';
+
+const { storeName, radiusMiles } = site.delivery;
+---
+
+<Page
+  title={`${storeName} delivery · Ratiu Twp`}
+  description={`Drive the real streets within ${radiusMiles} miles of the store, in a 32-bit pixel style.`}
+  skip={{ href: '#help', label: 'Skip to the controls and plain pages' }}
+>
+  <main>
+    <canvas
+      id="world"
+      tabindex="0"
+      role="application"
+      aria-roledescription="driving game"
+      aria-label="The delivery zone. W or the up arrow is the gas, S or the down arrow brakes, and pressed again from a stop reverses, A and D or the left and right arrows steer, Space is the handbrake, C changes the camera, N changes the time of day, R goes back to the store, Escape opens the menu."
+    ></canvas>
+  </main>
+  <header class="hud badge">
+    <h1>{storeName}</h1>
+    <p>
+      Delivery · <span id="clock">--:--</span>
+    </p>
+  </header>
+  <nav class="hud tools" aria-label="Controls">
+    <button class="key" id="btn-menu" type="button" aria-keyshortcuts="Escape">
+      Menu
+    </button>
+    <button class="key" id="b-camera" type="button" aria-keyshortcuts="C">
+      Camera
+    </button>
+    <button class="key" id="b-time" type="button" aria-keyshortcuts="N" aria-describedby="time-tip">
+      Real time
+    </button>
+    <span id="time-tip" class="visually-hidden">
+      Changes the time of day
+    </span>
+  </nav>
+  <section class="hud street" aria-label="Where you are">
+    <p id="street" aria-live="off">
+      Finding the street…
+    </p>
+    <p id="limit" class="limit" hidden>
+      <span class="visually-hidden">Speed limit</span>
+      <span id="limit-mph"></span>
+    </p>
+  </section>
+  <section class="hud map" aria-label="Map">
+    <canvas id="minimap" width="168" height="168" aria-hidden="true"></canvas>
+    <p class="visually-hidden">
+      A small map of the streets around you, turned so that the way you're heading is up.
+    </p>
+  </section>
+  <section class="hud dash" aria-label="Dashboard">
+    <p class="speed">
+      <span id="mph">0</span>
+      <span class="unit">mph</span>
+    </p>
+    <p class="gear">
+      <span class="visually-hidden">Gear</span>
+      <span id="gear">P</span>
+    </p>
+    <svg
+      class="revs"
+      viewBox="0 0 100 8"
+      role="img"
+      aria-label="Engine revs"
+      preserveAspectRatio="none"
+    >
+      <rect class="revs-well" x="0" y="0" width="100" height="8"></rect>
+      <rect id="revs" class="revs-bar" x="0" y="0" width="0" height="8"></rect>
+      <rect class="revs-red" x="86" y="0" width="14" height="2"></rect>
+    </svg>
+  </section>
+  <section class="hud pedals" aria-label="Driving controls">
+    <div class="pad-group">
+      <button class="pad" id="t-left" type="button" aria-label="Steer left">
+        ◀
+      </button>
+      <button class="pad" id="t-right" type="button" aria-label="Steer right">
+        ▶
+      </button>
+    </div>
+    <div class="pad-group">
+      <button class="pad" id="t-brake" type="button" aria-label="Brake; from a stop, reverse">
+        Brake
+      </button>
+      <button class="pad gas" id="t-gas" type="button" aria-label="Gas">
+        Gas
+      </button>
+    </div>
+  </section>
+  <footer id="help" class="hud hint">
+    <p id="hint-text">
+      W/S gas and brake · A/D steer · Space handbrake · C camera · N time · R reset · Esc menu
+    </p>
+  </footer>
+  <dialog id="pause" class="win" aria-labelledby="pause-title">
+    <header>
+      <h2 id="pause-title">Paused</h2>
+      <form method="dialog">
+        <button class="key" type="submit">
+          Resume
+        </button>
+      </form>
+    </header>
+    <div class="win-body">
+      <p>
+        You're driving for {storeName}, on the real streets within {radiusMiles} miles of the store.
+        There are no orders yet: this is the drive. Deliveries come next.
+      </p>
+      <dl>
+        <dt>Gas</dt>
+        <dd>W or ↑</dd>
+        <dt>Brake; from a stop, reverse</dt>
+        <dd>S or ↓</dd>
+        <dt>Steer</dt>
+        <dd>A and D, or ← and →</dd>
+        <dt>Handbrake</dt>
+        <dd>Space</dd>
+        <dt>Camera</dt>
+        <dd>C</dd>
+        <dt>Time of day</dt>
+        <dd>N</dd>
+        <dt>Back to the store</dt>
+        <dd>R</dd>
+      </dl>
+      <p class="dim">A controller works too: right trigger, left trigger and the left stick.</p>
+      <p class="links">
+        <button class="key" id="b-reset" type="button" aria-keyshortcuts="R">
+          Back to the store
+        </button>
+        <a class="key" href={path('/')}>
+          Walk into town
+        </a>
+        <a class="key" href={path('/today')}>
+          Open Today
+        </a>
+      </p>
+      <p class="dim credit">
+        Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.
+      </p>
+    </div>
+  </dialog>
+  <div id="loading" class="hud cover" role="status">
+    Warming up the car…
+  </div>
+  <section id="no-webgl" class="hud cover" aria-labelledby="no-webgl-title" hidden>
+    <div class="panel">
+      <h2 id="no-webgl-title">Delivery needs WebGL</h2>
+      <p id="no-webgl-why">This browser couldn't start it, so the 3D streets can't open here.</p>
+      <p>
+        <a class="key" href={path('/today')}>
+          Read Today instead
+        </a>
+      </p>
+    </div>
+  </section>
+</Page>
+
+<script>
+  import '../game/delivery/main.ts';
+</script>
+
+<style>
+  :global(html),
+  :global(body) {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #world {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    display: block;
+    image-rendering: pixelated;
+    touch-action: none;
+    outline: none;
+  }
+
+  #world:focus-visible {
+    outline: 3px solid var(--maize);
+    outline-offset: -3px;
+  }
+
+  .hud {
+    position: fixed;
+    z-index: 2;
+  }
+
+  .badge,
+  .street,
+  .dash,
+  .map {
+    background: var(--panel);
+    border: 2px solid var(--outline);
+    box-shadow: var(--bevel-up);
+  }
+
+  .badge {
+    inset-block-start: calc(env(safe-area-inset-top, 0px) + var(--space-3));
+    inset-inline-start: calc(env(safe-area-inset-left, 0px) + var(--space-3));
+    padding: var(--space-1) var(--space-3);
+  }
+
+  .badge h1 {
+    color: var(--maize);
+    font-size: var(--size-28);
+    letter-spacing: 0.04em;
+  }
+
+  .badge p {
+    color: var(--ink-dim);
+    font-size: var(--size-14);
+  }
+
+  .tools {
+    inset-block-start: calc(env(safe-area-inset-top, 0px) + var(--space-3));
+    inset-inline-end: calc(env(safe-area-inset-right, 0px) + var(--space-3));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    max-width: min(26rem, 56vw);
+  }
+
+  /* The street you're on, like the sign at the corner. */
+  .street {
+    inset-block-start: calc(env(safe-area-inset-top, 0px) + var(--space-3));
+    inset-inline-start: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    max-width: min(26rem, calc(100vw - 2rem));
+    padding: var(--space-1) var(--space-3);
+  }
+
+  #street {
+    color: var(--ink);
+    font: var(--size-24) / 1.1 var(--font-display);
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .limit {
+    flex: none;
+    min-width: 2rem;
+    padding: 0 var(--space-1);
+    background: var(--ink);
+    color: var(--night);
+    font: 600 var(--size-16) / 1.3 var(--font-ui);
+    text-align: center;
+  }
+
+  .limit[hidden] {
+    display: none;
+  }
+
+  .map {
+    inset-block-end: calc(env(safe-area-inset-bottom, 0px) + var(--space-3));
+    inset-inline-start: calc(env(safe-area-inset-left, 0px) + var(--space-3));
+    padding: var(--space-1);
+    line-height: 0;
+  }
+
+  #minimap {
+    width: 10.5rem;
+    height: 10.5rem;
+    image-rendering: pixelated;
+    background: var(--panel-lo);
+  }
+
+  .dash {
+    inset-block-end: calc(env(safe-area-inset-bottom, 0px) + var(--space-3));
+    inset-inline-end: calc(env(safe-area-inset-right, 0px) + var(--space-3));
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: var(--space-1) var(--space-3);
+    min-width: 11rem;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .speed {
+    color: var(--maize);
+    font: var(--size-48) / 0.9 var(--font-display);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .speed .unit {
+    color: var(--ink-dim);
+    font: var(--size-16) / 1 var(--font-ui);
+  }
+
+  .gear {
+    min-width: 2.2rem;
+    padding: 0 var(--space-2);
+    background: var(--panel-lo);
+    box-shadow: var(--bevel-down);
+    color: var(--ink);
+    font: var(--size-28) / 1.2 var(--font-display);
+    text-align: center;
+  }
+
+  .revs {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: 0.6rem;
+  }
+
+  .revs-well {
+    fill: var(--panel-lo);
+  }
+
+  .revs-bar {
+    fill: var(--maize);
+  }
+
+  .revs-red {
+    fill: var(--loss);
+  }
+
+  .hint {
+    inset-inline: 0;
+    inset-block-end: 0;
+    padding: var(--space-2) 12.5rem calc(env(safe-area-inset-bottom, 0px) + var(--space-2));
+    color: var(--ink);
+    font-size: var(--size-14);
+    text-align: center;
+    text-shadow:
+      1px 1px 0 var(--outline),
+      -1px 1px 0 var(--outline),
+      1px -1px 0 var(--outline),
+      -1px -1px 0 var(--outline);
+    pointer-events: none;
+  }
+
+  /* On-screen driving controls, for phones and tablets. */
+  .pedals {
+    display: none;
+    inset-inline: 0;
+    inset-block-end: calc(env(safe-area-inset-bottom, 0px) + var(--space-4));
+    justify-content: space-between;
+    padding-inline: calc(env(safe-area-inset-left, 0px) + var(--space-4));
+    pointer-events: none;
+  }
+
+  .pad-group {
+    display: flex;
+    gap: var(--space-3);
+    pointer-events: auto;
+  }
+
+  .pad {
+    min-width: 4.5rem;
+    min-height: 4.5rem;
+    padding: var(--space-2);
+    background: rgb(28 40 70 / 0.82);
+    border: 2px solid var(--outline);
+    box-shadow: var(--bevel-up);
+    color: var(--ink);
+    font: 600 var(--size-18) / 1 var(--font-ui);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .pad.gas {
+    min-height: 6rem;
+    color: var(--maize);
+  }
+
+  .pad[data-held] {
+    box-shadow: var(--bevel-down);
+    color: var(--maize);
+  }
+
+  @media (hover: none) {
+    .pedals {
+      display: flex;
+    }
+
+    .hint {
+      display: none;
+    }
+
+    /* The map and the dashboard move up, out from under your thumbs. */
+    .map {
+      inset-block: calc(env(safe-area-inset-top, 0px) + 5.5rem) auto;
+    }
+
+    #minimap {
+      width: 7rem;
+      height: 7rem;
+    }
+
+    .dash {
+      inset-block: calc(env(safe-area-inset-top, 0px) + 5.5rem) auto;
+      min-width: 8rem;
+    }
+  }
+
+  /* On a phone held upright the buttons wrap to two rows, so the map and dashboard sit lower. */
+  @media (hover: none) and (max-width: 40rem) {
+    .map,
+    .dash {
+      inset-block: calc(env(safe-area-inset-top, 0px) + 9rem) auto;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .street {
+      inset-block-start: calc(env(safe-area-inset-top, 0px) + 3.2rem);
+      inset-inline-start: calc(env(safe-area-inset-left, 0px) + var(--space-3));
+      transform: none;
+    }
+
+    .badge p {
+      display: none;
+    }
+
+    .tools {
+      max-width: 62vw;
+    }
+  }
+
+  .win {
+    margin: auto;
+    width: min(30rem, calc(100vw - 2rem));
+    max-height: min(84vh, 44rem);
+    padding: 0;
+    background: var(--panel);
+    color: var(--ink);
+    border: 2px solid var(--outline);
+    box-shadow:
+      var(--bevel-up),
+      0 12px 40px rgb(0 0 0 / 0.55);
+  }
+
+  .win[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .win::backdrop {
+    background: rgb(4 7 15 / 0.5);
+  }
+
+  .win header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+    background: var(--panel-lo);
+  }
+
+  .win h2 {
+    color: var(--maize);
+    font-size: var(--size-28);
+  }
+
+  .win-body {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4) var(--space-4);
+    overflow: auto;
+  }
+
+  .win-body dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-1) var(--space-4);
+  }
+
+  .win-body dt {
+    color: var(--ink-dim);
+  }
+
+  .win-body dd {
+    margin: 0;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .credit {
+    font-size: var(--size-14);
+  }
+
+  @media (max-width: 40rem) {
+    .win {
+      width: 100vw;
+      max-width: 100vw;
+      margin-block-end: 0;
+      margin-inline: 0;
+      padding-block-end: env(safe-area-inset-bottom, 0px);
+    }
+  }
+
+  .cover[hidden] {
+    display: none;
+  }
+
+  .cover {
+    inset: 0;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    padding: var(--space-4);
+    background: var(--night);
+    text-align: center;
+  }
+
+  #loading {
+    color: var(--maize);
+    font: var(--size-28) / 1.2 var(--font-display);
+  }
+
+  .panel {
+    max-width: 28rem;
+    padding: var(--space-4) var(--space-5);
+    background: var(--panel);
+    border: 2px solid var(--outline);
+    box-shadow: var(--bevel-up);
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .panel h2 {
+    color: var(--maize);
+    font-size: var(--size-28);
+  }
+
+  .key {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    padding: var(--space-2) var(--space-3);
+    background: var(--panel);
+    border: 2px solid var(--outline);
+    box-shadow: var(--bevel-up);
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  button.key {
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .key:hover {
+    color: var(--maize);
+  }
+
+  .key:active {
+    box-shadow: var(--bevel-down);
+  }
+</style>

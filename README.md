@@ -7,6 +7,8 @@ in town and in a Today panel. Loosely based on Romeo and Washington Township, Mi
 **Status:** the home page is the town, showing the morning feeds on real data: the cinema's
 marquee, the comic shop, the sports bar's scoreboard, a newspaper box, real aircraft overhead and
 the forecast's weather. The Today panel opens over it with T and has its own page at `/today`.
+At `/delivery` there's a second mode in progress: a pizza delivery sim on the real streets around
+Auburn and Dequindre, at true scale. Today you can drive the zone; deliveries come next.
 The plan is in [`docs/SPEC.md`](docs/SPEC.md) and [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 Built with Astro 7, TypeScript and three.js.

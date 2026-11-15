@@ -30,7 +30,80 @@ assembles them.
 - [x] Map checks: OpenStreetMap covers the grid and the delivery zone well enough to build from
       (ADR-016, ADR-020)
 
-## M1: MVP, running locally ← you are here
+## Delivery mode ← you are here
+
+The pizza delivery sim, as its own game mode at true scale (SPEC: Delivery mode; ADR-035 to 037).
+Norbert moved it ahead of the rest of M1 on 2026-11-15; M1 picks up again at step 5 when he says
+so. Each slice ends with something he can play.
+
+**Where it stands (2026-11-15).** `/delivery` loads the whole zone and you can drive it: every
+real street, the footprints as textured buildings, trees, a sky with the real sun, a car with an
+automatic gearbox, walls that stop you, a camera behind the car and a dashboard. Nobody has
+driven it on a real graphics card yet: the sandbox renders in software, at about 23 frames a
+second. Start the next session by having Norbert play it, then work down this list.
+
+1. [ ] **Drive the zone.** Is it fun to drive his streets?
+   - [x] Map import: `npm run zone:import` bakes the 2.5 miles around Auburn and Dequindre from
+         OpenStreetMap into `public/zone/auburn-dequindre.json` (ADR-037): the road graph,
+         sidewalks, footprints, lots, water, parks and trees, with unit tests on a saved sample.
+   - [x] The world (`src/game/delivery/world.ts`): built in 256 m squares around you, with pixel
+         textures in one texture array (`tiles.ts`), concrete and asphalt streets with lane lines
+         that stop at intersections (`roads.ts`), sidewalks and crosswalks, real footprints with
+         windows, doors, garages and shop fronts facing the street (`buildings.ts`), trees in fall
+         colour (`trees.ts`), and a dithered sky with the real sun, clouds and stars (`sky.ts`).
+   - [x] The car, first pass (ADR-036): the model with its automatic gearbox (`car.ts`, every
+         tuning value in `CAR`), walls and the zone's edge (`collide.ts`), a boxy body that leans
+         (`car-body.ts`), the camera with close, far and hood views (`chase.ts`), and the dashboard:
+         speed, gear, revs, the street and its limit, a heading-up map and the clock. Keyboard,
+         controller and on-screen pedals.
+   - [ ] **Tune the feel with Norbert.** He plays; change `CAR` to match what he says. The values
+         that matter most: `grip`, `steerOver` and `steerRate` (how sharp it turns), `inertia` and
+         `handbrakeGrip` (how easily it slides and spins: the handbrake held at full lock spins
+         the car in about a second, which may be too much), `torque` and the shift points, and
+         the camera's distance and lag in `chase.ts`.
+   - [ ] Frame rate on his laptop and phone. If it's short of 60: shadows are the first cost
+         (`?shadows=0` to compare), then the build distance (`BUILD` in `world.ts`) and the
+         picture's 360 lines (`driveScale`). A detail setting belongs in the menu.
+   - [ ] Engine sound: a synthesised tone that follows `car.rpm`, a thunk on each change of
+         `car.shifts`, and tyre squeal from `car.slip`, started by the first key press or tap,
+         with a mute key. Without it the gear shifts are only seen, not felt.
+   - [ ] Trees stop the car (trunks, kept by chunk), and the headlights' spotlight is checked at
+         night: it's set by guess and hasn't been looked at.
+   - [ ] Phone steering beyond two buttons (a slider or tilt), and a check with a real controller.
+   - [ ] Known rough edges to decide on: M-59 and its crossings are flat and drive through each
+         other; storeys, wall materials and which bay is a garage are guesses by building kind;
+         most houses have no driveway because the map has few; unnamed lanes read "Service lane".
+2. [ ] **The delivery loop.** First walk Norbert through how a shift plays (SPEC open question
+       11), a few questions at a time:
+       where orders appear at the store and how he takes them; who decides a double or a triple;
+       what counts as late, and how many orders an hour a slow night and a Friday rush bring, so
+       a shift can be a real evening or a short one; what moves a tip (time, weather, the order,
+       the customer); cash, card and change; regulars, apartment buzzers, dogs and dark porches;
+       whether speeding, damage or gas should cost anything; and which car he drives, for the
+       model and its colour.
+   - [ ] The pizzeria on its real corner, under its stand-in name (SPEC open questions 5 and 12).
+   - [ ] Addresses: every building gets one on its real street, with a house number from the
+         Census Bureau's block ranges (the TIGER address-range files for Oakland and Macomb
+         counties are public domain and reachable from the sandbox; they're zipped shapefiles, so
+         reading them needs a small parser or a dependency with a decision entry). The door is
+         the middle bay of the wall `buildings.ts` already picks as the front.
+   - [ ] Orders on tickets, arriving by the real clock; singles, doubles and triples.
+   - [ ] A GPS route: A* over the junctions and roads already in the zone file, drawn on the
+         map and on the road.
+   - [ ] Park, get out and walk to the door (the town's figure from `src/game/bodies.ts`, in
+         metres); knock; the customer answers in an RPG-style dialogue: an HTML dialog with a
+         portrait painted by code and text.
+   - [ ] The clock, tips and how the shift went, with the best shift saved on the device.
+3. [ ] **Roads that look right.** Modelled intersections with stop bars and medians, street-name
+       signs with the real names (the painters have a pixel font), stop signs where the side
+       street yields (the map has only 55), kerbs, and M-59's bridges and ramps.
+4. [ ] **Traffic.** Signals that work (44 junctions carry one), then other cars that follow
+       lanes, stop and turn. Real traffic from the feed can slow the real roads.
+5. [ ] **Depth.** The radio, real rain and snow that change the grip (`Surface` in `car.ts`),
+       seasons and snow cover from the forecast as in town, a start-up sequence, a detail
+       setting, and a pizzeria door in town that opens the mode (today it's in the pause menu).
+
+## M1: MVP, running locally (paused at step 5)
 
 Feeds came first: they're useful on their own, and the town reads them. Everything in the spec's
 MVP table ships together, and it goes public only when it's polished (ADR-018).
@@ -121,10 +194,11 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
          with, each listing the projects that use it (`prototype/2d/p7-windows.js`).
 7. [ ] **The big world** (ADR-016, ADR-019, SPEC: The map, World data). The whole real grid,
        generated from OpenStreetMap and streamed by the square mile.
-   - [ ] Map import: a build-time script turns OpenStreetMap data for 23 to 29 Mile, Mound to Romeo
-         Plank, into typed world data saved in the repo, so builds never touch the network: roads,
-         water, parks, golf courses and the Macomb Orchard Trail. The data carries the ODbL credit
-         (add it to the site's credits) and is shared under the same licence.
+   - [ ] Map import: the delivery mode's importer (`src/lib/zone/`, ADR-037) takes a centre and a
+         radius; point it at 23 to 29 Mile, Mound to Romeo Plank, for typed world data saved in
+         the repo, so builds never touch the network: roads, water, parks, golf courses and the
+         Macomb Orchard Trail. The data carries the ODbL credit and is shared under the same
+         licence.
    - [ ] One projection from latitude and longitude to tiles (`src/game/world/projection.ts`, from
          step 4, ADR-030): one origin and one tiles-per-mile constant in one place. Unit-test it on
          real corners here.
@@ -148,8 +222,6 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
    - [ ] The freeway sign over M-53 shows the worst of the area's traffic (TomTom), with the
          Traffic card in its window, like the boards on Main Street (ADR-029, ADR-032).
    - [ ] The Map pane shows the real grid and where you are (`paneMap` in `prototype/2d/p6-ui.js`).
-   - [ ] More than one area: the generator takes an area, so the delivery zone (M6) drops in later
-         without touching the town.
 8. [ ] **Music and sound** (DESIGN: Sound).
    - [ ] Chiptune that changes with the place and the time of day, on by default from the first key
          press or click.
@@ -188,7 +260,8 @@ MVP table ships together, and it goes public only when it's polished (ADR-018).
     - [ ] The `public` gate mode, and `PRIVATE_FEEDS` to hide the calendar, to-dos and traffic
           without a code change (SPEC: Access).
     - [ ] Passkey sign-in for editing the Town Hall (ADR-014, SPEC open question 1).
-    - [ ] Credits: TMDB's logo beside its notice, and the OpenStreetMap credit.
+    - [ ] Credits: TMDB's logo beside its notice. (The OpenStreetMap credit came with the delivery
+          mode's map.)
     - [ ] Deploy, then check from a phone off Wi-Fi.
 
 ## After launch
@@ -198,10 +271,10 @@ details in the spec and a plan before work starts.
 
 ### M2: On the road
 
-- [ ] The car: a start-up sequence, gears, a radio and headlights, with the feel of a real car
-      rather than an arcade one. It drives the road graph; park it anywhere and walk.
+- [ ] The car in town: the delivery mode's car (ADR-036), brought to the town's roads and scale.
+      Park it anywhere and walk.
 - [ ] Routes: pick a place or an address, and the road graph draws the way there with the dotted
-      path. The pizza sim needs this.
+      path, reusing the delivery mode's GPS.
 - [ ] Train rides on the line past the grain elevator.
 - [ ] The skateboard.
 - [ ] Winter vehicles after real snow: a sled and a snowmobile.
@@ -235,27 +308,6 @@ details in the spec and a plan before work starts.
 - [ ] Hero interiors: real rooms you can walk around in for the hero buildings, beyond step 3's
       door-and-camera entrance (ADR-027).
 - [ ] More secrets.
-
-### M6: Pizza delivery (much later)
-
-A delivery sim in the real neighbourhood around the pizzeria at Auburn and Dequindre, where Norbert
-works, as close to real as the map allows (SPEC: World data; ADR-019, ADR-020). It needs the car
-and routes (M2). Norbert knows the job, so walk him through how a shift plays before building it.
-
-- [ ] The delivery zone: a 2.5-mile radius built from OpenStreetMap's real building footprints as
-      they are, grouped by block and given heights and styles by type (houses, strip malls,
-      industrial, schools, churches). The real roads, M-59 included, and the ponds and parks come
-      too, on the town's projection and road graph. It's far denser than the grid, so block
-      grouping and instancing come first.
-- [ ] Addresses on the zone's real streets, as in the town.
-- [ ] The pizzeria on its real corner, with a stand-in name and no real brand or logo (SPEC open
-      question 5).
-- [ ] Orders: each one is a real address in the zone, on a ticket, arriving by the real clock.
-- [ ] Deliveries: the route comes from the road graph, you drive it in the car, and the clock runs.
-      Real traffic slows you down.
-- [ ] A shift: a run of orders and how it went, with your best shift saved on the device.
-- [ ] Join the zone to the town over the real roads between them; it sits just south-west of 23
-      Mile and Mound.
 
 ## Ideas (not planned)
 

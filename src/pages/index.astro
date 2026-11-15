@@ -11,6 +11,7 @@ import '../components/TodayCards.astro';
 import { PLACES } from '../game/world/places.ts';
 import { path } from '../lib/paths.ts';
 import { formatRelative } from '../lib/time.ts';
+import { site } from '../site.config.ts';
 
 // Each place's window, rendered here from the same content the project pages will use, and
 // copied into the dialog when you go in.
@@ -215,6 +216,11 @@ const windows = PLACES.map((place) => {
           </button>
         </li>
         <li>
+          <button class="menu-item" type="button" data-pane="delivery">
+            Delivery
+          </button>
+        </li>
+        <li>
           <button class="menu-item" type="button" data-pane="jukebox">
             Jukebox
           </button>
@@ -271,6 +277,18 @@ const windows = PLACES.map((place) => {
         </p>
         <p>
           <a href={path('/today')}>Open it as a page</a>
+        </p>
+      </section>
+      <section class="pane" data-pane-body="delivery" aria-label="Delivery" hidden>
+        <h3>Delivery</h3>
+        <p>
+          {site.delivery.storeName} delivers on the real streets around Auburn and Dequindre, at
+          true scale. For now it's the drive; orders come next.
+        </p>
+        <p>
+          <a class="key" href={path('/delivery')}>
+            Clock in
+          </a>
         </p>
       </section>
       <section class="pane" data-pane-body="jukebox" aria-label="Jukebox" hidden>

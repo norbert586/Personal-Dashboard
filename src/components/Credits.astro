@@ -1,5 +1,5 @@
 ---
-/** Who the Today panel's data comes from. Every headline also links to its source. */
+/** Who the site's data comes from. Every headline also links to its source. */
 import { site } from '../site.config.ts';
 
 const outlets = Object.values(site.news).flat();
@@ -28,6 +28,11 @@ const outlets = Object.values(site.news).flat();
         {i < outlets.length - 2 ? ', ' : i === outlets.length - 2 ? ' and ' : '.'}
       </>
     ))}
+  </p>
+  <p>
+    The delivery mode's streets and buildings are ©{' '}
+    <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, under the Open
+    Database License.
   </p>
 </footer>
 
