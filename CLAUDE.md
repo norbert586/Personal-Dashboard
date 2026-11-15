@@ -108,7 +108,9 @@ npm run zone:import  # re-bake the delivery zone from OpenStreetMap (needs the n
   `data-*` attributes (`data-sign-*`, `data-weather`, `data-aircraft`, `data-overhead`).
 - The delivery page takes `?at=east,north` (metres from the store), `?heading=degrees` (0 is
   north, clockwise) and `?time=day|dusk|night`. Its canvas carries `data-street`, `data-mph`,
-  `data-gear` and `data-at`.
+  `data-gear` and `data-at`. `?shadows=0` turns shadows off (phones start without them).
+  The sandbox's software renderer manages about 23 frames a second there; that says nothing
+  about a real graphics card.
 - `npm run zone:import` from a Claude cloud sandbox needs `NODE_USE_ENV_PROXY=1`. It keeps the
   raw tiles in `.cache/` (gitignored); delete that folder to download again.
 - Headless Chromium in Claude cloud sandboxes renders WebGL (software), so the town's e2e smoke

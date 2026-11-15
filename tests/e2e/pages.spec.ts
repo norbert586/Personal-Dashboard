@@ -54,3 +54,14 @@ test('the feeds are files, and the aircraft say why they are missing', async ({ 
   expect(cards.status()).toBe(200);
   expect(await cards.text()).toContain('data-card');
 });
+
+test('the delivery mode loads its map under the repository path', async ({ page }) => {
+  const missing: string[] = [];
+  page.on('response', (response) => {
+    if (response.status() >= 400) missing.push(response.url());
+  });
+  await page.goto(`${SITE}/delivery/`);
+  await expect(page.locator('html')).toHaveAttribute('data-delivery', 'ready', { timeout: 60_000 });
+  await expect(page.locator('#world')).toHaveAttribute('data-street', /Auburn Road/);
+  expect(missing, 'requests that failed').toEqual([]);
+});

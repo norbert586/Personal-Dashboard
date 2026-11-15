@@ -233,3 +233,6 @@ town as plain files, rebuilt about every half hour, with no aircraft and no edit
 11. **How a shift plays:** tips, what counts as late, how orders are paced, and what happens at
     the store between runs. Norbert knows the job; walk him through it before building the
     delivery loop.
+12. **The store and the car:** which corner of Auburn and Dequindre the pizzeria stands on (the
+    drive starts on Auburn Road beside the intersection until then), and which car Norbert
+    drives, for the model and its colour.

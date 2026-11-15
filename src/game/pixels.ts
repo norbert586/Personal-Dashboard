@@ -31,3 +31,18 @@ export function pixelScale(cssWidth: number, cssHeight: number, dpr: number, zoo
 export function zoomStep(current: number, dir: number, dpr: number): number {
   return Math.max(1, Math.min(Math.round(7 * dpr), current + dir));
 }
+
+/**
+ * The delivery mode's scale (DESIGN: Delivery mode): about 360 low-res lines on the screen's
+ * short side, like a 32-bit console's picture, scaled up by a whole number of device pixels.
+ */
+export function driveScale(
+  cssWidth: number,
+  cssHeight: number,
+  dpr: number,
+  lines = 360,
+): PixelScale {
+  const device = Math.max(1, Math.round((Math.min(cssWidth, cssHeight) * dpr) / lines));
+  const css = device / dpr;
+  return { device, css, width: Math.ceil(cssWidth / css), height: Math.ceil(cssHeight / css) };
+}
