@@ -356,6 +356,7 @@ export function buildZone(elements: readonly OsmElement[], spec: ZoneSpec): Zone
           mph: parseMph(tags.maxspeed) ?? usual.mph,
           oneway,
           bridge: Boolean(tags.bridge) && tags.bridge !== 'no',
+          concrete: (tags.surface ?? '').startsWith('concrete'),
           pts: ids.flatMap((id) => at.get(id)!),
         },
       });
@@ -387,6 +388,8 @@ export function buildZone(elements: readonly OsmElement[], spec: ZoneSpec): Zone
     traffic_signals: 'signal',
     stop: 'stop',
     give_way: 'yield',
+    turning_circle: 'turn',
+    turning_loop: 'turn',
   };
   for (const id of [...nodeTags.keys()].sort((a, b) => a - b)) {
     const tags = nodeTags.get(id)!;

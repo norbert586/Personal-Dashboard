@@ -69,6 +69,8 @@ test("main roads carry the map's lanes and limits; side streets get the usual on
     assert.equal(road.mph, 45);
     assert.ok(road.lanes >= 3);
   }
+  // Dequindre is concrete here, and the map says so.
+  assert.ok(dequindre.some((road) => road.concrete));
   const dawes = zone.roads.find((r) => r.name === 'Dawes Avenue');
   assert.deepEqual([dawes?.kind, dawes?.lanes, dawes?.mph], ['residential', 2, 25]);
   // Lots and lanes have no names, and nobody speeds through them.

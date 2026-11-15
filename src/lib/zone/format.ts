@@ -49,7 +49,8 @@ export type BuildingKind = (typeof BUILDING_KINDS)[number];
 export const AREA_KINDS = ['water', 'park', 'wood', 'golf', 'pitch', 'parking'] as const;
 export type AreaKind = (typeof AREA_KINDS)[number];
 
-export const POINT_KINDS = ['signal', 'stop', 'yield', 'tree'] as const;
+export const POINT_KINDS = ['signal', 'stop', 'yield', 'tree', 'turn'] as const;
+/** `turn` is the bulb at the end of a court, where cars turn round. */
 export type PointKind = (typeof POINT_KINDS)[number];
 
 /** A line or a ring as x, y, x, y… in metres. Rings don't repeat their first point. */
@@ -68,6 +69,8 @@ export interface Road {
   /** One-way streets run in the order of their points. */
   oneway: boolean;
   bridge: boolean;
+  /** Paved in concrete, as many streets here are; otherwise asphalt. */
+  concrete: boolean;
   pts: Line;
   /** Which graph node each point is, or -1 for a point between intersections. */
   nodes: number[];
@@ -127,6 +130,7 @@ export const ZONE_VERSION = 1;
 /** Road flags in the file. */
 const ONEWAY = 1;
 const BRIDGE = 2;
+const CONCRETE = 4;
 
 type RoadRow = [
   kind: number,
@@ -219,7 +223,7 @@ export function encodeZone(zone: Zone): ZoneFile {
         nameOf(road.ref),
         road.lanes,
         road.mph,
-        (road.oneway ? ONEWAY : 0) | (road.bridge ? BRIDGE : 0),
+        (road.oneway ? ONEWAY : 0) | (road.bridge ? BRIDGE : 0) | (road.concrete ? CONCRETE : 0),
         pack(road.pts),
         at,
       ];
@@ -273,6 +277,7 @@ export function decodeZone(file: ZoneFile): Zone {
         mph,
         oneway: (flags & ONEWAY) !== 0,
         bridge: (flags & BRIDGE) !== 0,
+        concrete: (flags & CONCRETE) !== 0,
         pts,
         nodes,
       };
