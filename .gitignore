@@ -20,3 +20,6 @@ playwright-report/
 !.vscode/extensions.json
 .idea/
 prototype/dist/
+
+# raw map downloads for `npm run zone:import`
+.cache/

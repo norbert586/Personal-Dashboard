@@ -25,6 +25,15 @@ export interface SiteConfig {
   news: Record<NewsSection, Outlet[]>;
   /** New comics from these publishers (ADR-015), by Comic Vine publisher id, in the order shown. */
   comics: Array<{ id: number; name: string }>;
+  /** The delivery mode (ADR-035): the pizzeria, and how far it delivers. */
+  delivery: {
+    /** The zone's file: public/zone/{zone}.json, baked by `npm run zone:import`. */
+    zone: string;
+    /** The pizzeria's stand-in name: no real brand (SPEC open question 5). */
+    storeName: string;
+    store: { lat: number; lon: number };
+    radiusMiles: number;
+  };
   /** Area traffic (ADR-017): incidents inside the box, closures only on the main roads. */
   traffic: {
     box: { west: number; south: number; east: number; north: number };
@@ -179,6 +188,13 @@ export const site: SiteConfig = {
     { id: 513, name: 'Image' },
     { id: 31, name: 'Marvel' },
   ],
+  delivery: {
+    zone: 'auburn-dequindre',
+    storeName: "Ratiu's Pizza",
+    // Where Auburn Road crosses Dequindre Road, on the Oakland and Macomb county line.
+    store: { lat: 42.63878, lon: -83.09214 },
+    radiusMiles: 2.5,
+  },
   traffic: {
     // The real grid (23 to 29 Mile, Mound to Romeo Plank) plus Hall Road (M-59) to the south.
     box: { west: -83.12, south: 42.6, east: -82.88, north: 42.8 },

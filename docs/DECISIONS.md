@@ -504,7 +504,7 @@ would need this revisited.
 
 **Accepted · 2026-11-15**
 Context: builds must never touch the network (ADR-016), the zone is small enough to ship whole
-(about 300 KB compressed, measured), and the pages build has no server to stream from.
+(under 2 MB, about 700 KB compressed), and the pages build has no server to stream from.
 Decision: `npm run zone:import` downloads the zone from OpenStreetMap in small tiles (an
 Overpass mirror first, the OSM API as the fallback, both in JSON, so no parser is added), and
 `src/lib/zone/` turns it into typed data: the road graph, sidewalks, footprints, lots, water,
