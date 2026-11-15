@@ -6,8 +6,8 @@
 import type { CarState } from './car.ts';
 import type { SegGrid } from './grid.ts';
 
-/** The car's outline: circles this far ahead of and behind its middle, each this wide. */
-const OFFSETS = [1.35, 0, -1.35] as const;
+/** The car's outline: circles this far ahead of and behind its centre of mass, each this wide. */
+const OFFSETS = [1.1, -0.25, -1.6] as const;
 const RADIUS = 0.95;
 /** How much of the speed into a wall comes back as bounce. */
 const BOUNCE = 0.12;

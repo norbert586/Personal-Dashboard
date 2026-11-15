@@ -65,7 +65,8 @@ npm run zone:import  # re-bake the delivery zone from OpenStreetMap (needs the n
   Landmarks the map doesn't name, and the pizzeria's shop front, are set in `site.config.ts`
   (`delivery.landmarks`, `delivery.storeFront`); re-run `npm run zone:import` after changing them.
 - The delivery mode's world is in real metres, east (+x) and north of the store; in three.js
-  north is -z. The car is a pure model with its tuning in one object (`car.ts`, ADR-036).
+  north is -z. The car is a pure model with its tuning in one object (`car.ts`, ADR-036): Norbert's 2006
+  HHR, stable under braking by design (ADR-040).
 - Every data source returns a `Reading<T>` (`src/lib/readings.ts`) carrying provenance:
   `live | local | sample | offline`. Sources never throw into a page: on failure, return
   `offline` with a human-readable `detail`.
@@ -109,7 +110,7 @@ npm run zone:import  # re-bake the delivery zone from OpenStreetMap (needs the n
   `?season=spring|summer|fall|latefall|winter`. The canvas carries what the town is showing in
   `data-*` attributes (`data-sign-*`, `data-weather`, `data-aircraft`, `data-overhead`).
 - The delivery page takes `?at=east,north` (metres from the store), `?heading=degrees` (0 is
-  north, clockwise) and `?time=day|dusk|night`. Without `?at` you start in the delivery parking at
+  north, clockwise) and `?time=day|dusk|night`. Without `?at` you start in the delivery parking behind
   the store. Its canvas carries `data-street`, `data-place`, `data-traffic`, `data-mph`,
   `data-gear` and `data-at`. `?shadows=0` turns shadows off (phones start without them), and
   `?traffic=0` empties the streets of other cars and people (they're random, so tests that drive

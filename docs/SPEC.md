@@ -86,9 +86,11 @@ drive.
 - **Real time.** A mile takes as long as a mile takes, the clock is the real clock, and the sun,
   seasons and weather are the real ones.
 - **Driving** is light and fun, in the spirit of Schedule I and GTA rather than a hard sim. The car
-  is an automatic whose gear shifts you can hear and feel. Steering is all yours: nothing steers,
-  brakes or corrects for you. It grips, slides when pushed and can be caught. It's a hand-written
-  model with no physics engine (ADR-036).
+  is mine: a silver 2006 Chevrolet HHR with the 2.4 litre engine and the four-speed automatic, at
+  its real size, weight and gearing, with gear shifts you can hear and feel. Steering is all
+  yours: nothing steers or brakes for you. It brakes in a straight line, turns in the real car's
+  36 feet, pushes wide before it spins, and slides when you pull the handbrake. It's a
+  hand-written model with no physics engine (ADR-036, ADR-040).
 - **A delivery:** drive there, park, get out and walk to the door, and knock. The customer answers
   in an RPG-style dialogue: a character portrait and text.
 - **A shift:** orders arrive by the real clock, each one an address on a ticket. You take singles,
@@ -99,7 +101,10 @@ drive.
   of the street. They are not the real houses' exact numbers, and no order is a real person's.
 - **The pizzeria** stands on its real corner under a stand-in name, with no real brand or logo.
   It's the brightest thing on the street: a lit shop front under a striped awning, its name in
-  lights, and marked delivery parking beside the door, where every drive starts and ends.
+  lights. Round the back, off the service lane, are its back door and the marked delivery
+  parking where I really park and load, and where every drive starts and ends.
+- **Street lamps** stand along every road, placed by rule since the map has almost none. They
+  all glow after dark, and the few nearest you throw real light on the road.
 - **Life on the streets:** a few other cars and cyclists on the roads and people on the
   sidewalks, enough that the place isn't empty and no more. They're around you only. Cars keep
   to their lane, give way to bigger roads, take turns at signals and wait behind you; you can't
@@ -248,10 +253,9 @@ town as plain files, rebuilt about every half hour, with no aircraft and no edit
 11. **How a shift plays:** tips, what counts as late, how orders are paced, and what happens at
     the store between runs. Norbert knows the job; walk him through it before building the
     delivery loop.
-12. **The store and the car:** which shop front at Auburn and Dequindre is the pizzeria. Until
-    Norbert says, it's the Auburn Road end of the plaza on the south-east corner
-    (`delivery.storeFront` in `site.config.ts`; re-run the import after changing it). And which
-    car he drives, for the model and its colour.
+12. **The store and the car:** settled on 2026-11-15. The pizzeria is the north end of the strip
+    in the plaza south of Auburn Road, facing west, with the drivers' parking behind it
+    (`delivery.storeFront` in `site.config.ts`). The car is his silver 2006 HHR (ADR-040).
 13. **Real names on signs:** landmarks and shops wear their real names in plain lettering, as a
     map does, with no logos or brand colours (ADR-039). Say so if any should be left off or
     renamed.

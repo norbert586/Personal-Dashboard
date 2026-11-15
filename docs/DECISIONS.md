@@ -550,3 +550,29 @@ Consequences: the streets are recognisable, and the names are only as right as t
 are stale). If a name should go, one rule in `world.ts` (which kinds get signs) or one entry
 removed from the import is the whole change. Hospitals use a white H on blue, not a red cross,
 which is a protected emblem.
+
+## ADR-040: The car is Norbert's HHR, and it's stable under braking by design
+
+**Accepted · 2026-11-15**
+Context: on his first drive Norbert found the car drifted when braking and swung wide in turns.
+Measuring the model showed two faults. The rear brakes asked for more than the rear tyres could
+hold once the weight pitched forward, so full braking with any steering spun the car. And below
+a jog the front tyres were treated as scrubbing sideways, so the car wouldn't pull away at full
+lock on less than most of the throttle, then ran wide once it did. ADR-036 says nothing
+corrects for you, which had been read as leaving these alone. He also named his car: a silver
+2006 Chevrolet HHR, 2.4 litre, and asked to keep the pace the game had.
+Decision: `CAR` takes the HHR's real weight, wheelbase, tyres, steering lock and the four-speed
+automatic's ratios; the engine's pull is set so 0 to 60 stays at about 7.5 seconds (the real
+car tested at 8.0). Stability comes from how the car is built, as on a real one, not from an
+assist that takes over: the rear brakes are held back like a proportioning valve, hard braking
+uses up most of the front tyres' cornering grip, the rear tyres grip a little more than the
+front and keep more of it in a slide, and at a crawl the car follows its wheels. The steering
+wheel takes the same moment to reach lock at any speed. There is still no ABS, traction control
+or steering help, and the handbrake still slides the tail.
+Consequences: braking hard while steering slows and turns the car without swinging it round;
+full lock from a stop is a 36 foot circle; a slide straightens itself when you let go. Tests
+hold each of these. It's harder to drift than before: if that turns out less fun, `slideRear`,
+`rearGrip` and `brakeCapRear` are the values to loosen. The final drive (3.91) and the weight
+split (60% front) are best estimates; sources disagree on the first and don't give the second.
+The store's point in the zone file was moved by hand to match `delivery.storeFront`, which is
+what a fresh import produces.
