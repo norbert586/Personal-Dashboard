@@ -54,7 +54,8 @@ test('it reaches 60 mph in seven to ten seconds, changing up through the gears',
     return speedMph(c) >= 60;
   });
   assert.ok(t > 7 && t < 10, `0 to 60 took ${t.toFixed(1)} s`);
-  assert.deepEqual(gears, [1, 2, 3]);
+  // Second runs to 77 mph, as the real four-speed's does.
+  assert.deepEqual(gears, [1, 2]);
   // Straight north, with no wander.
   assert.ok(Math.abs(car.x) < 0.01 && car.y > 80);
 });
@@ -78,12 +79,15 @@ test('a light foot changes up early, and flooring it kicks down', () => {
   let peak = 0;
   drive(car, { ...idle, gas: 0.3 }, 30, (c) => {
     peak = Math.max(peak, c.rpm);
-    return c.gear === 4;
+    return c.gear === 3;
   });
-  assert.equal(car.gear, 4);
+  assert.equal(car.gear, 3);
   assert.ok(peak < 3600, `revved to ${peak.toFixed(0)} on a light throttle`);
   drive(car, floored, 1.2);
-  assert.ok(car.gear < 4, 'kicked down');
+  assert.ok(car.gear < 3, 'kicked down');
+  // Cruising, it settles into the overdrive top gear.
+  drive(car, { ...idle, gas: 0.5 }, 60);
+  assert.equal(car.gear, CAR.gears.length);
 });
 
 test('it tops out between 110 and 135 mph', () => {
@@ -142,10 +146,61 @@ test('it turns the way you steer, tighter at low speed than at high', () => {
   assert.ok(car.yawRate < 0 && car.heading < 0);
 });
 
+test('from a stop at full lock it turns in the 36 feet the real car needs, on any throttle', () => {
+  for (const gas of [0.1, 0.18]) {
+    const car = newCar(0, 0, 0);
+    let west = 0;
+    let east = 0;
+    drive(car, { ...idle, gas, steer: 1 }, 30, (c) => {
+      // The outside front wheel, which draws the kerb-to-kerb circle.
+      const x = c.x + Math.sin(c.heading) * CAR.front - Math.cos(c.heading) * 0.745;
+      west = Math.min(west, x);
+      east = Math.max(east, x);
+      return c.heading > Math.PI * 2;
+    });
+    assert.ok(car.heading > Math.PI * 2, `went all the way round at ${gas} throttle`);
+    const feet = (east - west) * 3.281;
+    assert.ok(feet > 33 && feet < 40, `${feet.toFixed(0)} ft circle at ${gas} throttle`);
+  }
+});
+
+test('braking hard while steering slows and turns the car without swinging the tail out', () => {
+  for (const [mph, brake, steer] of [
+    [40, 1, 0.3],
+    [40, 0.5, 0.3],
+    [30, 1, -0.6],
+  ] as const) {
+    const car = newCar(0, 0, 0);
+    drive(car, floored, 30, (c) => speedMph(c) >= mph);
+    let slid = 0;
+    drive(car, { ...idle, back: brake, steer }, 8, (c) => {
+      const speed = Math.hypot(c.vx, c.vy);
+      // Above a jog: slower than that, a car on full lock points well inside its own path.
+      if (speed > 6) {
+        const off = Math.atan2(c.vx, c.vy) - c.heading;
+        slid = Math.max(slid, Math.abs(Math.atan2(Math.sin(off), Math.cos(off))));
+      }
+      return speed < 0.1;
+    });
+    assert.ok(slid < 0.2, `slid ${slid.toFixed(2)} rad braking ${brake} from ${mph} mph`);
+    assert.ok(Math.sign(car.heading) === Math.sign(steer), 'and it still turned');
+  }
+});
+
+test('a tap of the wheel at speed is a nudge, and the wheel takes a moment to reach full lock', () => {
+  const car = newCar(0, 0, 0);
+  drive(car, floored, 30, (c) => speedMph(c) >= 60);
+  drive(car, { ...idle, gas: 0.5, steer: 1 }, 0.1);
+  assert.ok(car.wheel > 0.2 && car.wheel < 0.5, `wheel at ${car.wheel.toFixed(2)}`);
+  drive(car, { ...idle, gas: 0.5 }, 1.5);
+  assert.ok(car.heading > 0 && car.heading < 0.06, `turned ${car.heading.toFixed(3)} rad`);
+  assert.ok(Math.abs(car.yawRate) < 0.01, 'and settled');
+});
+
 test('the handbrake swings the tail out in a corner, and letting go straightens it up', () => {
   const car = newCar(0, 0, 0);
   drive(car, floored, 30, (c) => speedMph(c) >= 35);
-  drive(car, { ...idle, steer: 1, handbrake: true }, 1.1);
+  drive(car, { ...idle, steer: 1, handbrake: true }, 0.8);
   // Sliding: the car points further round than it's travelling.
   const travel = Math.atan2(car.vx, car.vy);
   assert.ok(car.heading - travel > 0.25, `slid ${(car.heading - travel).toFixed(2)} rad`);

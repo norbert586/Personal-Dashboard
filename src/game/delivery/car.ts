@@ -7,67 +7,94 @@
  * Headings are compass headings in radians: 0 is north, clockwise. Positions are zone metres.
  */
 
-/** Every tuning value in one place, to adjust by feel. */
+/**
+ * Every tuning value in one place, to adjust by feel. The car is Norbert's: a 2006 Chevrolet HHR
+ * with the 2.4 litre engine and the four-speed automatic. Its size, weight, tyres and gearing are
+ * the real car's; grip and the engine's pull are set by feel.
+ */
 export const CAR = {
-  mass: 1250,
+  /** The car and its driver, in kg. */
+  mass: 1510,
   /** Resistance to turning, in kg·m². Lower is more eager to rotate. */
-  inertia: 1900,
-  /** Centre of mass to the front and rear axles, in metres. */
-  front: 1.15,
-  rear: 1.45,
+  inertia: 2500,
+  /** Centre of mass to the front and rear axles, in metres: the engine sits over the front. */
+  front: 1.05,
+  rear: 1.58,
   /** How high the centre of mass sits: more height shifts more weight under braking. */
-  height: 0.5,
-  wheelRadius: 0.31,
+  height: 0.58,
+  wheelRadius: 0.32,
   /** Tyre grip on dry pavement, and how sharply the tyres answer a slip angle. */
-  grip: 1.05,
+  grip: 1,
   stiffnessFront: 9.5,
-  stiffnessRear: 10.5,
-  /** Past the limit a sliding tyre keeps this share of its grip. */
-  slide: 0.82,
+  stiffnessRear: 11.5,
+  /**
+   * Past the limit a sliding tyre keeps this share of its grip. The rear keeps more than the
+   * front, so a slide straightens itself out instead of going on round.
+   */
+  slideFront: 0.8,
+  slideRear: 0.97,
+  /**
+   * The rear tyres' grip next to the front's. A little over 1 makes the nose push wide before
+   * the tail steps out, as a front-heavy wagon does.
+   */
+  rearGrip: 1.12,
   /** The rear tyres' grip with the handbrake on. */
-  handbrakeGrip: 0.42,
+  handbrakeGrip: 0.6,
   /** Engine: peak torque (N·m) at `peakRpm`, falling away either side over `torqueSpan` rpm. */
-  torque: 205,
-  peakRpm: 4200,
-  torqueSpan: 5200,
+  torque: 258,
+  peakRpm: 4800,
+  torqueSpan: 6200,
   idleRpm: 800,
   redline: 6500,
   /** How far the torque converter lets the engine rev at a standstill. */
-  stallRpm: 2300,
-  gears: [3.55, 2.05, 1.4, 1.03, 0.82, 0.68],
-  reverse: 3.3,
+  stallRpm: 2400,
+  gears: [2.96, 1.62, 1, 0.68],
+  reverse: 2.14,
   /** The fastest the car will back up, in metres a second. */
   reverseTop: 9,
-  finalDrive: 3.9,
+  finalDrive: 3.91,
   efficiency: 0.9,
   /** Seconds a gear change takes, and the share of power that still gets through during it. */
-  shiftTime: 0.26,
+  shiftTime: 0.3,
   shiftPower: 0.12,
   /** Upshift at this many rpm on a light throttle, and this many with your foot down. */
-  shiftUpLight: 2400,
-  shiftUpHard: 6100,
-  shiftDownLight: 1250,
+  shiftUpLight: 2100,
+  shiftUpHard: 6200,
+  shiftDownLight: 1150,
   shiftDownHard: 3300,
   /** Seconds a new gear is held before the gearbox thinks again, so it never hunts. */
   shiftHold: 0.55,
-  brakeForce: 11500,
+  brakeForce: 15500,
   /** The share of braking done by the front wheels. */
-  brakeBias: 0.62,
-  drag: 0.45,
-  rolling: 170,
-  engineBraking: 0.38,
-  /** The most the front wheels turn, in radians. */
-  steerLock: 0.6,
+  brakeBias: 0.74,
   /**
-   * At speed, full lock asks for this many times the grip the tyres have: over 1 lets you push
-   * the front into a slide, but never so far that a twitch of the wheel spins the car.
+   * The most of its tyres' grip each axle's brakes may use. The rear is held well back, as a
+   * proportioning valve does, so the tail stays planted when the weight pitches forward.
    */
-  steerOver: 1.55,
-  /** How fast the wheel turns toward where you hold it, and back to centre, in radians a second. */
-  steerRate: 2.3,
-  steerReturn: 3.4,
-  /** How quickly the pedals come on and off, per second. */
+  brakeCapFront: 0.96,
+  brakeCapRear: 0.55,
+  /**
+   * How much of a tyre's cornering grip is taken away by driving it hard, and by braking the
+   * front hard. The rear's brakes count as driving: they take less.
+   */
+  driveSteals: 0.5,
+  brakeSteals: 0.93,
+  drag: 0.52,
+  rolling: 190,
+  engineBraking: 0.38,
+  /** The most the front wheels turn, in radians: a 36 foot turning circle. */
+  steerLock: 0.575,
+  /**
+   * At speed, full lock asks for this many times the grip the tyres have: a little over 1 puts
+   * the front right at its limit without pushing it wide.
+   */
+  steerOver: 1.1,
+  /** How fast the wheel goes to full lock and back to centre, in locks a second. */
+  steerRate: 3.2,
+  steerReturn: 5,
+  /** How quickly the gas and the brake come on and off, per second. */
   pedalRate: 7,
+  brakeRate: 6,
 } as const;
 
 const G = 9.81;
@@ -85,6 +112,8 @@ export interface CarState {
   yawRate: number;
   /** Front wheel angle in radians, right positive. */
   steer: number;
+  /** How far the steering wheel is turned, -1 full left to 1 full right. */
+  wheel: number;
   rpm: number;
   /** -1 is reverse, 1 and up are the forward gears. */
   gear: number;
@@ -138,6 +167,7 @@ export function newCar(x: number, y: number, heading: number): CarState {
     vy: 0,
     yawRate: 0,
     steer: 0,
+    wheel: 0,
     rpm: CAR.idleRpm,
     gear: 1,
     shifting: 0,
@@ -187,11 +217,11 @@ function torqueAt(rpm: number): number {
 }
 
 /** A tyre's sideways force for a slip angle: it builds, peaks at the limit, then gives a little. */
-function tyre(slipAngle: number, stiffness: number, limit: number): number {
+function tyre(slipAngle: number, stiffness: number, limit: number, slide: number): number {
   const wanted = -stiffness * slipAngle * limit;
   const over = Math.abs(wanted) / limit;
   if (over <= 1) return wanted;
-  const kept = CAR.slide + (1 - CAR.slide) / over;
+  const kept = slide + (1 - slide) / over;
   return Math.sign(wanted) * limit * kept;
 }
 
@@ -247,17 +277,21 @@ function step(car: CarState, input: CarInput, surface: Surface, dt: number): voi
   car.wasBack = backDown;
   const reversing = car.gear < 0;
   car.throttle = toward(car.throttle, reversing ? input.back : input.gas, CAR.pedalRate * dt);
-  car.brake = toward(car.brake, reversing ? input.gas : input.back, CAR.pedalRate * 1.6 * dt);
+  const brakeAsk = reversing ? input.gas : input.back;
+  // The brake comes on over a moment, so a tapped key is a dab; it lets go at once.
+  car.brake = toward(car.brake, brakeAsk, (brakeAsk < car.brake ? 12 : CAR.brakeRate) * dt);
   car.handbrake = input.handbrake;
 
-  // ---- Steering: the wheel turns at a steady rate, with less lock the faster you go.
+  // ---- Steering: the wheel takes the same moment to reach full lock at any speed, and full
+  // lock is less the faster you go, so a tap on the motorway is a nudge, not a swerve.
   const lock = Math.min(
     CAR.steerLock,
     CAR.steerOver * Math.atan(((CAR.front + CAR.rear) * CAR.grip * G) / Math.max(1, speed * speed)),
   );
-  const want = clamp(input.steer, -1, 1) * lock;
-  const rate = Math.abs(want) < Math.abs(car.steer) ? CAR.steerReturn : CAR.steerRate;
-  car.steer = toward(car.steer, want, rate * dt);
+  const want = clamp(input.steer, -1, 1);
+  const rate = Math.abs(want) < Math.abs(car.wheel) ? CAR.steerReturn : CAR.steerRate;
+  car.wheel = toward(car.wheel, want, rate * dt);
+  car.steer = car.wheel * lock;
 
   gearbox(car, vf, dt);
 
@@ -279,17 +313,18 @@ function step(car: CarState, input: CarInput, surface: Surface, dt: number): voi
 
   // ---- Weight on each axle: braking loads the front, accelerating the rear.
   const base = CAR.front + CAR.rear;
-  const shift = clamp((CAR.mass * car.ax * CAR.height) / base, -2500, 2500);
+  const most = CAR.mass * G * 0.17;
+  const shift = clamp((CAR.mass * car.ax * CAR.height) / base, -most, most);
   const loadFront = Math.max(800, (CAR.mass * G * CAR.rear) / base - shift);
   const loadRear = Math.max(800, (CAR.mass * G * CAR.front) / base + shift);
   const mu = CAR.grip * surface.grip;
   const limitFront = mu * loadFront;
-  const limitRear = mu * loadRear * (car.handbrake ? CAR.handbrakeGrip : 1);
+  const limitRear = mu * CAR.rearGrip * loadRear * (car.handbrake ? CAR.handbrakeGrip : 1);
 
   // ---- Along the car: drive at the front wheels, brakes at all four, drag and rolling.
   const braking = car.brake * CAR.brakeForce;
-  const brakeFront = Math.min(braking * CAR.brakeBias, limitFront);
-  let brakeRear = Math.min(braking * (1 - CAR.brakeBias), limitRear);
+  const brakeFront = Math.min(braking * CAR.brakeBias, limitFront * CAR.brakeCapFront);
+  let brakeRear = Math.min(braking * (1 - CAR.brakeBias), limitRear * CAR.brakeCapRear);
   if (car.handbrake) brakeRear = Math.max(brakeRear, limitRear * 0.95);
   drive = clamp(drive, -limitFront, limitFront);
   const rolling = CAR.rolling * surface.drag;
@@ -298,19 +333,29 @@ function step(car: CarState, input: CarInput, surface: Surface, dt: number): voi
   const along = drive * Math.cos(car.steer) - CAR.drag * vf * Math.abs(vf);
   const stopping = resist * (Math.abs(vf) > 0.02 ? Math.sign(vf) : 0);
 
-  // ---- Across the car: each axle's tyres push back against sliding sideways.
-  const grip = (used: number, limit: number) =>
-    limit * Math.sqrt(Math.max(0.12, 1 - Math.min(1, (used / Math.max(1, limit)) ** 2) * 0.75));
+  // ---- Across the car: each axle's tyres push back against sliding sideways. A tyre that's
+  // driving or braking hard has less left over for cornering.
+  const left = (limit: number, driving: number, stopping: number) => {
+    const d = Math.min(1, driving / Math.max(1, limit));
+    const b = Math.min(1, stopping / Math.max(1, limit));
+    return limit * Math.sqrt(Math.max(0.1, 1 - d * d * CAR.driveSteals - b * b * CAR.brakeSteals));
+  };
+  // Below a jog the tyres aren't slipping, they're rolling where they point: the forces fade
+  // out there and the car follows its wheels (below), so it turns tightly at any throttle.
+  const bite = smooth(1.2, 4.5, speed);
   const reach = Math.max(Math.abs(vf), 2.2);
   const slipFront =
     Math.atan2(vr + CAR.front * car.yawRate, reach) - car.steer * Math.sign(vf || 1);
   const slipRear = Math.atan2(vr - CAR.rear * car.yawRate, reach);
-  const sideFront = tyre(
-    slipFront,
-    CAR.stiffnessFront,
-    grip(Math.abs(drive) + brakeFront, limitFront),
-  );
-  const sideRear = tyre(slipRear, CAR.stiffnessRear, grip(brakeRear, limitRear));
+  const sideFront =
+    tyre(
+      slipFront,
+      CAR.stiffnessFront,
+      left(limitFront, Math.abs(drive), brakeFront),
+      CAR.slideFront,
+    ) * bite;
+  const sideRear =
+    tyre(slipRear, CAR.stiffnessRear, left(limitRear, brakeRear, 0), CAR.slideRear) * bite;
 
   // ---- Put it together.
   // The front wheels push along and across their own direction, so the drive pulls the nose
@@ -341,15 +386,17 @@ function step(car: CarState, input: CarInput, surface: Surface, dt: number): voi
   car.vx = vf * sin + vr * cos;
   car.vy = vf * cos - vr * sin;
 
-  // At a crawl the tyre model has nothing to hold on to: there the car just follows its wheels.
-  const crawl = 1 - smooth(1.2, 4.5, speed);
+  // At a crawl the tyre model has nothing to hold on to: there the car just follows its wheels,
+  // turning about the point its rear axle rolls round.
+  const crawl = 1 - bite;
   if (crawl > 0) car.yawRate += ((vf * Math.tan(car.steer)) / base - car.yawRate) * crawl;
   car.heading += car.yawRate * dt;
   if (crawl > 0) {
     const s2 = Math.sin(car.heading);
     const c2 = Math.cos(car.heading);
-    car.vx += (vf * s2 - car.vx) * crawl;
-    car.vy += (vf * c2 - car.vy) * crawl;
+    const across = CAR.rear * car.yawRate;
+    car.vx += (vf * s2 + across * c2 - car.vx) * crawl;
+    car.vy += (vf * c2 - across * s2 - car.vy) * crawl;
   }
   car.x += car.vx * dt;
   car.y += car.vy * dt;
@@ -361,7 +408,7 @@ function step(car: CarState, input: CarInput, surface: Surface, dt: number): voi
     Math.abs(slipFront) * CAR.stiffnessFront,
     Math.abs(slipRear) * CAR.stiffnessRear,
   );
-  const want2 = speed > 3 ? clamp((sliding - 0.9) / 1.2, 0, 1) : 0;
+  const want2 = clamp((sliding - 0.9) / 1.2, 0, 1) * bite;
   car.slip += (want2 - car.slip) * Math.min(1, dt * 12);
 }
 
