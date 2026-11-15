@@ -88,12 +88,25 @@ drew a driving game: low-poly streets at true scale, from behind the car. Values
 - **Detail:** real footprints with windows fitted to each wall, shingled gable and hip roofs,
   flat-roofed shops, sidewalks where the map has them, lane lines that stop at intersections,
   trees in yards and woods. Detail comes from many simple shapes, never from smooth ones.
+- **Landmarks:** a landmark is told by its shape before its sign: a steeple and cross, a school's
+  long windows, entrance canopy and flag, the hospital's tall wards under a blue band with a
+  white H, a showroom of glass with cars lined up outside, a gas station's lit canopy over its
+  pumps, a strip mall's row of coloured sign bands. No red cross: that emblem is protected.
+- **Signs:** names are painted in the town's 3 by 5 pixel font, white on a panel coloured by the
+  kind of place, on the wall and on a roadside sign (tall on a pole for shops and gas, low on
+  brick for schools and churches). Letters and panels are lit after dark. The dashboard backs
+  every sign with words, so nothing depends on reading small lettering.
+- **The pizzeria:** red and white awning, warm lit windows, the name in lights and a real pool
+  of light on the pavement at night. Delivery stalls are painted in maize, the game's accent.
+- **People and traffic:** boxy like your car, in ordinary colours (mostly white, black, grey and
+  silver cars). People swing their arms and legs; with reduced motion they glide.
 - **Sky:** a dome with a dithered gradient for the hour, the real sun where it really is, pixel
   clouds that drift, and stars at night. Fog at the far edge takes the sky's colour.
 - **Night:** headlights throw real light, windows glow and the topper sign is lit.
 - **The car:** boxy and low-poly. It rolls in corners, dives under braking, squats when it pulls
   away and nudges on each gear shift, so you feel what it's doing.
-- **On screen:** speed, gear and revs, the street you're on and its limit, a small heading-up map
+- **On screen:** speed, gear and revs, the street you're on and its limit, the landmark or
+  neighborhood you're in, a small heading-up map with a letter for each landmark
   and the real clock, in the game's bevelled panels. Phones get steering buttons on the left and
   pedals on the right.
 - **Reduced motion:** no camera roll or shake.

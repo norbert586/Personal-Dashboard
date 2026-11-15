@@ -122,7 +122,7 @@ function serialise(file: ZoneFile): string {
   return `{\n${lines.join(',\n')}\n}\n`;
 }
 
-const { store, radiusMiles, zone: name } = site.delivery;
+const { store, radiusMiles, zone: name, storeName, storeFront, landmarks } = site.delivery;
 const radius = Math.round(radiusMiles * METRES_PER_MILE);
 
 async function sample(): Promise<void> {
@@ -183,6 +183,8 @@ async function bake(): Promise<void> {
     store,
     radius,
     imported: new Date().toISOString().slice(0, 10),
+    shop: { name: storeName, ...storeFront },
+    landmarks,
   });
   const to = `public/zone/${name}.json`;
   const text = serialise(encodeZone(zone));

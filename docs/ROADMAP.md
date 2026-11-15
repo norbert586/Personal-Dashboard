@@ -32,13 +32,15 @@ assembles them.
 
 ## Delivery mode ← you are here
 
-The pizza delivery sim, as its own game mode at true scale (SPEC: Delivery mode; ADR-035 to 037).
+The pizza delivery sim, as its own game mode at true scale (SPEC: Delivery mode; ADR-035 to 039).
 Norbert moved it ahead of the rest of M1 on 2026-11-15; M1 picks up again at step 5 when he says
 so. Each slice ends with something he can play.
 
 **Where it stands (2026-11-15).** `/delivery` loads the whole zone and you can drive it: every
-real street, the footprints as textured buildings, trees, a sky with the real sun, a car with an
-automatic gearbox, walls that stop you, a camera behind the car and a dashboard. Nobody has
+real street, the footprints as textured buildings with landmarks and signs, homes on every
+residential street, a lit pizzeria with delivery parking, a few other cars, cyclists and people,
+trees, a sky with the real sun, a car with an automatic gearbox, walls that stop you, a camera
+behind the car and a dashboard. Nobody has
 driven it on a real graphics card yet: the sandbox renders in software, at about 23 frames a
 second. Start the next session by having Norbert play it, then work down this list.
 
@@ -56,6 +58,24 @@ second. Start the next session by having Norbert play it, then work down this li
          (`car-body.ts`), the camera with close, far and hood views (`chase.ts`), and the dashboard:
          speed, gear, revs, the street and its limit, a heading-up map and the clock. Keyboard,
          controller and on-screen pedals.
+   - [x] A fuller map, from Norbert's first look (2026-11-15). Landmarks read as what they are
+         (`landmarks.ts`): steeples on churches, school entrances and flags, the hospital's towers
+         with its H, showrooms with cars for sale, pumps under lit gas canopies, sign bands on
+         strip malls. Every named place wears its name (`labels.ts`, ADR-039) on its wall and on
+         a sign by the road; the dashboard says what you're beside, and the small map letters the
+         landmarks. Streets the map left bare get stand-in homes (`src/lib/zone/fill.ts`, ADR-038),
+         houses get driveways, and lots and driveways have parked cars you can't drive through.
+   - [x] The pizzeria: a lit shop front with a striped awning and its sign, and marked delivery
+         stalls where the drive starts. It's on a stand-in shop front until Norbert says which
+         one is his (`delivery.storeFront` in `site.config.ts`, SPEC open question 12).
+   - [x] A little life (`traffic.ts`, `life.ts`): a few cars and cyclists on the real road graph
+         and people on the real sidewalks, only around you. Cars keep their lane, stop for bigger
+         roads, take turns at signals and wait behind you. `?traffic=0` empties the streets.
+   - [ ] Look at the landmarks with Norbert, against his own drive: which are missing or wrong
+         (dealerships and schools are the thinnest in OpenStreetMap; add them to
+         `delivery.landmarks` in `site.config.ts` and re-run the import), and whether the hospital
+         wants its real shape of towers rather than one tall block.
+   - [ ] Signal heads you can see, showing the phase the other cars already follow.
    - [ ] **Tune the feel with Norbert.** He plays; change `CAR` to match what he says. The values
          that matter most: `grip`, `steerOver` and `steerRate` (how sharp it turns), `inertia` and
          `handbrakeGrip` (how easily it slides and spins: the handbrake held at full lock spins
@@ -72,7 +92,9 @@ second. Start the next session by having Norbert play it, then work down this li
    - [ ] Phone steering beyond two buttons (a slider or tilt), and a check with a real controller.
    - [ ] Known rough edges to decide on: M-59 and its crossings are flat and drive through each
          other; storeys, wall materials and which bay is a garage are guesses by building kind;
-         most houses have no driveway because the map has few; unnamed lanes read "Service lane".
+         unnamed lanes read "Service lane"; other cars don't see parked cars or each other at
+         crossings beyond a simple give-way, and nothing happens if you hit a person (they stop
+         and wait for you to pass).
 2. [ ] **The delivery loop.** First walk Norbert through how a shift plays (SPEC open question
        11), a few questions at a time:
        where orders appear at the store and how he takes them; who decides a double or a triple;

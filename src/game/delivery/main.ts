@@ -3,9 +3,22 @@
  * builds the world around the car, and runs the drive: input, the car model, collisions, the
  * camera and the dashboard. Or it says plainly that this browser can't.
  */
-import { BasicShadowMap, ColorManagement, LinearSRGBColorSpace, Scene, WebGLRenderer } from 'three';
+import {
+  BasicShadowMap,
+  ColorManagement,
+  LinearSRGBColorSpace,
+  PointLight,
+  Scene,
+  WebGLRenderer,
+} from 'three';
 import { path } from '../../lib/paths.ts';
-import { decodeZone, type Road, type Zone, type ZoneFile } from '../../lib/zone/format.ts';
+import {
+  decodeZone,
+  type PlaceKind,
+  type Road,
+  type Zone,
+  type ZoneFile,
+} from '../../lib/zone/format.ts';
 import { site } from '../../site.config.ts';
 import { keys, listen, onKey, startLoop } from '../loop.ts';
 import { driveScale } from '../pixels.ts';
@@ -25,9 +38,11 @@ import { CarBody } from './car-body.ts';
 import { Chase } from './chase.ts';
 import { collide, fence } from './collide.ts';
 import { roadWidth } from './roads.ts';
+import { Life } from './life.ts';
 import { Sky } from './sky.ts';
 import { insideRing, points, type XY } from './space.ts';
 import { makeMaterials } from './tiles.ts';
+import { Traffic, bump } from './traffic.ts';
 import { World } from './world.ts';
 
 // Colours are painted in display space, as in the town.
@@ -46,6 +61,29 @@ const UNNAMED: Partial<Record<Road['kind'], string>> = {
   service: 'Service lane',
   aisle: 'Parking lot',
   driveway: 'Driveway',
+};
+
+/** What each kind of place is called on the dashboard, and its letter on the small map. */
+const PLACE_WORD: Record<PlaceKind, string> = {
+  school: 'School',
+  church: 'Church',
+  hospital: 'Hospital',
+  fuel: 'Gas station',
+  dealer: 'Car dealer',
+  shop: 'Shop',
+  food: 'Food',
+  civic: 'Public building',
+  park: 'Park',
+  homes: 'Neighborhood',
+  pizzeria: 'The store',
+};
+const MAP_LETTER: Partial<Record<PlaceKind, string>> = {
+  school: 'S',
+  church: 'C',
+  hospital: 'H',
+  fuel: 'G',
+  dealer: 'D',
+  pizzeria: 'P',
 };
 
 function cannot(title: string, why: string): void {
@@ -119,12 +157,21 @@ async function boot(): Promise<void> {
   world.shadows = shadows;
   const sky = new Sky(scene, shadows);
   const lots = zone.areas.filter((a) => a.kind === 'parking').map((a) => points(a.pts));
+  // The store: its delivery stalls are paved, and its front throws light after dark.
+  const glow = new PointLight(0xffb070, 0, 34, 1.4);
+  if (world.shop) {
+    lots.push(world.shop.apron);
+    const { door, out } = world.shop;
+    glow.position.set(door[0] + out[0] * 4, 3.2, -(door[1] + out[1] * 4));
+    scene.add(glow);
+  }
 
-  // ---- Where you start: on Auburn Road beside the store, heading east, or where ?at= says ----
+  // ---- Where you start: in the delivery stall at the store, facing it, or where ?at= says ----
   const start = (): [number, number, number] => {
     const [x, y] = (asked.get('at') ?? '').split(',').map(Number);
     if (Number.isFinite(x) && Number.isFinite(y))
       return [x!, y!, ((Number(asked.get('heading')) || 0) * Math.PI) / 180];
+    if (world.shop) return [world.shop.park.x, world.shop.park.y, world.shop.park.heading];
     const near = world.streets.nearest(-90, 0, 80, (id) => zone.roads[id]!.name.includes('Auburn'));
     if (!near) return [0, 0, Math.PI / 2];
     const east = near.dx >= 0 ? 1 : -1;
@@ -134,6 +181,15 @@ async function boot(): Promise<void> {
     return [near.x + dy * lane, near.y - dx * lane, Math.atan2(dx, dy)];
   };
   const car = newCar(...start());
+  // A few other cars, cyclists and people on foot; fewer on a phone. ?traffic=0 empties the streets.
+  const busy = asked.get('traffic') !== '0';
+  const traffic = new Traffic(zone, world.streets, world.walks, {
+    cars: busy ? (touch ? 10 : 18) : 0,
+    bikes: busy ? 3 : 0,
+    walkers: busy ? (touch ? 8 : 14) : 0,
+    random: Math.random,
+  });
+  const life = new Life(scene, traffic, shadows, still);
   const body = new CarBody(scene, still);
   const chase = new Chase(car.heading, still);
 
@@ -251,6 +307,8 @@ async function boot(): Promise<void> {
   const street = $<HTMLElement>('#street');
   const limit = $<HTMLElement>('#limit');
   const limitMph = $<HTMLElement>('#limit-mph');
+  const placeLine = $<HTMLElement>('#place');
+  const placeBox = $<HTMLElement>('#place-box');
   const clock = $<HTMLElement>('#clock');
   const map = $<HTMLCanvasElement>('#minimap');
   const pen = map.getContext('2d');
@@ -260,6 +318,7 @@ async function boot(): Promise<void> {
   const DIM = colour('--ink-dim');
   const MAIZE = colour('--maize');
   const WELL = colour('--panel-lo');
+  const FONT = colour('--font-ui') || 'sans-serif';
   const clockFormat = new Intl.DateTimeFormat(site.locale, {
     timeZone: site.timeZone,
     hour: 'numeric',
@@ -301,6 +360,19 @@ async function boot(): Promise<void> {
       pen.lineWidth = pass ? 2 : 1;
       pen.stroke();
     }
+    // The landmarks around you, each with its letter.
+    pen.font = `10px ${FONT}`;
+    pen.textAlign = 'center';
+    pen.textBaseline = 'middle';
+    for (const place of zone.places) {
+      const letter = MAP_LETTER[place.kind];
+      if (!letter || Math.hypot(place.x - car.x, place.y - car.y) > reach * 1.25) continue;
+      const [x, y] = put(place.x, place.y);
+      pen.fillStyle = place.kind === 'pizzeria' ? MAIZE : INK;
+      pen.fillRect(Math.round(x) - 5, Math.round(y) - 5, 11, 11);
+      pen.fillStyle = WELL;
+      pen.fillText(letter, Math.round(x) + 0.5, Math.round(y) + 1);
+    }
     // You, pointing up.
     pen.fillStyle = MAIZE;
     pen.beginPath();
@@ -331,6 +403,9 @@ async function boot(): Promise<void> {
     if (playing) {
       driveCar(car, input(), surface, dt);
       collide(car, world.walls);
+      collide(car, world.things);
+      traffic.update(dt, car, car);
+      bump(car, traffic.riders);
       fence(car, edge);
     }
     world.update(car.x, car.y, 5);
@@ -339,7 +414,9 @@ async function boot(): Promise<void> {
     const eye = chase.camera.position;
     sky.update(L, eye.x, eye.y, eye.z, still ? 0 : now);
     materials.night.value = sky.night;
+    glow.intensity = sky.night * 60;
     body.sync(car, sky.night, dt);
+    life.sync(sky.night, now);
     renderer.render(scene, chase.camera);
 
     // The dashboard: the dials every frame, the slower things a few times a second.
@@ -354,18 +431,26 @@ async function boot(): Promise<void> {
     surface = paved() ? PAVEMENT : GRASS;
     const on = surface === PAVEMENT ? under : null;
     const past = Math.hypot(car.x, car.y) > zone.radius;
+    const home = world.shop && insideRing(world.shop.apron, car.x, car.y);
     const name = past
       ? 'Past the delivery area'
-      : on
-        ? on.road.name || on.road.ref || UNNAMED[on.road.kind] || 'Street'
-        : under
-          ? 'Off the road'
-          : 'Out in the grass';
+      : home
+        ? 'Delivery parking'
+        : on
+          ? on.road.name || on.road.ref || UNNAMED[on.road.kind] || 'Street'
+          : under
+            ? 'Off the road'
+            : 'Out in the grass';
     say(street, name);
     // Lots, lanes and driveways have no posted limit.
-    const posted = on && !['service', 'aisle', 'driveway'].includes(on.road.kind) ? on.road.mph : 0;
+    const posted =
+      on && !home && !['service', 'aisle', 'driveway'].includes(on.road.kind) ? on.road.mph : 0;
     limit.hidden = !posted;
     if (posted) say(limitMph, String(posted));
+    const place = past ? null : world.placeNear(car.x, car.y);
+    const here = place ? `${PLACE_WORD[place.kind]} · ${place.name}` : '';
+    placeBox.hidden = !place;
+    if (place) say(placeLine, here);
     say(clock, clockFormat.format(new Date()));
     drawMap();
     // For tests and tools: what the drive is showing, written only when it changes.
@@ -373,6 +458,9 @@ async function boot(): Promise<void> {
     const at = `${car.x.toFixed(1)},${car.y.toFixed(1)}`;
     if (data.at !== at) data.at = at;
     if (data.street !== name) data.street = name;
+    if (data.place !== here) data.place = here;
+    const cars = traffic.riders.filter((r) => !r.bike).length;
+    data.traffic = `${cars} cars, ${traffic.riders.length - cars} bikes, ${traffic.walkers.length} on foot`;
     if (data.mph !== String(speed)) data.mph = String(speed);
     if (data.gear !== gear.textContent) data.gear = gear.textContent ?? '';
     const built = world.load;

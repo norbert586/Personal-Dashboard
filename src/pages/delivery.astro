@@ -53,10 +53,15 @@ const { storeName, radiusMiles } = site.delivery;
       <span id="limit-mph"></span>
     </p>
   </section>
+  <section class="hud place" id="place-box" aria-label="What you're beside" hidden>
+    <p id="place" aria-live="off"></p>
+  </section>
   <section class="hud map" aria-label="Map">
     <canvas id="minimap" width="168" height="168" aria-hidden="true"></canvas>
     <p class="visually-hidden">
-      A small map of the streets around you, turned so that the way you're heading is up.
+      A small map of the streets around you, turned so that the way you're heading is up, with a
+      letter for each landmark: P for the store, H for the hospital, S for a school, C for a church,
+      G for a gas station and D for a car dealer.
     </p>
   </section>
   <section class="hud dash" aria-label="Dashboard">
@@ -199,6 +204,7 @@ const { storeName, radiusMiles } = site.delivery;
 
   .badge,
   .street,
+  .place,
   .dash,
   .map {
     background: var(--panel);
@@ -252,6 +258,24 @@ const { storeName, radiusMiles } = site.delivery;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  /* What you're beside: a landmark, or the neighbourhood. */
+  .place {
+    inset-block-start: calc(env(safe-area-inset-top, 0px) + var(--space-3) + 2.9rem);
+    inset-inline-start: 50%;
+    transform: translateX(-50%);
+    max-width: min(30rem, calc(100vw - 2rem));
+    padding: 0 var(--space-2);
+    color: var(--ink);
+    font: var(--size-14) / 1.5 var(--font-ui);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .place[hidden] {
+    display: none;
   }
 
   .limit {
@@ -423,6 +447,12 @@ const { storeName, radiusMiles } = site.delivery;
   @media (max-width: 40rem) {
     .street {
       inset-block-start: calc(env(safe-area-inset-top, 0px) + 3.2rem);
+      inset-inline-start: calc(env(safe-area-inset-left, 0px) + var(--space-3));
+      transform: none;
+    }
+
+    .place {
+      inset-block-start: calc(env(safe-area-inset-top, 0px) + 6rem);
       inset-inline-start: calc(env(safe-area-inset-left, 0px) + var(--space-3));
       transform: none;
     }

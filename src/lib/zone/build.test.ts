@@ -225,6 +225,93 @@ test('a pond drawn as several ways is joined into one ring', () => {
   near(Math.abs(area(made.areas[0]!.pts)), 1200, 5);
 });
 
+const square = (id: number, x: number, y: number, w: number, h = w) => [
+  node(id, x, y),
+  node(id + 1, x + w, y),
+  node(id + 2, x + w, y + h),
+  node(id + 3, x, y + h),
+];
+const loop = (id: number) => [id, id + 1, id + 2, id + 3, id];
+
+test('landmarks are told apart: a school by its grounds, a gas station by its pumps', () => {
+  const made = buildZone(
+    [
+      // A school mapped as grounds, with a plain building on them.
+      ...square(100, -120, 40, 100, 80),
+      way(1, loop(100), { amenity: 'school', name: 'Maple Elementary School' }),
+      ...square(200, -100, 60, 40, 30),
+      way(2, loop(200), { building: 'yes' }),
+      // A gas station mapped as a point, beside a roof and a shop.
+      node(300, 60, 60, { amenity: 'fuel', name: 'Corner Gas' }),
+      ...square(310, 50, 50, 16, 12),
+      way(3, loop(310), { building: 'roof' }),
+      // A dealership and a church, each a named building.
+      ...square(400, 40, -90, 40, 30),
+      way(4, loop(400), { building: 'yes', shop: 'car', name: 'Motor City Cars' }),
+      ...square(500, -90, -90, 30, 20),
+      way(5, loop(500), { building: 'yes', amenity: 'place_of_worship', name: 'First Church' }),
+    ],
+    {
+      ...spec,
+      shop: { name: 'Test Pizza', lat: store.lat - 80 / 111_086, lon: store.lon + 55 / 82_004 },
+    },
+  );
+  assert.deepEqual(
+    made.buildings.map((b) => b.kind),
+    ['school', 'fuel', 'dealer', 'church'],
+  );
+  const places = new Map(made.places.map((p) => [p.name, p]));
+  // The school's place stands at its building, not in the middle of its field.
+  assert.equal(places.get('Maple Elementary School')?.building, 0);
+  near(places.get('Maple Elementary School')!.x, -80, 2);
+  assert.equal(places.get('Corner Gas')?.kind, 'fuel');
+  assert.equal(places.get('Motor City Cars')?.kind, 'dealer');
+  assert.equal(places.get('First Church')?.kind, 'church');
+  // The pizzeria is the shop front its point is in.
+  assert.deepEqual(
+    [places.get('Test Pizza')?.kind, places.get('Test Pizza')?.building],
+    ['pizzeria', 2],
+  );
+});
+
+test('an empty residential street gets stand-in homes; a built-up one keeps what it has', () => {
+  const made = buildZone(
+    [
+      node(1, -140, 0),
+      node(2, 140, 0),
+      way(10, [1, 2], { highway: 'residential', name: 'Empty Street' }),
+      // One real house on the north side, and a pond on the south.
+      ...square(100, -8, 10, 14, 10),
+      way(11, loop(100), { building: 'house' }),
+      ...square(200, 40, -60, 60, 50),
+      way(12, loop(200), { natural: 'water' }),
+      // A lane behind shops gets nothing.
+      node(3, -140, -120),
+      node(4, 140, -120),
+      way(13, [3, 4], { highway: 'service' }),
+    ],
+    spec,
+  );
+  const homes = made.buildings.filter((b) => b.made);
+  assert.equal(made.buildings.filter((b) => !b.made).length, 1);
+  assert.ok(homes.length >= 12 && homes.length <= 24, `${homes.length} homes`);
+  for (const home of homes) {
+    assert.equal(home.kind, 'house');
+    assert.ok(area(home.pts) > 60, 'anticlockwise, and house-sized');
+    for (let i = 0; i < home.pts.length; i += 2) {
+      const [x, y] = [home.pts[i]!, home.pts[i + 1]!];
+      assert.ok(Math.abs(y) > 8 && Math.abs(y) < 40, 'set back from the street, in a row');
+      assert.ok(!(x > 36 && x < 104 && y < -6), 'not in the pond');
+      assert.ok(!(x > -13 && x < 11 && y > 0), "not on the real house's lot");
+    }
+  }
+  // The same map always gives the same homes.
+  assert.deepEqual(
+    buildZone(saved.elements, spec).buildings,
+    buildZone(saved.elements, spec).buildings,
+  );
+});
+
 test('the file round-trips, and names are stored once', () => {
   const file = encodeZone(zone);
   assert.deepEqual(decodeZone(JSON.parse(JSON.stringify(file)) as ZoneFile), zone);
@@ -249,6 +336,17 @@ test('the baked zone in public/ is the real one: about 245 miles of streets', ()
   for (const name of ['Auburn Road', 'Dequindre Road', 'Dawes Avenue', 'Hamlin Road'])
     assert.ok(names.has(name), name);
   assert.ok(baked.roads.some((r) => r.kind === 'motorway' && r.ref.includes('59')));
+  // The landmarks came along, and the streets the map left empty have homes.
+  assert.ok(stats.standInHomes! > 3000 && stats.places! > 250, JSON.stringify(stats));
+  const place = (kind: string, name: RegExp) =>
+    baked.places.find((p) => p.kind === kind && name.test(p.name));
+  const hospital = place('hospital', /Corewell Health Beaumont Troy/);
+  assert.equal(baked.buildings[hospital!.building]?.kind, 'hospital');
+  assert.ok(place('school', /Reuther Middle School/) && place('church', /Gethsemane/));
+  assert.ok(place('dealer', /BMW/) && place('dealer', /Audi/) && place('fuel', /Marathon/));
+  const shop = place('pizzeria', /Pizza/);
+  assert.equal(shop?.name, site.delivery.storeName);
+  assert.ok(shop!.building >= 0 && Math.hypot(shop!.x, shop!.y) < 400);
   // The store stands at a signal.
   assert.ok(baked.junctions.some((j) => j.signal && Math.hypot(j.x, j.y) < 5));
 });

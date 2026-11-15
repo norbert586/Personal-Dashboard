@@ -9,6 +9,7 @@
  */
 import {
   DataArrayTexture,
+  DataTexture,
   DoubleSide,
   FrontSide,
   MeshLambertMaterial,
@@ -17,6 +18,7 @@ import {
   RGBAFormat,
   RepeatWrapping,
   type Side,
+  type Texture,
 } from 'three';
 import {
   M,
@@ -62,8 +64,15 @@ export const T = {
   leaves: 23,
   bark: 24,
   plain: 25,
+  schoolWindow: 26,
+  wardWindow: 27,
+  glassWall: 28,
+  brickArch: 29,
+  awning: 30,
 } as const;
-const COUNT = 26;
+const COUNT = 31;
+/** A triangle with this layer wears the sign lettering (labels.ts) instead of a tile. */
+export const LABEL = -1;
 
 type RGBA = readonly [number, number, number, number];
 type Paint = (u: number, v: number) => RGBA;
@@ -209,6 +218,27 @@ function paintTiles(season: Season): Uint8Array {
   });
   paints[T.bark] = ramp('trunk', (u, v) => (clump(u, 0, 2, 9) < 0.4 ? 0 : (v & 7) === 0 ? 1 : 2));
   paints[T.plain] = () => [255, 255, 255, 255];
+  // Landmarks: a school's long classroom windows, a hospital's ribbon of them, a showroom's
+  // wall of glass, a church's arched windows, and a striped awning (white and the tint).
+  paints[T.schoolWindow] = bay(
+    withWall(brick, { mat: 'brickR', wins: [{ u: 3, v: 9, w: 26, h: 13, k: 'fix' }] }),
+  );
+  paints[T.wardWindow] = bay(
+    withWall(stucco, {
+      mat: 'stucco',
+      wins: [
+        { u: 3, v: 10, w: 11, h: 13, k: 'fix' },
+        { u: 18, v: 10, w: 11, h: 13, k: 'fix' },
+      ],
+    }),
+  );
+  paints[T.glassWall] = bay(
+    withWall(stucco, { mat: 'stucco', wins: [{ u: 0, v: 0, w: 32, h: 30, k: 'store' }] }),
+  );
+  paints[T.brickArch] = bay(
+    withWall(brick, { mat: 'brickR', wins: [{ u: 11, v: 6, w: 10, h: 21, k: 'arch' }] }),
+  );
+  paints[T.awning] = (u) => [255, 255, 255, (u >> 2) & 1 ? 0 : 255];
 
   const data = new Uint8Array(SIZE * SIZE * 4 * COUNT);
   for (let layer = 0; layer < COUNT; layer++) {
@@ -232,6 +262,8 @@ export interface Materials {
   marks: MeshLambertMaterial;
   /** 0 by day to 1 at night: how strongly windows glow. */
   night: { value: number };
+  /** The sign lettering, once the world has collected its signs. */
+  labels: { value: Texture };
 }
 
 const VERTEX_HEAD = `
@@ -251,6 +283,7 @@ vTile = uv;
 `;
 const FRAGMENT_HEAD = `
 uniform highp sampler2DArray tiles;
+uniform sampler2D labels;
 uniform float night;
 varying float vLayer;
 varying float vGlow;
@@ -258,12 +291,18 @@ varying vec3 vTint;
 varying vec2 vTile;
 `;
 const FRAGMENT_MAP = `
-vec4 tile = texture(tiles, vec3(vTile, floor(vLayer + 0.5)));
+vec4 tile = mix(
+  texture(tiles, vec3(vTile, max(0.0, floor(vLayer + 0.5)))),
+  texture(labels, vTile),
+  step(vLayer, -0.5)
+);
 float glass = 1.0 - smoothstep(0.12, 0.38, abs(tile.a - 0.5));
 diffuseColor.rgb = tile.rgb * mix(vec3(1.0), vTint, smoothstep(0.6, 0.9, tile.a));
 `;
 const FRAGMENT_GLOW = `
-totalEmissiveRadiance += vec3(1.0, 0.8, 0.46) * (glass * vGlow * night);
+// A glow above zero lights the glass; below zero the whole face is lit, as a sign is.
+totalEmissiveRadiance += vec3(1.0, 0.8, 0.46) * (glass * max(vGlow, 0.0) * night);
+totalEmissiveRadiance += diffuseColor.rgb * (max(-vGlow, 0.0) * night);
 `;
 
 /** The world's materials for a season: they share one texture array and one shader. */
@@ -277,6 +316,9 @@ export function makeMaterials(season: Season, anisotropy: number): Materials {
   tiles.anisotropy = anisotropy;
   tiles.needsUpdate = true;
   const night = { value: 0 };
+  const blank = new DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1, RGBAFormat);
+  blank.needsUpdate = true;
+  const labels: { value: Texture } = { value: blank };
   const make = (side: Side, lift: number): MeshLambertMaterial => {
     const material = new MeshLambertMaterial({
       side,
@@ -287,6 +329,7 @@ export function makeMaterials(season: Season, anisotropy: number): Materials {
     material.onBeforeCompile = (shader) => {
       shader.uniforms.tiles = { value: tiles };
       shader.uniforms.night = night;
+      shader.uniforms.labels = labels;
       shader.vertexShader = shader.vertexShader
         .replace('#include <common>', `#include <common>${VERTEX_HEAD}`)
         .replace('#include <begin_vertex>', `#include <begin_vertex>${VERTEX_BODY}`);
@@ -307,5 +350,6 @@ export function makeMaterials(season: Season, anisotropy: number): Materials {
     roads: make(FrontSide, 2),
     marks: make(FrontSide, 4),
     night,
+    labels,
   };
 }

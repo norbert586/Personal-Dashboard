@@ -62,6 +62,6 @@ test('the delivery mode loads its map under the repository path', async ({ page 
   });
   await page.goto(`${SITE}/delivery/`);
   await expect(page.locator('html')).toHaveAttribute('data-delivery', 'ready', { timeout: 60_000 });
-  await expect(page.locator('#world')).toHaveAttribute('data-street', /Auburn Road/);
+  await expect(page.locator('#world')).toHaveAttribute('data-street', 'Delivery parking');
   expect(missing, 'requests that failed').toEqual([]);
 });

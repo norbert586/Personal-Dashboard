@@ -4,6 +4,7 @@
  * Where the map is silent (lanes on side streets, most speed limits, what a plain "building" is),
  * the usual value for that kind of road or place stands in.
  */
+import { fillHomes } from './fill.ts';
 import type {
   Area,
   AreaKind,
@@ -13,6 +14,8 @@ import type {
   Line,
   Path,
   PathKind,
+  Place,
+  PlaceKind,
   Road,
   RoadKind,
   Spot,
@@ -48,6 +51,10 @@ export interface ZoneSpec {
   radius: number;
   /** The date the map data was downloaded. */
   imported: string;
+  /** The pizzeria: its stand-in name, and where its front door is. */
+  shop?: { name: string; lat: number; lon: number };
+  /** Places the map doesn't name, added by hand: the building there takes the kind and the name. */
+  landmarks?: ReadonlyArray<{ kind: PlaceKind; name: string; lat: number; lon: number }>;
 }
 
 /** The world goes on a little past the zone's edge, so the edge isn't a cliff. */
@@ -153,7 +160,7 @@ const BUILDING: Record<string, BuildingKind> = {
   civic: 'civic',
   public: 'civic',
   government: 'civic',
-  hospital: 'civic',
+  hospital: 'hospital',
   fire_station: 'civic',
 };
 
@@ -216,6 +223,44 @@ function plainBuilding(tags: Tags, area: number, landuse: string | null): Buildi
   if (landuse === 'residential') return area > 600 ? 'apartments' : 'house';
   return area > 320 ? 'commercial' : 'house';
 }
+
+const FOOD = new Set(['restaurant', 'fast_food', 'cafe', 'ice_cream', 'pub', 'bar']);
+const CIVIC = new Set([
+  'fire_station',
+  'police',
+  'library',
+  'post_office',
+  'townhall',
+  'courthouse',
+  'community_centre',
+]);
+const SHOPS = new Set(['bank', 'pharmacy', 'cinema', 'car_wash', 'veterinary', 'events_venue']);
+const SCHOOLS = new Set(['school', 'kindergarten', 'college', 'university']);
+
+/** What a named thing on the map is, when it's a place worth a sign. */
+export function placeKind(tags: Tags): PlaceKind | null {
+  const amenity = tags.amenity ?? '';
+  const building = tags.building ?? '';
+  if (SCHOOLS.has(amenity) || SCHOOLS.has(building)) return 'school';
+  if (amenity === 'place_of_worship' || BUILDING[building] === 'church') return 'church';
+  if (amenity === 'hospital' || building === 'hospital') return 'hospital';
+  if (amenity === 'fuel') return 'fuel';
+  if (tags.shop === 'car') return 'dealer';
+  if (FOOD.has(amenity)) return 'food';
+  if (CIVIC.has(amenity) || BUILDING[building] === 'civic') return 'civic';
+  if (['park', 'nature_reserve', 'golf_course'].includes(tags.leisure ?? '')) return 'park';
+  if (tags.shop || SHOPS.has(amenity) || tags.landuse === 'retail') return 'shop';
+  if (tags.landuse === 'residential' || BUILDING[building] === 'apartments') return 'homes';
+  return null;
+}
+
+/** Kinds of place that make the building they're in that kind of building. */
+const MAKES: Partial<Record<PlaceKind, BuildingKind>> = {
+  school: 'school',
+  church: 'church',
+  hospital: 'hospital',
+  dealer: 'dealer',
+};
 
 function areaKind(tags: Tags): AreaKind | null {
   if (tags.natural === 'water' || tags.landuse === 'basin' || tags.landuse === 'reservoir')
@@ -326,7 +371,7 @@ export function buildZone(elements: readonly OsmElement[], spec: ZoneSpec): Zone
   };
 
   // ---- Roads, and the graph they make ----
-  const drafts: Array<{ road: Omit<Road, 'nodes'>; ids: number[] }> = [];
+  const drafts: Array<{ road: Omit<Road, 'nodes'>; ids: number[]; homes: boolean }> = [];
   for (const way of ways) {
     const tags = way.tags ?? {};
     const kind = roadKind(tags);
@@ -343,6 +388,8 @@ export function buildZone(elements: readonly OsmElement[], spec: ZoneSpec): Zone
       const ids = backwards ? [...run].reverse() : run;
       drafts.push({
         ids,
+        // Streets people live on; "unclassified" roads here mostly run through industrial parks.
+        homes: tags.highway === 'residential' || tags.highway === 'living_street',
         road: {
           kind,
           name: tags.name ?? '',
@@ -412,15 +459,42 @@ export function buildZone(elements: readonly OsmElement[], spec: ZoneSpec): Zone
   // ---- Land: water, parks, woods, lots, and what plain buildings stand on ----
   const areas: Area[] = [];
   const landuse: Array<{ kind: string; ring: Ring }> = [];
+  /** The grounds of schools, churches and hospitals: what stands on them belongs to them. */
+  const grounds: Array<{ kind: PlaceKind; ring: Ring }> = [];
+  /** Land that isn't for houses (fill.ts). */
+  const keepOut: Line[] = [];
+  /** Named things that might be places: where they are, and the building when they are one. */
+  const named: Array<{ kind: PlaceKind; name: string; p: [number, number]; building: number }> = [];
+  const KEEP_OUT = new Set([
+    'retail',
+    'commercial',
+    'industrial',
+    'religious',
+    'cemetery',
+    'farmland',
+    'meadow',
+    'construction',
+    'brownfield',
+    'quarry',
+    'railway',
+  ]);
   const addArea = (tags: Tags, ids: readonly number[]) => {
     const ring = ringOf(ids);
     if (!ring) return;
     if (['retail', 'commercial', 'industrial', 'residential'].includes(tags.landuse ?? ''))
       landuse.push({ kind: tags.landuse!, ring });
+    const place = placeKind(tags);
+    const isGrounds = place === 'school' || place === 'hospital' || tags.landuse === 'religious';
+    if (isGrounds) grounds.push({ kind: place ?? 'church', ring });
+    if (isGrounds || KEEP_OUT.has(tags.landuse ?? '') || tags.power === 'substation')
+      keepOut.push(flat(ring));
+    if (place && tags.name && within(centroid(ring)))
+      named.push({ kind: place, name: tags.name, p: centroid(ring), building: -1 });
     const kind = areaKind(tags);
     if (kind && ring.some(within)) areas.push({ kind, pts: flat(ring) });
   };
   const buildings: Building[] = [];
+  const rings: Ring[] = [];
   /** Buildings tagged only "yes": sorted out once every landuse is known. */
   const plain: Array<{ building: Building; tags: Tags; ring: Ring }> = [];
   const addBuilding = (tags: Tags, ids: readonly number[]) => {
@@ -430,9 +504,19 @@ export function buildZone(elements: readonly OsmElement[], spec: ZoneSpec): Zone
       kind: BUILDING[tags.building ?? ''] ?? 'house',
       levels: Math.max(0, Math.round(Number.parseFloat(tags['building:levels'] ?? '') || 0)),
       name: tags.name ?? '',
+      made: false,
       pts: flat(ring),
     });
+    rings.push(ring);
     if (!BUILDING[tags.building ?? '']) plain.push({ building: buildings.at(-1)!, tags, ring });
+    const place = placeKind(tags);
+    if (place && tags.name)
+      named.push({
+        kind: place,
+        name: tags.name,
+        p: centroid(ring),
+        building: buildings.length - 1,
+      });
   };
   for (const way of ways) {
     const tags = way.tags ?? {};
@@ -455,6 +539,126 @@ export function buildZone(elements: readonly OsmElement[], spec: ZoneSpec): Zone
     building.kind = plainBuilding(tags, Math.abs(signedArea(ring)), on);
   }
 
+  // ---- Places: the named things, and the landmark buildings they make ----
+  const middles = rings.map(centroid);
+  const sizes = rings.map((ring) => Math.abs(signedArea(ring)));
+  /** The building a point is in, or the nearest one of at least `least` m² within `reach` metres. */
+  const buildingAt = (p: readonly [number, number], reach: number, least = 0): number => {
+    let best = -1;
+    let bestD = reach;
+    for (let i = 0; i < rings.length; i++) {
+      const m = middles[i]!;
+      const d = Math.hypot(m[0] - p[0], m[1] - p[1]);
+      if (d > reach + 150 || sizes[i]! < least) continue;
+      if (inside(rings[i]!, p[0], p[1])) return i;
+      if (d < bestD) {
+        bestD = d;
+        best = i;
+      }
+    }
+    return best;
+  };
+  for (const id of [...nodeTags.keys()].sort((a, b) => a - b)) {
+    const tags = nodeTags.get(id)!;
+    const kind = placeKind(tags);
+    const p = at.get(id)!;
+    if (!kind || !tags.name || !within(p)) continue;
+    // A school the map marks with a point stands in the nearest big building.
+    const building = kind === 'fuel' ? -1 : buildingAt(p, kind === 'school' ? 70 : 28, 60);
+    named.push({ kind, name: tags.name, p, building });
+  }
+  for (const mark of spec.landmarks ?? []) {
+    const p = metres(mark.lat, mark.lon);
+    named.unshift({ kind: mark.kind, name: mark.name, p, building: buildingAt(p, 45, 60) });
+  }
+  const places: Place[] = [];
+  for (const n of named) {
+    // The same place is often mapped twice: its building, and its grounds or a point.
+    const twin = places.find(
+      (p) =>
+        Math.hypot(p.x - n.p[0], p.y - n.p[1]) < (n.kind === 'hospital' ? 600 : 260) &&
+        (p.name === n.name ||
+          (p.kind === n.kind &&
+            ['school', 'hospital', 'church'].includes(n.kind) &&
+            (p.building < 0 || n.building < 0 || p.building === n.building)) ||
+          (n.building >= 0 && p.building === n.building && p.kind === n.kind)),
+    );
+    if (!twin) {
+      places.push({ kind: n.kind, name: n.name, x: n.p[0], y: n.p[1], building: n.building });
+      continue;
+    }
+    // Keep the fuller name, and stand at the building.
+    if (n.name.length > twin.name.length && n.name.includes(twin.name.split(' ')[0]!))
+      twin.name = n.name;
+    if (twin.building < 0 && n.building >= 0) {
+      twin.building = n.building;
+      twin.x = n.p[0];
+      twin.y = n.p[1];
+    }
+  }
+  for (const place of places) {
+    const kind = MAKES[place.kind];
+    if (kind && place.building >= 0 && sizes[place.building]! >= 60)
+      buildings[place.building]!.kind = kind;
+    // The roofs over a gas station's pumps.
+    if (place.kind === 'fuel')
+      buildings.forEach((b, i) => {
+        const m = middles[i]!;
+        if (b.kind === 'canopy' && Math.hypot(m[0] - place.x, m[1] - place.y) < 45) b.kind = 'fuel';
+      });
+  }
+  // What stands on a school's, a church's or a hospital's grounds is part of it.
+  for (const { kind, ring } of grounds) {
+    const least = kind === 'hospital' ? 400 : 250;
+    const on = buildings
+      .map((b, i) => ({ b, i }))
+      .filter(({ i }) => sizes[i]! >= least && inside(ring, middles[i]![0], middles[i]![1]));
+    if (kind !== 'church') for (const { b } of on) b.kind = MAKES[kind]!;
+    else if (on.length && !on.some(({ b }) => b.kind === 'church'))
+      on.reduce((a, c) => (sizes[c.i]! > sizes[a.i]! ? c : a)).b.kind = 'church';
+  }
+  // A place mapped by its grounds stands at the biggest building on them.
+  for (const place of places) {
+    const kind = MAKES[place.kind];
+    if (!kind || place.building >= 0) continue;
+    let best = -1;
+    for (let i = 0; i < rings.length; i++) {
+      const m = middles[i]!;
+      if (buildings[i]!.kind !== kind || Math.hypot(m[0] - place.x, m[1] - place.y) > 220) continue;
+      if (best < 0 || sizes[i]! > sizes[best]!) best = i;
+    }
+    if (best < 0) continue;
+    place.building = best;
+    [place.x, place.y] = middles[best]!;
+  }
+  if (spec.shop) {
+    const p = metres(spec.shop.lat, spec.shop.lon);
+    places.push({
+      kind: 'pizzeria',
+      name: spec.shop.name,
+      x: p[0],
+      y: p[1],
+      building: buildingAt(p, 40),
+    });
+  }
+
+  for (const place of places) {
+    place.x = tenth(place.x);
+    place.y = tenth(place.y);
+  }
+
+  // ---- Stand-in homes on the streets the map left empty (ADR-038) ----
+  buildings.push(
+    ...fillHomes({
+      roads,
+      streets: drafts.map(({ road, homes }) => homes && road.name !== ''),
+      buildings,
+      areas,
+      keepOut,
+      reach,
+    }),
+  );
+
   return {
     name: spec.name,
     imported: spec.imported,
@@ -467,5 +671,6 @@ export function buildZone(elements: readonly OsmElement[], spec: ZoneSpec): Zone
     buildings,
     areas,
     spots,
+    places,
   };
 }
