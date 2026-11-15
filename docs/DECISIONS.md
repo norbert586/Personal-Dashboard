@@ -222,7 +222,7 @@ the going-public step. Every source must work from a home internet connection.
 
 ## ADR-019: World data built for driving, deliveries and growth
 
-**Accepted · 2026-11-09**
+**Accepted · 2026-11-09 · the delivery zone's scale is revised by ADR-035**
 Context: Norbert wants the map ready for a pizza delivery sim and for future expansion. Both need
 more than a pretty town: deliveries need addresses and routes, and expansion needs new areas to line
 up with old ones.
@@ -240,7 +240,7 @@ Decision: the world generator outputs data before pixels.
 
 ## ADR-020: The delivery zone is built from real footprints
 
-**Accepted · 2026-11-09**
+**Accepted · 2026-11-09 · scale and timing revised by ADR-035**
 Context: Norbert works at the pizzeria at Auburn and Dequindre and wants the delivery sim to mimic
 a 2.5-mile radius around it as closely as possible. OpenStreetMap covers it well: about 11,650
 building footprints, 1,951 streets, M-59, 155 ponds and 18 parks, checked 2026-11-09.
@@ -462,3 +462,57 @@ not to index it. Feeds there are as old as the last build, and a feed that refus
 build machines shows offline. Editing the Town Hall (ADR-014) can't live on Pages; it needs the
 home server or a real host, which is still the roadmap's going-public step. Supersedes the
 "local only" part of ADR-018.
+
+## ADR-035: The delivery sim is its own game mode at true scale, built now
+
+**Accepted · 2026-11-15 · Norbert's call**
+Context: Norbert has wanted a pizza delivery sim for years and asked to build it now, as a
+separate game mode with a 1-to-1 street match of his delivery zone. ADR-019 and ADR-020 put the
+zone on the town's projection, where a real mile is 32 tiles of about 6 m: real footprints at
+that scale would be an eighth of life size, and a real drive would be over in seconds. We
+measured the zone from OpenStreetMap on 2026-11-15: 235 miles of streets, 740 street names, 145
+more miles of lots, lanes and driveways, 11,570 footprints, and a median delivery of 2.5 miles.
+Decision: the delivery mode is its own page (`/delivery`) and its own world, where one unit is
+one real metre, measured east and north of the store. It keeps what ADR-019 and ADR-020 were
+for: data before pixels, roads as a graph, real footprints with heights and styles by type, a
+stand-in name on the pizzeria. It's built in slices, ahead of the rest of the MVP: drive the
+zone, the delivery loop, roads that look right, traffic, depth. Drives take real time; the
+pressure comes from the order clock, not from a fast car. The town and the zone share code (the
+loop, the painters and materials, the sun), not a map.
+Consequences: the town's MVP waits at its Town Hall step. The zone and the town can't be joined
+by road, since their scales differ; a pizzeria door in town opens the mode instead. The spec's
+"no minigames" rule stands for the town, and this mode is named as the exception. The site now
+shows where Norbert works in far more detail, which stays his call (ADR-020).
+
+## ADR-036: A hand-written car model, with no physics engine
+
+**Accepted · 2026-11-15**
+Context: Norbert wants driving that's light and fun, like Schedule I or GTA: an automatic with
+gear shifts you can feel, and steering that's all his. The zone is close to flat (about 45 m of
+rise across 5 miles) and the only things to hit are walls and, later, other cars. A physics
+engine would be a large new dependency (a WebAssembly one also needs a wider CSP), and its
+vehicle models are harder to tune for feel than to write.
+Decision: the car is our own pure model in `src/game/delivery/car.ts`, stepped at a fixed rate:
+an engine torque curve, an automatic gearbox that cuts power for a moment on each shift, and a
+two-axle tyre model that grips, slides and recovers. Nothing assists the steering. Collisions
+are the car's outline against wall segments in a grid. Every tuning value sits in one object.
+Consequences: no dependency, and unit tests can drive the car (0 to 60, shifts, braking
+distance). Feel is ours to get right, by playing it with Norbert. Hills, jumps and rollovers
+would need this revisited.
+
+## ADR-037: The zone is one file, baked from OpenStreetMap by a script
+
+**Accepted · 2026-11-15**
+Context: builds must never touch the network (ADR-016), the zone is small enough to ship whole
+(about 300 KB compressed, measured), and the pages build has no server to stream from.
+Decision: `npm run zone:import` downloads the zone from OpenStreetMap in small tiles (an
+Overpass mirror first, the OSM API as the fallback, both in JSON, so no parser is added), and
+`src/lib/zone/` turns it into typed data: the road graph, sidewalks, footprints, lots, water,
+parks and trees. It's saved as `public/zone/auburn-dequindre.json`, with coordinates as
+delta-encoded decimetres. The browser loads it once and builds what's near you. The same
+importer takes any centre and radius, for the town's own map step. The file is a derivative of
+OpenStreetMap: it carries the credit, the site's credits name it, and it's shared under the
+same licence (ODbL).
+Consequences: the map is as old as the last import; re-run the script to refresh it and review
+the diff. House numbers aren't in this data (about one building in ten has one), so addresses
+come from the Census Bureau's block ranges when the delivery loop is built.

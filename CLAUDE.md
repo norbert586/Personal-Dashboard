@@ -1,8 +1,9 @@
 # Ratiu Twp
 
 Norbert's personal site as a small 3D pixel-art town you can walk, run and bike around. Every
-building is a project; the morning update lives in town and in a Today panel. Public, for
-Norbert, friends and family. Astro 7 + TypeScript, server-rendered (Node adapter); the town is a
+building is a project; the morning update lives in town and in a Today panel. Beside it, at
+`/delivery`, is the delivery mode: a pizza delivery sim on the real streets around Auburn and
+Dequindre, at true scale. Public, for Norbert, friends and family. Astro 7 + TypeScript, server-rendered (Node adapter); the town is a
 three.js island; plain CSS with design tokens for the HTML parts.
 
 ## Read before you work
@@ -25,6 +26,7 @@ npm run build:pages  # the plain-files build for GitHub Pages, into dist-pages/ 
 npm run test:e2e     # Playwright + axe against the built server (run build first)
 npm run verify       # all of the above + prettier --check. The definition of done.
 npm run format       # prettier --write .
+npm run zone:import  # re-bake the delivery zone from OpenStreetMap (needs the network; ADR-037)
 ```
 
 ## Definition of done
@@ -58,7 +60,10 @@ npm run format       # prettier --write .
 ## Code conventions
 
 - TypeScript strict. Server-only logic in `src/lib/`. UI in `src/components/*.astro`. The town
-  (client-side, three.js) goes in `src/game/`.
+  (client-side, three.js) goes in `src/game/`, and the delivery mode in `src/game/delivery/`.
+  The delivery zone's importer and file format are in `src/lib/zone/`; the browser only decodes.
+- The delivery mode's world is in real metres, east (+x) and north of the store; in three.js
+  north is -z. The car is a pure model with its tuning in one object (`car.ts`, ADR-036).
 - Every data source returns a `Reading<T>` (`src/lib/readings.ts`) carrying provenance:
   `live | local | sample | offline`. Sources never throw into a page: on failure, return
   `offline` with a human-readable `detail`.
@@ -101,6 +106,11 @@ npm run format       # prettier --write .
   `?time=day|dusk|night`, `?sky=clear|partly|cloudy|rain|snow|storm|fog` and
   `?season=spring|summer|fall|latefall|winter`. The canvas carries what the town is showing in
   `data-*` attributes (`data-sign-*`, `data-weather`, `data-aircraft`, `data-overhead`).
+- The delivery page takes `?at=east,north` (metres from the store), `?heading=degrees` (0 is
+  north, clockwise) and `?time=day|dusk|night`. Its canvas carries `data-street`, `data-mph`,
+  `data-gear` and `data-at`.
+- `npm run zone:import` from a Claude cloud sandbox needs `NODE_USE_ENV_PROXY=1`. It keeps the
+  raw tiles in `.cache/` (gitignored); delete that folder to download again.
 - Headless Chromium in Claude cloud sandboxes renders WebGL (software), so the town's e2e smoke
   test and screenshots run there. To compare against the prototypes, open
   `prototype/dist/*.html` over `file://`; the 3D one loads three.js from cdn.jsdelivr.net.
