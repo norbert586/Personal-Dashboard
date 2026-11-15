@@ -62,6 +62,8 @@ npm run zone:import  # re-bake the delivery zone from OpenStreetMap (needs the n
 - TypeScript strict. Server-only logic in `src/lib/`. UI in `src/components/*.astro`. The town
   (client-side, three.js) goes in `src/game/`, and the delivery mode in `src/game/delivery/`.
   The delivery zone's importer and file format are in `src/lib/zone/`; the browser only decodes.
+  Landmarks the map doesn't name, and the pizzeria's shop front, are set in `site.config.ts`
+  (`delivery.landmarks`, `delivery.storeFront`); re-run `npm run zone:import` after changing them.
 - The delivery mode's world is in real metres, east (+x) and north of the store; in three.js
   north is -z. The car is a pure model with its tuning in one object (`car.ts`, ADR-036).
 - Every data source returns a `Reading<T>` (`src/lib/readings.ts`) carrying provenance:
@@ -107,8 +109,11 @@ npm run zone:import  # re-bake the delivery zone from OpenStreetMap (needs the n
   `?season=spring|summer|fall|latefall|winter`. The canvas carries what the town is showing in
   `data-*` attributes (`data-sign-*`, `data-weather`, `data-aircraft`, `data-overhead`).
 - The delivery page takes `?at=east,north` (metres from the store), `?heading=degrees` (0 is
-  north, clockwise) and `?time=day|dusk|night`. Its canvas carries `data-street`, `data-mph`,
-  `data-gear` and `data-at`. `?shadows=0` turns shadows off (phones start without them).
+  north, clockwise) and `?time=day|dusk|night`. Without `?at` you start in the delivery parking at
+  the store. Its canvas carries `data-street`, `data-place`, `data-traffic`, `data-mph`,
+  `data-gear` and `data-at`. `?shadows=0` turns shadows off (phones start without them), and
+  `?traffic=0` empties the streets of other cars and people (they're random, so tests that drive
+  use it).
   The sandbox's software renderer manages about 23 frames a second there; that says nothing
   about a real graphics card.
 - `npm run zone:import` from a Claude cloud sandbox needs `NODE_USE_ENV_PROXY=1`. It keeps the

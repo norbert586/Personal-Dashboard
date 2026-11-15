@@ -516,3 +516,37 @@ same licence (ODbL).
 Consequences: the map is as old as the last import; re-run the script to refresh it and review
 the diff. House numbers aren't in this data (about one building in ten has one), so addresses
 come from the Census Bureau's block ranges when the delivery loop is built.
+
+## ADR-038: Stand-in homes where the map has a street but no houses
+
+**Accepted · 2026-11-15**
+Context: OpenStreetMap has every street in the zone but only some of the houses. West of
+Dequindre most are mapped; east of it, whole subdivisions are streets through bare grass.
+Norbert's first look: this is a built-up area and it reads as empty.
+Decision: the importer fills in. Along a named residential street, wherever a house-sized lot
+is clear of every real footprint, road, lot, park, pond, wood and non-residential land, it
+places a stand-in house: a size and setback that's steady for the street, a garage wing on
+about half, seeded so the same map gives the same houses (`src/lib/zone/fill.ts`). They're in
+the baked file, marked `made`, after the real buildings, so real ones keep their indices. No
+other source is added; Microsoft's footprints or county parcels could replace this later.
+Consequences: about 5,100 of the zone's 17,700 buildings are stand-ins, not the real houses:
+right street, plausible lot, wrong shape. The spec says so. Addresses (later) can treat them
+like any building. A street that really is empty (a new road, a road through a field the map
+doesn't mark) gets houses it shouldn't; the fix is to map the field or widen the keep-out rules.
+
+## ADR-039: Real place names on signs, in the game's lettering, with no logos
+
+**Accepted · 2026-11-15 · Norbert to confirm (SPEC open question 13)**
+Context: Norbert wants landmarks with clear indicators of what they are, and the test for the
+mode is "does it feel like my drive". ADR-035 keeps the pizzeria under a stand-in name with no
+real brand or logo.
+Decision: every named place in OpenStreetMap wears its real name, as a map would print it:
+schools, churches, the hospital, parks, and shops, restaurants, gas stations and dealerships
+too. Names are plain words in the game's pixel font on panels coloured by the kind of place,
+never a logo, a trademarked colour scheme or a building made to imitate a brand's design. The
+pizzeria keeps its stand-in name. Landmarks the map misses are added by hand in
+`site.config.ts` (`delivery.landmarks`).
+Consequences: the streets are recognisable, and the names are only as right as the map (some
+are stale). If a name should go, one rule in `world.ts` (which kinds get signs) or one entry
+removed from the import is the whole change. Hospitals use a white H on blue, not a red cross,
+which is a protected emblem.

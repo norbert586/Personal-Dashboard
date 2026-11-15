@@ -42,12 +42,37 @@ export const BUILDING_KINDS = [
   'school',
   'church',
   'civic',
+  'hospital',
+  'fuel',
+  'dealer',
 ] as const;
-/** `mobile` is a mobile home; `canopy` is a roof on posts (a carport, a gas station's canopy). */
+/**
+ * `mobile` is a mobile home; `canopy` is a roof on posts (a carport, a picnic shelter); `fuel` is
+ * the canopy over a gas station's pumps; `dealer` is a car dealership's showroom.
+ */
 export type BuildingKind = (typeof BUILDING_KINDS)[number];
 
 export const AREA_KINDS = ['water', 'park', 'wood', 'golf', 'pitch', 'parking'] as const;
 export type AreaKind = (typeof AREA_KINDS)[number];
+
+export const PLACE_KINDS = [
+  'school',
+  'church',
+  'hospital',
+  'fuel',
+  'dealer',
+  'shop',
+  'food',
+  'civic',
+  'park',
+  'homes',
+  'pizzeria',
+] as const;
+/**
+ * What a named place is, for its sign and its mark on the map. `shop` is a store, a bank or a
+ * shopping plaza; `homes` is a named subdivision or apartment complex; `pizzeria` is the store.
+ */
+export type PlaceKind = (typeof PLACE_KINDS)[number];
 
 export const POINT_KINDS = ['signal', 'stop', 'yield', 'tree', 'turn'] as const;
 /** `turn` is the bulb at the end of a court, where cars turn round. */
@@ -93,7 +118,19 @@ export interface Building {
   /** Storeys, when the map says; otherwise 0 and the kind decides. */
   levels: number;
   name: string;
+  /** A stand-in the importer placed where the map has a street but no footprints (ADR-038). */
+  made: boolean;
   pts: Line;
+}
+
+/** A place with a name: it gets a sign in the world and a mark on the map. */
+export interface Place {
+  kind: PlaceKind;
+  name: string;
+  x: number;
+  y: number;
+  /** The building it's in, as an index into `buildings`, or -1 when it has none. */
+  building: number;
 }
 
 export interface Area {
@@ -123,9 +160,10 @@ export interface Zone {
   buildings: Building[];
   areas: Area[];
   spots: Spot[];
+  places: Place[];
 }
 
-export const ZONE_VERSION = 1;
+export const ZONE_VERSION = 2;
 
 /** Road flags in the file. */
 const ONEWAY = 1;
@@ -157,10 +195,13 @@ export interface ZoneFile {
   /** x, y, flags for each junction, in decimetres. */
   junctions: number[];
   paths: Array<[kind: number, pts: number[]]>;
-  buildings: Array<[kind: number, levels: number, name: number, pts: number[]]>;
+  /** A fifth entry of 1 marks a stand-in the importer placed. */
+  buildings: Array<[kind: number, levels: number, name: number, pts: number[], made?: number]>;
   areas: Array<[kind: number, pts: number[]]>;
   /** kind, x, y for each spot, in decimetres. */
   spots: number[];
+  /** kind, name, x, y in decimetres, and the building's index (or -1) for each place. */
+  places: number[];
 }
 
 const dm = (metres: number) => Math.round(metres * 10);
@@ -230,14 +271,20 @@ export function encodeZone(zone: Zone): ZoneFile {
     }),
     junctions: zone.junctions.flatMap((j) => [dm(j.x), dm(j.y), j.signal ? 1 : 0]),
     paths: zone.paths.map((p) => [PATH_KINDS.indexOf(p.kind), pack(p.pts)]),
-    buildings: zone.buildings.map((b) => [
-      BUILDING_KINDS.indexOf(b.kind),
-      b.levels,
-      nameOf(b.name),
-      pack(b.pts),
-    ]),
+    buildings: zone.buildings.map((b) =>
+      b.made
+        ? [BUILDING_KINDS.indexOf(b.kind), b.levels, nameOf(b.name), pack(b.pts), 1]
+        : [BUILDING_KINDS.indexOf(b.kind), b.levels, nameOf(b.name), pack(b.pts)],
+    ),
     areas: zone.areas.map((a) => [AREA_KINDS.indexOf(a.kind), pack(a.pts)]),
     spots: zone.spots.flatMap((s) => [POINT_KINDS.indexOf(s.kind), dm(s.x), dm(s.y)]),
+    places: zone.places.flatMap((p) => [
+      PLACE_KINDS.indexOf(p.kind),
+      nameOf(p.name),
+      dm(p.x),
+      dm(p.y),
+      p.building,
+    ]),
   };
 }
 
@@ -258,6 +305,15 @@ export function decodeZone(file: ZoneFile): Zone {
       kind: POINT_KINDS[file.spots[i]!] ?? 'tree',
       x: file.spots[i + 1]! / 10,
       y: file.spots[i + 2]! / 10,
+    });
+  const places: Place[] = [];
+  for (let i = 0; i < file.places.length; i += 5)
+    places.push({
+      kind: PLACE_KINDS[file.places[i]!] ?? 'shop',
+      name: name(file.places[i + 1]!),
+      x: file.places[i + 2]! / 10,
+      y: file.places[i + 3]! / 10,
+      building: file.places[i + 4]!,
     });
   return {
     name: file.name,
@@ -287,10 +343,11 @@ export function decodeZone(file: ZoneFile): Zone {
       kind: PATH_KINDS[kind] ?? 'walk',
       pts: unpack(steps),
     })),
-    buildings: file.buildings.map(([kind, levels, nameAt, steps]) => ({
+    buildings: file.buildings.map(([kind, levels, nameAt, steps, made]) => ({
       kind: BUILDING_KINDS[kind] ?? 'house',
       levels,
       name: name(nameAt),
+      made: made === 1,
       pts: unpack(steps),
     })),
     areas: file.areas.map(([kind, steps]) => ({
@@ -298,6 +355,7 @@ export function decodeZone(file: ZoneFile): Zone {
       pts: unpack(steps),
     })),
     spots,
+    places,
   };
 }
 
@@ -325,6 +383,8 @@ export function zoneStats(zone: Zone): Record<string, number> {
     signals: zone.junctions.filter((j) => j.signal).length,
     paths: zone.paths.length,
     buildings: zone.buildings.length,
+    standInHomes: zone.buildings.filter((b) => b.made).length,
+    places: zone.places.length,
     areas: zone.areas.length,
     trees: zone.spots.filter((s) => s.kind === 'tree').length,
   };

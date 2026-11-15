@@ -1,6 +1,6 @@
 # Spec: Ratiu Twp
 
-**Status:** v1.3, MVP defined, delivery mode in progress · **Updated:** 2026-11-15
+**Status:** v1.4, MVP defined, delivery mode in progress · **Updated:** 2026-11-15
 
 This is the only spec. Change it here, in place; don't fork it.
 
@@ -70,11 +70,19 @@ drive.
 
 - **The zone** is everything within 2.5 miles of the store, at true scale: one unit is one real
   metre. Every street is real, with its real name, shape, lanes and speed limit, from
-  OpenStreetMap: about 235 miles of streets, 145 more of parking lots, apartment lanes and
-  driveways, M-59 with its ramps, and about 11,600 real building footprints, with heights and
-  styles by type (houses, apartments, mobile homes, strip malls, schools, churches). Ponds, parks
-  and woods come too. A script bakes it into one file in the repo, so builds never touch the
-  network (ADR-037).
+  OpenStreetMap: about 245 miles of streets, 150 more of parking lots, apartment lanes and
+  driveways, M-59 with its ramps, and about 12,600 real building footprints, with heights and
+  styles by type. Ponds, parks and woods come too. A script bakes it into one file in the repo,
+  so builds never touch the network (ADR-037).
+- **A built-up place.** This is an old, developed suburb, and it has to look like one. Where the
+  map has a residential street but no houses along it, the importer puts stand-in homes there
+  (about 5,100 of them), so no subdivision is bare grass (ADR-038). Houses have driveways, and
+  lots and driveways have parked cars.
+- **Landmarks** look like what they are and say so: schools, churches, the hospital (Corewell
+  Health Beaumont Troy), car dealerships, gas stations, strip malls and big stores. Each named
+  place wears its real name on its wall and on a sign by the road, in the game's own lettering,
+  with no logos (ADR-039); the dashboard names the landmark or neighborhood you're in, and the
+  small map marks the landmarks.
 - **Real time.** A mile takes as long as a mile takes, the clock is the real clock, and the sun,
   seasons and weather are the real ones.
 - **Driving** is light and fun, in the spirit of Schedule I and GTA rather than a hard sim. The car
@@ -90,7 +98,13 @@ drive.
   from the Census Bureau's public block ranges, so numbers sit in the right block on the right side
   of the street. They are not the real houses' exact numbers, and no order is a real person's.
 - **The pizzeria** stands on its real corner under a stand-in name, with no real brand or logo.
-- **Traffic** comes after the first playable: working signals first, then other cars.
+  It's the brightest thing on the street: a lit shop front under a striped awning, its name in
+  lights, and marked delivery parking beside the door, where every drive starts and ends.
+- **Life on the streets:** a few other cars and cyclists on the roads and people on the
+  sidewalks, enough that the place isn't empty and no more. They're around you only. Cars keep
+  to their lane, give way to bigger roads, take turns at signals and wait behind you; you can't
+  drive through them. Signal lights you can see, and traffic that matters to a delivery, come
+  later.
 - **The look** is detailed, with a proper sky, in the 32-bit (PlayStation-era) pixel style. See
   `DESIGN.md`.
 - **Where it plays:** desktop first, with a keyboard or a controller; phones get on-screen
@@ -228,11 +242,16 @@ town as plain files, rebuilt about every half hour, with no aircraft and no edit
    open the town like a desktop does? It's one setting, `phonesOpenToday` in `site.config.ts`.
 9. **Headlines and traffic in town:** built as proposed (a newspaper box now, a freeway sign with
    M-53; ADR-032). Norbert hasn't confirmed either, so say so if something else would be better.
-10. **Traffic in the delivery mode:** Norbert hasn't said whether the first playable needs it.
-    Built without: empty streets first, then signals, then other cars.
+10. **Traffic in the delivery mode:** Norbert asked for a few cars, cyclists and people to fill
+    the void (2026-11-15), and that's built. How much traffic a real shift should have, and
+    whether it should slow a delivery down, is still open.
 11. **How a shift plays:** tips, what counts as late, how orders are paced, and what happens at
     the store between runs. Norbert knows the job; walk him through it before building the
     delivery loop.
-12. **The store and the car:** which corner of Auburn and Dequindre the pizzeria stands on (the
-    drive starts on Auburn Road beside the intersection until then), and which car Norbert
-    drives, for the model and its colour.
+12. **The store and the car:** which shop front at Auburn and Dequindre is the pizzeria. Until
+    Norbert says, it's the Auburn Road end of the plaza on the south-east corner
+    (`delivery.storeFront` in `site.config.ts`; re-run the import after changing it). And which
+    car he drives, for the model and its colour.
+13. **Real names on signs:** landmarks and shops wear their real names in plain lettering, as a
+    map does, with no logos or brand colours (ADR-039). Say so if any should be left off or
+    renamed.

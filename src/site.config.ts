@@ -2,6 +2,8 @@
  * Non-secret settings for the site. Secrets never go here: they belong in `.env`
  * and `astro.config.mjs` → `env.schema`.
  */
+import type { PlaceKind } from './lib/zone/format.ts';
+
 export interface SiteConfig {
   owner: string;
   /** IANA zone for every date and time on the site. */
@@ -32,7 +34,16 @@ export interface SiteConfig {
     /** The pizzeria's stand-in name: no real brand (SPEC open question 5). */
     storeName: string;
     store: { lat: number; lon: number };
+    /** The pizzeria's front door: the shop front there wears the sign (SPEC open question 12). */
+    storeFront: { lat: number; lon: number };
     radiusMiles: number;
+    /** Landmarks OpenStreetMap doesn't name: the building at each point takes the kind and name. */
+    landmarks: Array<{
+      kind: PlaceKind;
+      name: string;
+      lat: number;
+      lon: number;
+    }>;
   };
   /** Area traffic (ADR-017): incidents inside the box, closures only on the main roads. */
   traffic: {
@@ -193,7 +204,14 @@ export const site: SiteConfig = {
     storeName: "Ratiu's Pizza",
     // Where Auburn Road crosses Dequindre Road, on the Oakland and Macomb county line.
     store: { lat: 42.63878, lon: -83.09214 },
+    // A stand-in until Norbert says which shop front it is: the Auburn Road end of the plaza
+    // on the south-east corner.
+    storeFront: { lat: 42.63848, lon: -83.08945 },
     radiusMiles: 2.5,
+    landmarks: [
+      // 45550 Dequindre Road, across from the Audi dealer; the map has the building unnamed.
+      { kind: 'dealer', name: 'BMW of Rochester Hills', lat: 42.6282, lon: -83.0902 },
+    ],
   },
   traffic: {
     // The real grid (23 to 29 Mile, Mound to Romeo Plank) plus Hall Road (M-59) to the south.

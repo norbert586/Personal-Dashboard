@@ -229,6 +229,9 @@ const FONT: Record<string, string> = {
   ' ': '000000000000000',
 }; // prettier-ignore
 
+/** A character's 3 by 5 pixels, top row first, or null when the sign font can't draw it. */
+export const glyphOf = (ch: string): string | null => FONT[ch] ?? null;
+
 /** Whether the sign font can draw a character. */
 export const hasGlyph = (ch: string): boolean => ch in FONT;
 

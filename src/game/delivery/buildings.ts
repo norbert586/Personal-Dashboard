@@ -2,7 +2,9 @@
  * Buildings from their real footprints (DESIGN: Delivery mode). The map gives the outline and
  * the kind; the rest is the usual for that kind of building here: storeys, siding or brick, a
  * shingled roof. Walls are cut into bays about 4 m wide, each wearing a window, a door, a garage
- * door, a shop front or plain wall. The front is the side facing the nearest street.
+ * door, a shop front or plain wall. The front is the side facing the nearest street. Landmarks
+ * (schools, churches, the hospital, dealerships, gas stations) get their own windows here and
+ * are dressed in landmarks.ts.
  */
 import { ShapeUtils, Vector2 } from 'three';
 import type { Building, BuildingKind } from '../../lib/zone/format.ts';
@@ -50,6 +52,21 @@ const STYLE: Record<BuildingKind, Style> = {
   school: { wall: ['brick'], roof: 'flat', storey: 4.6, pitch: 0, lit: 0.15 },
   church: { wall: ['brick'], roof: 'pitched', storey: 6.5, pitch: 0.95, lit: 0.3 },
   civic: { wall: ['brick', 'stucco'], roof: 'flat', storey: 4.2, pitch: 0, lit: 0.3 },
+  hospital: { wall: ['stucco'], roof: 'flat', storey: 4.2, pitch: 0, lit: 0.7 },
+  fuel: { wall: ['stucco'], roof: 'canopy', storey: 5.2, pitch: 0, lit: 0 },
+  dealer: { wall: ['stucco'], roof: 'flat', storey: 6.4, pitch: 0, lit: 1 },
+};
+
+/** Landmarks wear their own windows on every bay, whatever the wall. */
+const WINDOWS: Partial<Record<BuildingKind, number>> = {
+  school: T.schoolWindow,
+  hospital: T.wardWindow,
+  church: T.brickArch,
+};
+const WALL_TINT: Partial<Record<BuildingKind, Tint>> = {
+  hospital: [1.2, 1.12, 0.96],
+  dealer: [1.22, 1.23, 1.27],
+  school: [1.08, 0.98, 0.9],
 };
 
 /** The tiles a wall wears, by what's in the bay. */
@@ -124,6 +141,9 @@ export function storeysOf(b: Building, area: number, seed: number): number {
       return roll < 0.5 ? 2 : 3;
     case 'commercial':
       return area < 1500 && roll < 0.3 ? 2 : 1;
+    case 'hospital':
+      // The towers of a hospital, and the lower clinics and offices around them.
+      return area > 6000 ? 7 : area > 2500 ? 5 : area > 900 ? 3 : 2;
     default:
       return 1;
   }
@@ -132,6 +152,7 @@ export function storeysOf(b: Building, area: number, seed: number): number {
 /** How tall a building's walls stand, in metres. */
 export function wallHeight(b: Building, area: number, seed: number): number {
   if (b.kind === 'canopy') return area < 70 ? 2.5 : 4.8;
+  if (b.kind === 'fuel') return 5.2;
   return STYLE[b.kind].storey * storeysOf(b, area, seed);
 }
 
@@ -192,8 +213,11 @@ function isRectangle(ring: readonly XY[]): boolean {
   return true;
 }
 
-const up = (p: XY, h: number): P3 => [p[0], p[1], h];
-const lerp = (a: XY, b: XY, t: number): XY => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+export const up = (p: XY, h: number): P3 => [p[0], p[1], h];
+export const lerp = (a: XY, b: XY, t: number): XY => [
+  a[0] + (b[0] - a[0]) * t,
+  a[1] + (b[1] - a[1]) * t,
+];
 
 /** A sloped roof face: the texture runs along the eave and up the slope. */
 function slope(out: MeshBuilder, e0: P3, e1: P3, r1: P3, r0: P3, layer: number, tint: Tint): void {
@@ -212,29 +236,28 @@ function slope(out: MeshBuilder, e0: P3, e1: P3, r1: P3, r0: P3, layer: number, 
   out.tri(e0, r1, r0, a[0], a[1], c[0], c[1], d[0], d[1], layer, tint);
 }
 
-/**
- * Add one building. `seed` keeps its look steady from visit to visit; `front` is the unit
- * direction from the building toward its street, or null when there's none nearby.
- */
-export function addBuilding(out: MeshBuilder, b: Building, seed: number, front: XY | null): void {
-  const ring = points(b.pts);
-  if (ring.length < 3) return;
-  const area = Math.abs(area2(ring)) / 2;
-  const style = STYLE[b.kind];
-  const storeys = storeysOf(b, area, seed);
-  const H = wallHeight(b, area, seed);
-  if (style.roof === 'canopy') return canopy(out, ring, H, area);
+/** What addBuilding worked out, for whatever dresses the building afterwards. */
+export interface Built {
+  ring: XY[];
+  /** The top of the walls, in metres. */
+  H: number;
+  /** The wall that faces the street, as the index of its first corner, or -1. */
+  frontEdge: number;
+  /** How squarely each wall faces the street: 1 is square on, below zero faces away. */
+  facing: number[];
+  /** The two ends of a house's garage door, at the foot of the wall. */
+  garage: [XY, XY] | null;
+}
 
-  const wall = style.wall[Math.floor(rnd(seed, 1) * style.wall.length)]!;
-  const bays = BAYS[wall];
-  const tints = TINTS[wall];
-  const tint = tints[Math.floor(rnd(seed, 2) * tints.length)]!;
-  const n = ring.length;
-
-  // The front wall: the one that most faces the street, longer walls first.
+/** The wall that most faces the street (longer walls first), and how each wall faces it. */
+export function frontOfRing(
+  ring: readonly XY[],
+  front: XY | null,
+): { frontEdge: number; facing: number[] } {
   let frontEdge = -1;
   let best = 0;
   const facing: number[] = [];
+  const n = ring.length;
   for (let i = 0; i < n; i++) {
     const a = ring[i]!;
     const c = ring[(i + 1) % n]!;
@@ -246,6 +269,38 @@ export function addBuilding(out: MeshBuilder, b: Building, seed: number, front: 
       frontEdge = i;
     }
   }
+  return { frontEdge, facing };
+}
+
+/**
+ * Add one building. `seed` keeps its look steady from visit to visit; `front` is the unit
+ * direction from the building toward its street, or null when there's none nearby.
+ */
+export function addBuilding(
+  out: MeshBuilder,
+  b: Building,
+  seed: number,
+  front: XY | null,
+): Built | null {
+  const ring = points(b.pts);
+  if (ring.length < 3) return null;
+  const area = Math.abs(area2(ring)) / 2;
+  const style = STYLE[b.kind];
+  const storeys = storeysOf(b, area, seed);
+  const H = wallHeight(b, area, seed);
+  const { frontEdge, facing } = frontOfRing(ring, front);
+  const built: Built = { ring, H, frontEdge, facing, garage: null };
+  if (style.roof === 'canopy') {
+    canopy(out, ring, H, area, b.kind === 'fuel');
+    return built;
+  }
+
+  const wall = style.wall[Math.floor(rnd(seed, 1) * style.wall.length)]!;
+  const bays = BAYS[wall];
+  const tints = TINTS[wall];
+  const tint = WALL_TINT[b.kind] ?? tints[Math.floor(rnd(seed, 2) * tints.length)]!;
+  const n = ring.length;
+  const windows = WINDOWS[b.kind];
 
   const base = style.storey;
   for (let i = 0; i < n; i++) {
@@ -286,13 +341,19 @@ export function addBuilding(out: MeshBuilder, b: Building, seed: number, front: 
       const roll = rnd(seed * 31 + i, k);
       let layer = roll < 0.22 ? bays.blank : bays.window;
       if (b.kind === 'garage' || b.kind === 'shed' || b.kind === 'industrial') layer = bays.blank;
+      if (windows !== undefined) layer = windows;
+      // A showroom is glass wherever it faces the street.
+      if (b.kind === 'dealer') layer = facing[i]! > -0.3 ? T.glassWall : bays.blank;
       if (shopFront) layer = k % 3 === 1 ? T.stuccoDoor : T.stuccoShop;
-      else if (isFront && k === garage) layer = bays.garage;
-      else if (isFront && k === door && b.kind !== 'shed') layer = bays.door;
+      else if (isFront && k === garage) {
+        layer = bays.garage;
+        built.garage = [p0, p1];
+      } else if (isFront && k === door && b.kind !== 'shed' && b.kind !== 'dealer')
+        layer = windows === undefined ? bays.door : T.stuccoDoor;
       const glow = rnd(seed * 17 + i, k + 40) < style.lit ? 0.55 + 0.45 * roll : 0;
       out.quad(up(p0, 0), up(p1, 0), up(p1, base), up(p0, base), 0, 0, 0.5, 0.5, layer, tint, glow);
       if (storeys > 1) {
-        const upper = roll > 0.85 ? bays.blank : bays.window;
+        const upper = windows ?? (roll > 0.85 ? bays.blank : bays.window);
         const lit = rnd(seed * 13 + i, k + 80) < style.lit ? 0.5 + 0.5 * roll : 0;
         out.quad(
           up(p0, base),
@@ -313,7 +374,7 @@ export function addBuilding(out: MeshBuilder, b: Building, seed: number, front: 
 
   if (style.roof === 'flat') {
     fill(out, ring, H - 0.4, T.flatRoof, PLAIN);
-    return;
+    return built;
   }
   const metal = b.kind === 'mobile';
   const roofLayer = metal ? T.metalRoof : T.shingle;
@@ -321,6 +382,7 @@ export function addBuilding(out: MeshBuilder, b: Building, seed: number, front: 
   if (isRectangle(ring))
     gable(out, ring, H, style.pitch, roofLayer, roofTint, bays.blank, tint, base);
   else hip(out, ring, H, area, style.pitch, roofLayer, roofTint);
+  return built;
 }
 
 /** A gable roof on a rectangle: the ridge runs the long way, with eaves that overhang. */
@@ -403,10 +465,35 @@ function hip(
 }
 
 /** A roof on posts: a carport, or the canopy over a gas station's pumps. */
-function canopy(out: MeshBuilder, ring: readonly XY[], H: number, area: number): void {
-  const thick = area < 70 ? 0.2 : 0.7;
+function canopy(
+  out: MeshBuilder,
+  ring: readonly XY[],
+  H: number,
+  area: number,
+  fuel: boolean,
+): void {
+  const thick = fuel ? 0.9 : area < 70 ? 0.2 : 0.7;
   const n = ring.length;
   fill(out, ring, H, T.flatRoof, PLAIN);
+  if (fuel) {
+    // The underside is one big light after dark: seen from below, so it's wound the other way.
+    const contour = ring.map((p) => new Vector2(p[0], p[1]));
+    for (const [i, j, k] of ShapeUtils.triangulateShape(contour, []) as number[][])
+      out.tri(
+        up(ring[i!]!, H - thick),
+        up(ring[k!]!, H - thick),
+        up(ring[j!]!, H - thick),
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        T.plain,
+        [0.93, 0.93, 0.9],
+        -0.9,
+      );
+  }
   for (let i = 0; i < n; i++) {
     const a = ring[i]!;
     const c = ring[(i + 1) % n]!;
@@ -421,7 +508,8 @@ function canopy(out: MeshBuilder, ring: readonly XY[], H: number, area: number):
       len / TILE,
       thick / TILE,
       T.plain,
-      [0.9, 0.9, 0.88],
+      fuel ? [0.86, 0.2, 0.18] : [0.9, 0.9, 0.88],
+      fuel ? -0.6 : 0,
     );
   }
   if (n > 8) return;
