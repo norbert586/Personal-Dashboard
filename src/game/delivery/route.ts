@@ -33,6 +33,8 @@ export const PACE = {
   left: 2,
   /** Seconds it costs to turn into a driveway: it's the way into some lots, never a short cut. */
   driveway: 20,
+  /** Seconds to get going the other way when a route starts behind you. */
+  aboutFace: 12,
   /** Seconds to turn round where a road ends. */
   turnRound: 6,
   /** How far a point looks for a road to be on, and a door for pavement, in metres. */
@@ -488,6 +490,11 @@ export interface RouteOptions {
    * It's there so a test can hold the two together.
    */
   guess?: boolean;
+  /**
+   * The compass heading you're facing at the start, in radians. Setting off the other way then
+   * costs turning the car round first, so the GPS prefers the way you're pointing.
+   */
+  facing?: number;
 }
 
 /**
@@ -516,19 +523,30 @@ export function route(zone: Zone, from: Spot, to: Spot, options: RouteOptions = 
   let bestFrom = -1;
   let bestOn = -1;
 
-  // Straight there, when both spots are on one stretch and the end is ahead.
+  // Setting off against the way you face costs an about-face first.
   const starts = ways(g, from);
+  const setOff = (e: number): number => {
+    if (options.facing === undefined) return 0;
+    const pts = zone.roads[from.road]!.pts;
+    const i = Math.min(from.seg, pts.length / 2 - 2);
+    const d = g.b[e]! > g.a[e]! ? 1 : -1;
+    const ahead =
+      Math.sin(options.facing) * (pts[i * 2 + 2]! - pts[i * 2]!) * d +
+      Math.cos(options.facing) * (pts[i * 2 + 3]! - pts[i * 2 + 1]!) * d;
+    return ahead < 0 ? PACE.aboutFace : 0;
+  };
+  // Straight there, when both spots are on one stretch and the end is ahead.
   if (from.road === to.road && starts[0] === goals[0]) {
     const e = to.s >= from.s ? starts[0] : starts[1];
     if (e >= 0) {
-      best = Math.abs(to.s - from.s) / g.speed[e]!;
+      best = setOff(e) + Math.abs(to.s - from.s) / g.speed[e]!;
       bestOn = e;
     }
   }
   const fromAlong = g.along[from.road]!;
   for (const e of starts) {
     if (e < 0) continue;
-    cost[e] = Math.abs(fromAlong[g.b[e]!]! - from.s) / g.speed[e]!;
+    cost[e] = setOff(e) + Math.abs(fromAlong[g.b[e]!]! - from.s) / g.speed[e]!;
     prev[e] = -1;
     seen[e] = run;
     heap.push(cost[e]! + left(e), e);

@@ -726,3 +726,9 @@ has no turn restrictions, so a route may turn left where a real sign forbids it.
 flat, but its ramps are the only way on and off in the graph, so routes use them properly. No
 U-turns at a junction unless the road ends there, and driveways are never a short cut. How bad a
 bundle must be before customers are angry is step 6's choice; `planRun` only gives the numbers.
+Built 2026-11-16. Found on the way: 40 lots are only reached through a road the map calls a
+driveway, so driveways cost 20 seconds to turn into rather than being barred. 266 of the 15,888
+numbered doors are on streets the zone's edge cuts off from the rest; they get no route, and
+orders must never go to them (`doorSpot` returns null). A route knows which way the car faces and
+charges 12 seconds to set off the other way. The path is blue (`--route`), not maize: maize
+chevrons read as more yellow lane paint. On a phone the GPS button sits under the dashboard.

@@ -246,3 +246,21 @@ test('without the GPS there is no route, and the page with it on passes axe', as
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations).toEqual([]);
 });
+
+test('the GPS paints the way on the road, and driving it shortens what is left', async ({
+  page,
+}) => {
+  test.slow();
+  // Westbound on Auburn Road, the way this route sets off.
+  await clockIn(page, `${TO_MAYAPPLE}&at=-60,-13&heading=257`);
+  const world = page.locator('#world');
+  const left = async () => Number(await world.getAttribute('data-gps-metres'));
+  await expect
+    .poll(async () => Number(await world.getAttribute('data-gps-marks')))
+    .toBeGreaterThan(100);
+  const from = await left();
+  expect(from).toBeGreaterThan(4000);
+  await page.keyboard.down('KeyW');
+  await expect.poll(left, { timeout: 40_000 }).toBeLessThan(from - 40);
+  await page.keyboard.up('KeyW');
+});

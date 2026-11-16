@@ -132,6 +132,19 @@ test('a one-way street is never driven backwards', () => {
   assert.deepEqual(foot.line.slice(-4), [0, -200, 0, -100]);
 });
 
+test('setting off against the way you face costs an about-face', () => {
+  const from = at(town, -150, 0);
+  const to = at(town, -250, 0);
+  const EAST = Math.PI / 2;
+  const west = route(town, from, to, { facing: -EAST });
+  const east = route(town, from, to, { facing: EAST });
+  assert.ok(west && east);
+  assert.ok(Math.abs(west.seconds - 100 / (45 * MPH)) < 0.01);
+  assert.ok(Math.abs(east.seconds - west.seconds - PACE.aboutFace) < 0.01);
+  // With a long way round ahead, turning the car is still the quicker start.
+  assert.deepEqual(east.line, [-150, 0, -250, 0]);
+});
+
 test('a point is placed against a route: how far along, and how far off', () => {
   const { line, roads } = go(town, at(town, 0, 100), at(town, 150, 0));
   assert.equal(roads.length, line.length / 2);

@@ -64,6 +64,8 @@ npm run zone:import  # re-bake the delivery zone from OpenStreetMap (needs the n
   The delivery zone's importer and file format are in `src/lib/zone/`; the browser only decodes.
   Who stops where is `control.ts`, and the signals' one timer is `signals.ts`: the signs and signal
   heads you see and the other cars both read them, so change the rule there, never in one place.
+  Drive times and routes are `route.ts`, with every value a quote depends on in `PACE` (ADR-047);
+  the GPS, quotes and the bundle check all read it.
   Landmarks the map doesn't name, and the pizzeria's shop front, are set in `site.config.ts`
   (`delivery.landmarks`, `delivery.storeFront`); re-run `npm run zone:import` after changing them.
 - The delivery mode's world is in real metres, east (+x) and north of the store; in three.js
@@ -118,6 +120,9 @@ npm run zone:import  # re-bake the delivery zone from OpenStreetMap (needs the n
   `red`, or empty when none faces you within 150 m). `?shadows=0` turns shadows off (phones start without them), and
   `?traffic=0` empties the streets of other cars and people (they're random, so tests that drive
   use it).
+  `?to=<building index>` starts with the GPS on for that door (G picks a random one); the canvas
+  then carries `data-gps` ("40775 Mayapple Drive, 3.3 mi, 6 min"), `data-gps-metres` and
+  `data-gps-marks` (chevrons painted on the road).
   The sandbox's software renderer manages about 23 frames a second there; that says nothing
   about a real graphics card.
 - `npm run zone:import` from a Claude cloud sandbox needs `NODE_USE_ENV_PROXY=1`. It keeps the

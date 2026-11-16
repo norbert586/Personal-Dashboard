@@ -113,7 +113,7 @@ drive.
   lane for a shop or an apartment block. The GPS, the time a customer is quoted and the check on
   a bundle all read it.
 - **GPS** is off by default, and delivering without it earns a small bonus. Turned on, it draws
-  the route as a path on the ground and on the small map, with the miles and minutes left, and
+  the route in blue as chevrons on the road, in my lane, and as a line on the small map, with the miles and minutes left, and
   finds a new way when I leave it. Until there are orders, G in free drive picks a random
   address to find.
 - **What goes wrong:** a late order, the wrong address, the wrong hand-over, and a damaged pizza.
