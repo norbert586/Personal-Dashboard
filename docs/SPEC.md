@@ -97,15 +97,23 @@ drive.
   - **Time trial:** a set time; deliver as many orders as well as you can.
   - **Story:** a career, where you earn upgrades and get better as a driver. Designed with me
     before it's built.
-  - **Free drive:** the streets with no orders.
+  - **Free drive:** the streets with no score and no end. Until Rush exists it's also where the
+    loop is built: you carry one ticket at a time (ADR-048).
 - **The store** is the hub (ADR-043). You park in the delivery parking, walk in the back door, and
   at the dispatch screen assign yourself a single, double or triple. Orders come in bunches, and
   pacing them is up to you. If what you bundle isn't really one run, the customers are quoted a
   bad time and are angrier when you're late.
 - **A delivery:** each ticket has an address, the order, and how to hand it over: leave it on the
-  porch, call or text first, knock, or ring. Drive there, park, get out and walk to the door, every
+  porch, call first, text first, knock, or ring. Drive there, park, get out and walk to the door, every
   time: the walk is where the game's jokes live. Do the hand-over, and the customer answers in an
   RPG-style dialogue, a portrait and their line. Then back to the store.
+- **The ticket** (ADR-048) is on the dashboard: the address, what they ordered from a small
+  made-up menu and what it came to, the customer's note in their own words ("Bell is broken,
+  please knock") with the plain instruction under it, and the time they were quoted. A quote is
+  the router's drive with a little to spare, plus the walk to that door and back and a moment at
+  the door, in whole minutes. The clock starts when I drive out of the delivery parking, counts
+  down, and then says how late I am. Until the store's room is built, stopping in the delivery
+  parking hands me a ticket, and coming back and stopping there swaps it for the next.
 - **Routing** (ADR-047): one router finds the quickest drive between any two doors on the real
   streets, one-ways included. A drive time is every street at its speed limit, plus time for each
   stop sign, an average wait at each signal, and slowing for each turn: a fair time for a legal
@@ -114,8 +122,7 @@ drive.
   a bundle all read it.
 - **GPS** is off by default, and delivering without it earns a small bonus. Turned on, it draws
   the route in blue as chevrons on the road, in my lane, and as a line on the small map, with the miles and minutes left, and
-  finds a new way when I leave it. Until there are orders, G in free drive picks a random
-  address to find.
+  finds a new way when I leave it. It goes to the door on my ticket; with no ticket it says so.
 - **What goes wrong:** a late order, the wrong address, the wrong hand-over, and a damaged pizza.
   Only collisions damage it, and harder hits do more.
 - **Scoring:** one combined score from time against the quote, the tip, the pizza's condition, the

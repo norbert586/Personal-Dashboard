@@ -21,7 +21,7 @@ const { storeName, radiusMiles } = site.delivery;
       tabindex="0"
       role="application"
       aria-roledescription="driving game"
-      aria-label="The delivery zone. W or the up arrow is the gas, S or the down arrow brakes, and pressed again from a stop reverses, A and D or the left and right arrows steer, Space is the handbrake, C changes the camera, G turns the GPS on and off, N changes the time of day, R goes back to the store, Escape opens the menu."
+      aria-label="The delivery zone. W or the up arrow is the gas, S or the down arrow brakes, and pressed again from a stop reverses, A and D or the left and right arrows steer, Space is the handbrake, C changes the camera, G turns the GPS to your order's door on and off, N changes the time of day, R goes back to the store, Escape opens the menu."
     ></canvas>
   </main>
   <header class="hud badge">
@@ -65,6 +65,23 @@ const { storeName, radiusMiles } = site.delivery;
       <span id="gps-to" aria-live="polite"></span>
       <span id="gps-left"></span>
     </p>
+  </section>
+  <section class="hud ticket" aria-label="Your order">
+    <h2>Order</h2>
+    <p id="ticket-none">No order. Stop in the delivery parking behind the store to get one.</p>
+    <div id="ticket-body" hidden>
+      <p id="ticket-to" class="ticket-to" aria-live="polite"></p>
+      <p class="ticket-order">
+        <span id="ticket-order"></span>
+        <span class="visually-hidden">, total</span>
+        <span id="ticket-total" class="ticket-total"></span>
+      </p>
+      <p id="ticket-note" class="ticket-note"></p>
+      <p class="ticket-foot">
+        <span id="ticket-how" class="ticket-how"></span>
+        <span id="ticket-clock" class="ticket-clock"></span>
+      </p>
+    </div>
   </section>
   <section class="hud map" aria-label="Map">
     <canvas id="minimap" width="168" height="168" aria-hidden="true"></canvas>
@@ -132,8 +149,10 @@ const { storeName, radiusMiles } = site.delivery;
     <div class="win-body">
       <p>
         You're driving for {storeName}, on the real streets within {radiusMiles} miles of the store.
-        There are no orders yet: this is the drive. Until there are, the GPS picks an address for
-        you to find, and shows the way on the road and on the map.
+        Stop in the delivery parking behind the store and you're handed an order: the address, what
+        they ordered, how they want it handed over, and the time they were quoted, which starts
+        counting when you drive out. There's no door to walk to yet: this is the drive. The GPS is
+        off until you ask, and then shows the way on the road and on the map.
       </p>
       <dl>
         <dt>Gas</dt>
@@ -146,7 +165,7 @@ const { storeName, radiusMiles } = site.delivery;
         <dd>Space</dd>
         <dt>Camera</dt>
         <dd>C</dd>
-        <dt>GPS: a random address, or off</dt>
+        <dt>GPS to your order's door, on or off</dt>
         <dd>G</dd>
         <dt>Time of day</dt>
         <dd>N</dd>
@@ -221,6 +240,7 @@ const { storeName, radiusMiles } = site.delivery;
   .street,
   .place,
   .gps,
+  .ticket,
   .dash,
   .map {
     background: var(--panel);
@@ -321,6 +341,72 @@ const { storeName, radiusMiles } = site.delivery;
   #gps-left {
     margin-inline-start: var(--space-1);
     font-variant-numeric: tabular-nums;
+  }
+
+  /* The order you're carrying: a slip under the store's name. */
+  .ticket {
+    inset-block-start: calc(env(safe-area-inset-top, 0px) + var(--space-3) + 5rem);
+    inset-inline-start: calc(env(safe-area-inset-left, 0px) + var(--space-3));
+    width: min(17rem, calc(100vw - 2rem));
+    padding: var(--space-1) var(--space-2) var(--space-2);
+    color: var(--ink);
+    font: var(--size-14) / 1.35 var(--font-ui);
+  }
+
+  .ticket h2 {
+    color: var(--maize);
+    font: var(--size-16) / 1.2 var(--font-display);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .ticket [hidden] {
+    display: none;
+  }
+
+  .ticket-to {
+    font: var(--size-24) / 1.1 var(--font-display);
+    letter-spacing: 0.03em;
+  }
+
+  .ticket-order,
+  .ticket-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+
+  .ticket-total,
+  .ticket-clock {
+    flex: none;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ticket-note {
+    color: var(--ink-dim);
+  }
+
+  .ticket-foot {
+    margin-block-start: var(--space-1);
+    padding-block-start: var(--space-1);
+    border-block-start: 2px dashed var(--outline);
+  }
+
+  .ticket-how {
+    font-weight: 600;
+  }
+
+  .ticket-clock {
+    color: var(--maize);
+    font-weight: 600;
+  }
+
+  /* Late is said in words; the colour only backs it up. */
+  .ticket-clock.late {
+    color: var(--night);
+    background: var(--loss);
+    padding: 0 var(--space-1);
   }
 
   .limit {
@@ -486,6 +572,23 @@ const { storeName, radiusMiles } = site.delivery;
     .map,
     .dash {
       inset-block: calc(env(safe-area-inset-top, 0px) + 9.9rem) auto;
+    }
+
+    /* The ticket runs under the map and the GPS button, the width of the screen. It says it's an
+       order by what's on it, so the heading is left to screen readers and the road gets the room. */
+    .ticket h2 {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .ticket {
+      inset-block-start: calc(env(safe-area-inset-top, 0px) + 18.1rem);
+      width: auto;
+      inset-inline-end: calc(env(safe-area-inset-right, 0px) + var(--space-3));
     }
 
     /* A fourth button would push the others under the street's name: it sits under the dashboard. */
