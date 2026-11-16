@@ -106,8 +106,16 @@ drive.
   porch, call or text first, knock, or ring. Drive there, park, get out and walk to the door, every
   time: the walk is where the game's jokes live. Do the hand-over, and the customer answers in an
   RPG-style dialogue, a portrait and their line. Then back to the store.
+- **Routing** (ADR-047): one router finds the quickest drive between any two doors on the real
+  streets, one-ways included. A drive time is every street at its speed limit, plus time for each
+  stop sign, an average wait at each signal, and slowing for each turn: a fair time for a legal
+  drive. A route ends at the nearest pavement to the door: the curb for a house, the lot or the
+  lane for a shop or an apartment block. The GPS, the time a customer is quoted and the check on
+  a bundle all read it.
 - **GPS** is off by default, and delivering without it earns a small bonus. Turned on, it draws
-  the route as a path on the ground.
+  the route as a path on the ground and on the small map, with the miles and minutes left, and
+  finds a new way when I leave it. Until there are orders, G in free drive picks a random
+  address to find.
 - **What goes wrong:** a late order, the wrong address, the wrong hand-over, and a damaged pizza.
   Only collisions damage it, and harder hits do more.
 - **Scoring:** one combined score from time against the quote, the tip, the pizza's condition, the

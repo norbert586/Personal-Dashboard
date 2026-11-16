@@ -702,3 +702,27 @@ take a yield as a short stop for now. Street names are green blades on those pos
 a sign has them ("E Auburn Rd"); 25 of the 795 names are too long for a blade and lose their last
 word. Blades and stop signs are drawn larger than life for the same reason as the signal heads.
 At the store this adds about 2.6% to the triangles on screen.
+
+## ADR-047: One router: time at the limit plus stops, ending at the nearest pavement
+
+**Accepted · 2026-11-16 · Norbert's picks**
+Context: step 4 needs a drive time between any two doors, for the GPS path, the customer's quote
+and the bundle check (ADR-043). No doc said what a quote assumes about how he drives (nothing
+happens when he runs a red, ADR-046), where a route to a door ends, or what there is to see
+before tickets exist.
+Decision: `route.ts` searches the zone file's own graph with A\*, over stretches of road rather
+than junctions so a turn can cost time. A drive time is each stretch at its speed limit, plus a
+stop sign (braking from the limit, a look, pulling away), a yield (about half that), a signal's
+average wait (worked out from `signals.ts`' timer) and slowing for a turn by its angle. What each
+approach meets comes from `control.ts`, the rule the signs and the other cars read. Norbert chose
+this over the limit alone (quotes a third short in subdivisions) and over the car flat out (only
+makeable recklessly): a quote is fair for a legal drive, and running reds beats it. A route ends
+at the nearest pavement to the door that isn't a private driveway, a ramp or the freeway, on the
+part of the map you can drive to and back from; else on the address's street. Every value is in
+one object, `PACE`. Until step 5's tickets, G in free drive picks a random address and turns the
+GPS on, so the path can be driven and judged.
+Consequences: times are plausible, not surveyed: the stop signs are mostly by rule, and the map
+has no turn restrictions, so a route may turn left where a real sign forbids it. M-59 is still
+flat, but its ramps are the only way on and off in the graph, so routes use them properly. No
+U-turns at a junction unless the road ends there, and driveways are never a short cut. How bad a
+bundle must be before customers are angry is step 6's choice; `planRun` only gives the numbers.
