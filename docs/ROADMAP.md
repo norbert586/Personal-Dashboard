@@ -66,13 +66,12 @@ waits for its own design session.
    - [x] Collisions that don't bounce (ADR-044). Proved first in `collide.test.ts`: a 40 mph hit
          sprang back at 4.8 mph. Now every wall and parked car settles in one pass after each step
          of the car, with no bounce, and `driveCar` reports the hardest hit for the pizza (step 6).
-   - [ ] Frame rate on his laptop and phone. If it's short of 60: shadows first (`?shadows=0`),
+   - [ ] Frame rate on his laptop and phone (skipped for now at Norbert's word, 2026-11-16). If it's short of 60: shadows first (`?shadows=0`),
          then the build distance (`BUILD` in `world.ts`), then the picture's 360 lines.
-3. [ ] **Addresses** (ADR-042). Every building gets a number on its real street, generated in the
-       importer from how far along the street its front door is, even on one side and odd on the
-       other. Not accurate, and no new data. Numbers show on the houses (by the door or on a
-       mailbox) and on shop fronts, so a wrong address is a mistake you can make. The door is the
-       middle bay of the wall `buildings.ts` already picks as the front.
+3. [x] **Addresses** (ADR-042), done 2026-11-16. The importer gives every building a five-digit
+       number on one grid across the zone (`src/lib/zone/addresses.ts`), even on the north and east
+       sides. Houses show it on a blue board under a mailbox at the curb, everything else over its
+       front door, and the dashboard names the address beside you once you stop.
 4. [ ] **Routing.** A* over the zone file's junctions and roads, giving a drive time between any
        two doors. One piece of code serves three things: the GPS path on the ground, the time
        estimate a customer is quoted, and the check on whether a bundle is a real double or triple

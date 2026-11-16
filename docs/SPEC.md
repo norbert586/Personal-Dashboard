@@ -115,9 +115,13 @@ drive.
   and what they say at the door. Best runs are saved on the device.
 - **People:** customers with faces and lines, grown a lot over time. They're the heart of the
   game's humour. Every name is generated at random.
-- **Addresses:** every building gets a number on its real street, generated from how far along the
-  street its door is, even on one side and odd on the other (ADR-042). The numbers show on houses
-  and shops. They aren't accurate, and no order is a real person's.
+- **Addresses:** every building gets a five-digit number on its real street from one grid across
+  the zone, as in Macomb and Oakland, so the next street over has neighbouring numbers: even on
+  the north and east sides, odd on the south and west (ADR-042). Houses show theirs on a blue
+  board under a mailbox at the curb; shops, offices, schools and apartments show theirs in big
+  digits over the front door. Stopped beside a building, the dashboard names its address; while
+  you drive, you read the mailboxes. The numbers aren't accurate, and no order is a real
+  person's.
 - **The pizzeria** stands on its real corner under a stand-in name, with no real brand or logo.
   It's the brightest thing on the street: a lit shop front under a striped awning, its name in
   lights. Round the back, off the service lane, are its back door and the marked delivery

@@ -111,7 +111,7 @@ npm run zone:import  # re-bake the delivery zone from OpenStreetMap (needs the n
   `data-*` attributes (`data-sign-*`, `data-weather`, `data-aircraft`, `data-overhead`).
 - The delivery page takes `?at=east,north` (metres from the store), `?heading=degrees` (0 is
   north, clockwise) and `?time=day|dusk|night`. Without `?at` you start in the delivery parking behind
-  the store. Its canvas carries `data-street`, `data-place`, `data-traffic`, `data-mph`,
+  the store. Its canvas carries `data-street`, `data-place`, `data-address`, `data-traffic`, `data-mph`,
   `data-gear` and `data-at`. `?shadows=0` turns shadows off (phones start without them), and
   `?traffic=0` empties the streets of other cars and people (they're random, so tests that drive
   use it).

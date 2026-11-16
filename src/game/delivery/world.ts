@@ -5,14 +5,25 @@
  * the paint on them. Water, parks and lots are one mesh for the whole zone.
  */
 import { Group, type Mesh, type Scene } from 'three';
-import type { Place, PlaceKind, Road, Zone } from '../../lib/zone/format.ts';
+import { doorOf, nearestOnRoad } from '../../lib/zone/addresses.ts';
+import type { Building, Place, PlaceKind, Road, Zone } from '../../lib/zone/format.ts';
 import type { Season } from '../world/materials.ts';
 import { addBuilding, fill, up, wallHeight, type Built } from './buildings.ts';
 import { SegGrid } from './grid.ts';
 import { Labels } from './labels.ts';
 import { dress, mainWall, wallOf } from './landmarks.ts';
 import { MeshBuilder } from './mesh.ts';
-import { box, flagpole, panel, parkedCar, sign, streetLamp } from './props.ts';
+import {
+  box,
+  flagpole,
+  houseNumber,
+  mailbox,
+  numberWidth,
+  panel,
+  parkedCar,
+  sign,
+  streetLamp,
+} from './props.ts';
 import { Roads, roadHeight, roadWidth } from './roads.ts';
 import {
   CHUNK,
@@ -73,7 +84,8 @@ const SIGN: Record<PlaceKind, { tint: Tint; tall: boolean }> = {
   pizzeria: { tint: [0.76, 0.1, 0.08], tall: true },
 };
 const MAIZE: Tint = [1, 0.8, 0.22];
-const HOMES = new Set(['house', 'townhouse', 'apartments', 'mobile', 'garage', 'shed']);
+/** Homes whose number is on a mailbox at the curb; everything else wears it on the wall. */
+const MAILBOXES = new Set(['house', 'townhouse', 'mobile']);
 
 /**
  * The pizzeria: its front door and which way it faces, and round the back, where the drivers
@@ -165,6 +177,8 @@ export class World {
   private readonly labels = new Labels();
   /** The names on each building's wall: label ids and the places they're for. */
   private readonly wallSigns = new Map<number, Array<{ label: number; place: Place }>>();
+  /** Every numbered building's front door, by building index: what address is this? */
+  private readonly doors = new SegGrid(48);
   /** The pizzeria, when the zone has one. */
   readonly shop: Shop | null = null;
   /** Whether buildings and trees throw shadows. */
@@ -180,6 +194,12 @@ export class World {
     zone.roads.forEach((road, r) => {
       for (let i = 0; i + 3 < road.pts.length; i += 2)
         this.streets.add(road.pts[i]!, road.pts[i + 1]!, road.pts[i + 2]!, road.pts[i + 3]!, r);
+    });
+    zone.buildings.forEach((b, i) => {
+      if (b.number <= 0) return;
+      const ring = points(b.pts);
+      const [x, y] = doorOf(ring, this.frontOf(b, ring));
+      this.doors.add(x, y, x, y, i);
     });
     zone.paths.forEach((path, p) => {
       if (path.kind === 'crossing') return;
@@ -524,28 +544,67 @@ export class World {
   }
 
   /**
-   * Which way a building faces. A home faces the nearest street that isn't a freeway or a
-   * driveway; a shop, a school or a hospital faces the main road when one is in reach, since
-   * that's where its sign and its front door are.
+   * A home's mailbox at the curb in front of its door, to one side of the walk and away from the
+   * garage, with its number on a board that reads from the street either way.
    */
-  private frontOf(ring: readonly XY[], home: boolean): XY | null {
+  private mailbox(out: MeshBuilder, b: Building, built: Built, first: boolean): void {
+    const door =
+      built.frontEdge >= 0 ? wallOf(built.ring, built.frontEdge).mid : centre(built.ring);
+    const road = this.zone.roads[b.street]!;
+    const near = nearestOnRoad(road, door[0], door[1]);
+    if (near.d < 4 || near.d > 70) return;
+    // From the street toward the door, and along the street.
+    const t: XY = [(door[0] - near.x) / near.d, (door[1] - near.y) / near.d];
+    const along: XY = [-t[1], t[0]];
+    let sides = [1, -1];
+    if (built.garage) {
+      const g = built.garage;
+      const gx = (g[0][0] + g[1][0]) / 2 - door[0];
+      const gy = (g[0][1] + g[1][1]) / 2 - door[1];
+      if (gx * along[0] + gy * along[1] > 0) sides = [-1, 1];
+    }
+    const back = roadWidth(road) / 2 + 1.1;
+    for (const side of sides)
+      for (const off of [2.2, 4.2]) {
+        const x = near.x + t[0] * back + along[0] * off * side;
+        const y = near.y + t[1] * back + along[1] * off * side;
+        if (!this.open(x, y, 0.8)) continue;
+        mailbox(out, x, y, [-t[0], -t[1]], String(b.number), (d) => this.labels.digit(d));
+        if (first) this.block(x, y, t, 0.12, 0.12);
+        return;
+      }
+  }
+
+  /**
+   * A big number on the front wall, over the door; beside the name when the name hangs over the
+   * door on a wall too low for both.
+   */
+  private numberOnWall(out: MeshBuilder, i: number, built: Built): void {
+    const b = this.zone.buildings[i]!;
+    const w = wallOf(built.ring, mainWall(built));
+    const text = String(b.number);
+    // Big enough to read from the lot: a shop's name never comes lower than 2.8 m.
+    const height = built.H > 9 ? 0.9 : 0.7;
+    const width = numberWidth(text.length, height);
+    let s = w.len / 2;
+    const h0 = Math.min(2.05, built.H - height - 0.2);
+    if (this.wallSigns.has(i) && built.H < 5) {
+      // The name takes up to 62% of the wall's middle: go past its end.
+      s += w.len * 0.31 + width / 2 + 0.3;
+      if (s + width / 2 > w.len - 0.2) return;
+    }
+    if (width > w.len - 0.4) return;
+    const x = w.a[0] + w.dir[0] * s + w.out[0] * 0.06;
+    const y = w.a[1] + w.dir[1] * s + w.out[1] * 0.06;
+    houseNumber(out, x, y, w.out, h0, height, text, (d) => this.labels.digit(d));
+  }
+
+  /** Which way a building faces: toward the road the importer chose for it (`addresses.ts`). */
+  private frontOf(b: Building, ring: readonly XY[]): XY | null {
+    if (b.faces < 0) return null;
     const [cx, cy] = centre(ring);
-    const roads = this.zone.roads;
-    const reach = home ? 90 : Math.max(220, Math.sqrt(Math.abs(area2(ring)) / 2) * 1.6);
-    const main = home
-      ? null
-      : this.streets.nearest(cx, cy, reach, (id) => {
-          const kind = roads[id]!.kind;
-          return kind === 'primary' || kind === 'secondary' || kind === 'tertiary';
-        });
-    const near =
-      main ??
-      this.streets.nearest(cx, cy, reach, (id) => {
-        const kind = roads[id]!.kind;
-        return kind !== 'motorway' && kind !== 'link' && kind !== 'driveway';
-      });
-    if (!near || near.d < 0.5) return null;
-    return [(near.x - cx) / near.d, (near.y - cy) / near.d];
+    const near = nearestOnRoad(this.zone.roads[b.faces]!, cx, cy);
+    return near.d < 0.5 ? null : [(near.x - cx) / near.d, (near.y - cy) / near.d];
   }
 
   /** Whether a tree could stand here: not in a street, not through a roof. */
@@ -958,10 +1017,14 @@ export class World {
     for (const i of stuff?.buildings ?? []) {
       const b = this.zone.buildings[i]!;
       const ring = points(b.pts);
-      const built = addBuilding(base, b, i, this.frontOf(ring, HOMES.has(b.kind)));
+      const built = addBuilding(base, b, i, this.frontOf(b, ring));
       if (!built) continue;
       dress(base, b, built, i, clear, park);
       this.nameOnWall(base, i, built);
+      if (b.number > 0) {
+        if (MAILBOXES.has(b.kind)) this.mailbox(base, b, built, first);
+        else this.numberOnWall(base, i, built);
+      }
       if (b.kind === 'house') this.driveway(ground, built, i, park);
       if (this.shop?.building === i) this.dressShop(base, ground, marks, built);
     }
@@ -1047,6 +1110,14 @@ export class World {
    * What's here, for the dashboard: the landmark you're beside, or else the neighbourhood you're
    * in. Places are few, so it looks through them all.
    */
+  /** The address of the front door nearest a point, within `reach` metres: "44886 Hessel Avenue". */
+  addressAt(x: number, y: number, reach = 30): string | null {
+    const near = this.doors.nearest(x, y, reach);
+    if (!near) return null;
+    const b = this.zone.buildings[near.id]!;
+    return `${b.number} ${this.zone.roads[b.street]!.name}`;
+  }
+
   placeNear(x: number, y: number): Place | null {
     let best: Place | null = null;
     let score = Infinity;

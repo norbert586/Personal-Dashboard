@@ -228,7 +228,16 @@ export function fillHomes(input: FillInput): Building[] {
           }
           if (area < 0) ring.reverse();
           const flat = ring.flat().map((v) => Math.round(v * 10) / 10);
-          homes.push({ kind: 'house', levels: 0, name: '', made: true, pts: flat });
+          homes.push({
+            kind: 'house',
+            levels: 0,
+            name: '',
+            made: true,
+            pts: flat,
+            faces: -1,
+            street: -1,
+            number: 0,
+          });
           ground.fill(ring, TAKEN);
           ground.line(flat, 4.5, TAKEN, true);
         }

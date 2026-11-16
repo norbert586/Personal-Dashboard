@@ -8,6 +8,7 @@
  */
 import { ShapeUtils, Vector2 } from 'three';
 import type { Building, BuildingKind } from '../../lib/zone/format.ts';
+import { frontOfRing } from '../../lib/zone/addresses.ts';
 import type { MeshBuilder } from './mesh.ts';
 import { TILE, area2, centre, points, rnd, type P3, type Tint, type XY } from './space.ts';
 import { T } from './tiles.ts';
@@ -247,29 +248,6 @@ export interface Built {
   facing: number[];
   /** The two ends of a house's garage door, at the foot of the wall. */
   garage: [XY, XY] | null;
-}
-
-/** The wall that most faces the street (longer walls first), and how each wall faces it. */
-export function frontOfRing(
-  ring: readonly XY[],
-  front: XY | null,
-): { frontEdge: number; facing: number[] } {
-  let frontEdge = -1;
-  let best = 0;
-  const facing: number[] = [];
-  const n = ring.length;
-  for (let i = 0; i < n; i++) {
-    const a = ring[i]!;
-    const c = ring[(i + 1) % n]!;
-    const len = Math.hypot(c[0] - a[0], c[1] - a[1]) || 1;
-    const dot = front ? ((c[1] - a[1]) / len) * front[0] - ((c[0] - a[0]) / len) * front[1] : 0;
-    facing.push(dot);
-    if (dot > 0.35 && dot * len > best) {
-      best = dot * len;
-      frontEdge = i;
-    }
-  }
-  return { frontEdge, facing };
 }
 
 /**

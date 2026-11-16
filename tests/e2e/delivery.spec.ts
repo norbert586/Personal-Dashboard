@@ -153,3 +153,25 @@ test('the delivery page passes axe', async ({ page }) => {
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations).toEqual([]);
 });
+
+test('stopped beside a house, the dashboard names its address; driving on, it stops', async ({
+  page,
+}) => {
+  // On Hessel Avenue, in front of a house with its mailbox at the curb.
+  await clockIn(page, '?at=-99,-90&heading=178&traffic=0');
+  const world = page.locator('#world');
+  await expect(world).toHaveAttribute('data-address', /^\d{5} Hessel Avenue$/);
+  const address = (await world.getAttribute('data-address'))!;
+  await expect(page.locator('#place')).toHaveText(address);
+  await page.keyboard.down('KeyW');
+  await expect.poll(mph(page), { timeout: 30_000 }).toBeGreaterThan(5);
+  // The line goes back to the place nearby, or hides when there's none.
+  await expect
+    .poll(
+      async () =>
+        (await page.locator('#place-box').isHidden()) ||
+        (await page.locator('#place').textContent()) !== address,
+    )
+    .toBe(true);
+  await page.keyboard.up('KeyW');
+});
