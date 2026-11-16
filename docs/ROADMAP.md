@@ -38,7 +38,8 @@ so. Each slice ends with something he can play.
 
 **Where it stands (2026-11-16).** `/delivery` is a driving sandbox: every real street, the
 footprints as textured buildings with landmarks and signs, homes on every residential street, the
-lit pizzeria with its delivery parking, a few other cars, cyclists and people, street lamps, a
+lit pizzeria with its delivery parking, a few other cars, cyclists and people, street lamps,
+signals that cycle, stop signs and street names at the corners, a
 sky with the real sun, and Norbert's HHR with its automatic gearbox, walls that stop it, a chase
 camera and a dashboard. On 2026-11-16 Norbert and Claude planned the game itself (SPEC: Delivery
 mode, the modes, the store, scoring; ADR-041 to 043). The order below builds the loop rough first,
@@ -72,6 +73,19 @@ waits for its own design session.
        number on one grid across the zone (`src/lib/zone/addresses.ts`), even on the north and east
        sides. Houses show it on a blue board under a mailbox at the curb, everything else over its
        front door, and the dashboard names the address beside you once you stop.
+       3a. [x] **A livelier map**, before routing (Norbert's pick, 2026-11-16; SPEC: Traffic control).
+       Visual for the player; the other cars obey it.
+   - [x] Trees stop the car at the trunk (`trunkHalf` in `trees.ts`), and the headlights checked
+         at night: from bumper height they only grazed the road and left it dark, so the light
+         now sits higher and brighter (`car-body.ts`).
+   - [x] Signal heads at the 44 signal junctions, cycling on the timer the other cars obey
+         (ADR-046): yellow heads on a wire between two poles, green, yellow and red from
+         `signals.ts`, with `control.ts` pairing up each signal's streets.
+   - [x] Stop signs by rule (where the other cars stop) and from the map, and the map's yield
+         signs: about 1,230 stop signs and 33 yields, the yields at the Auburn Road roundabouts.
+         The rule is in `control.ts`, and the cars read it from there too.
+   - [x] Street-name signs at corners: green blades for both streets, on the stop signs' posts
+         or the signal's pole, else on a post of their own (`bladeText` in `control.ts`).
 4. [ ] **Routing.** A* over the zone file's junctions and roads, giving a drive time between any
        two doors. One piece of code serves three things: the GPS path on the ground, the time
        estimate a customer is quoted, and the check on whether a bundle is a real double or triple
@@ -106,12 +120,9 @@ waits for its own design session.
     - [ ] Look at the landmarks with Norbert against his own drive (dealerships and schools are
           thinnest; add them to `delivery.landmarks` and re-run the import), and the hospital's
           real towers.
-    - [ ] Signal heads you can see, then signals and traffic that matter to a delivery (SPEC open
-          question 10). 44 junctions carry a signal.
-    - [ ] Roads that look right: modelled intersections, stop bars, medians, street-name signs,
-          stop signs where the side street yields, kerbs, and M-59's bridges and ramps (today it
-          and its crossings are flat and drive through each other).
-    - [ ] Trees stop the car; the headlights checked at night.
+    - [ ] Signals and traffic that matter to a delivery (SPEC open question 10).
+    - [ ] Roads that look right: modelled intersections, stop bars, medians, kerbs, and M-59's
+          bridges and ramps (today it and its crossings are flat and drive through each other).
     - [ ] Phone steering beyond two buttons, and a check with a real controller.
     - [ ] A detail setting in the menu.
     - [ ] Depth: the radio, real rain and snow that change the grip (`Surface` in `car.ts`),

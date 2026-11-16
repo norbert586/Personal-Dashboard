@@ -8,12 +8,14 @@ import { Group, type Mesh, type Scene } from 'three';
 import { doorOf, nearestOnRoad } from '../../lib/zone/addresses.ts';
 import type { Building, Place, PlaceKind, Road, Zone } from '../../lib/zone/format.ts';
 import type { Season } from '../world/materials.ts';
+import { bladeText, controlOf } from './control.ts';
 import { addBuilding, fill, up, wallHeight, type Built } from './buildings.ts';
 import { SegGrid } from './grid.ts';
 import { Labels } from './labels.ts';
 import { dress, mainWall, wallOf } from './landmarks.ts';
 import { MeshBuilder } from './mesh.ts';
 import {
+  ROAD_SIGN,
   box,
   flagpole,
   houseNumber,
@@ -22,9 +24,15 @@ import {
   panel,
   parkedCar,
   sign,
+  signalSpan,
+  stopSign,
+  streetBlades,
   streetLamp,
+  yieldSign,
+  type HeadSpot,
 } from './props.ts';
 import { Roads, roadHeight, roadWidth } from './roads.ts';
+import type { SignalHead } from './signal-heads.ts';
 import {
   CHUNK,
   area2,
@@ -39,7 +47,7 @@ import {
   type XY,
 } from './space.ts';
 import { T, type Materials } from './tiles.ts';
-import { addTree, type Tree } from './trees.ts';
+import { addTree, trunkHalf, type Tree } from './trees.ts';
 
 /** Squares are built within this many metres of you, and dropped past the second distance. */
 const BUILD = 1180;
@@ -120,6 +128,18 @@ interface ChunkStuff {
   parked: number[];
   /** Street lamps: where the pole stands, the unit direction of its arm, and its kind, in fives. */
   lamps: number[];
+  /** Street names at corners: where, how high, the blades, and whether they need their own post. */
+  names: Array<{
+    x: number;
+    y: number;
+    h: number;
+    post: boolean;
+    blades: Array<{ dir: XY; label: number }>;
+  }>;
+  /** Stop and yield signs: where the post stands and the unit direction the sign faces. */
+  stops: Array<{ x: number; y: number; face: XY; yields: boolean }>;
+  /** Signals: the two poles a wire is strung between, and the heads hanging from it. */
+  spans: Array<{ a: XY; b: XY; heads: HeadSpot[] }>;
   /** Trees the map itself marks. */
   trees: Tree[];
   /** Woods and parks that reach into this square, as indices into `green`. */
@@ -171,7 +191,7 @@ export class World {
   private readonly built = new Map<number, Mesh[]>();
   private readonly stuff = new Map<number, ChunkStuff>();
   private readonly green: Green[] = [];
-  /** Parked cars and sign posts, by chunk: they stop the car but not the camera. */
+  /** Parked cars, sign posts and tree trunks, by chunk: they stop the car but not the camera. */
   readonly things = new SegGrid(24);
   private readonly solid = new Set<number>();
   private readonly labels = new Labels();
@@ -181,6 +201,11 @@ export class World {
   private readonly doors = new SegGrid(48);
   /** The pizzeria, when the zone has one. */
   readonly shop: Shop | null = null;
+  private stopWord = 0;
+  /** Posts already standing at a junction, for its street names: stop signs', a signal's pole. */
+  private readonly posts = new Map<number, Array<{ x: number; y: number; h: number }>>();
+  /** Every signal head in the zone: `signal-heads.ts` lights them. */
+  readonly heads: SignalHead[] = [];
   /** Whether buildings and trees throw shadows. */
   shadows = true;
 
@@ -258,9 +283,196 @@ export class World {
     }
     this.shop = this.findShop();
     this.placeSigns();
+    this.placeSignals();
+    this.placeStops();
+    this.placeNames();
     this.parkLots();
     this.placeLamps();
     materials.labels.value = this.labels.build();
+  }
+
+  /**
+   * Hang the signals (SPEC: traffic control): at each signal junction a wire between two poles on
+   * opposite corners, and a head over every lane that drives in, facing it.
+   */
+  private placeSignals(): void {
+    const { junctions, roads } = this.zone;
+    const control = controlOf(this.zone);
+    const hung: XY[] = [];
+    junctions.forEach((junction, j) => {
+      const arms = control.arms[j]!;
+      if (!junction.signal || !arms.length) return;
+      const c: XY = [junction.x, junction.y];
+      // Two signals a few metres apart are one intersection in life: one wire does for both.
+      if (hung.some((h) => Math.hypot(h[0] - c[0], h[1] - c[1]) < 25)) return;
+      hung.push(c);
+      const widest = (axis: 0 | 1) =>
+        arms.filter((a) => a.axis === axis).reduce((w, a) => Math.max(w, a.half), 0) || 4;
+      const main = arms.find((a) => a.axis === 0) ?? arms[0]!;
+      const u: XY = [Math.sin(main.heading), Math.cos(main.heading)];
+      const v: XY = [u[1], -u[0]];
+      // The corner: clear of the crossing street along the main one, and of the main one across.
+      const along = widest(1) + 2.5;
+      const across = widest(0) + 2.5;
+      const reach = Math.hypot(along, across);
+      const d: XY = [
+        (u[0] * along + v[0] * across) / reach,
+        (u[1] * along + v[1] * across) / reach,
+      ];
+      const pole = (side: 1 | -1): XY => {
+        for (let out = reach; out < reach + 12; out += 2) {
+          const p: XY = [c[0] + d[0] * out * side, c[1] + d[1] * out * side];
+          if (this.open(p[0], p[1], 0.6)) return p;
+        }
+        return [c[0] + d[0] * reach * side, c[1] + d[1] * reach * side];
+      };
+      const a = pole(-1);
+      const b = pole(1);
+      const wx = b[0] - a[0];
+      const wy = b[1] - a[1];
+      const heads: HeadSpot[] = [];
+      for (const arm of arms) {
+        if (!arm.inbound) continue;
+        const road = roads[arm.road]!;
+        const face: XY = [Math.sin(arm.heading), Math.cos(arm.heading)];
+        // Driving in, the way is the other way, and the right-hand side is on its right.
+        const t: XY = [-face[0], -face[1]];
+        const r: XY = [t[1], -t[0]];
+        const lanes = road.oneway
+          ? road.lanes > 1
+            ? [-0.4, 0.4]
+            : [0]
+          : road.lanes >= 4
+            ? [0.28, 0.72]
+            : [0.5];
+        for (const lane of lanes) {
+          // Where this lane's line passes under the wire.
+          const lx = c[0] + r[0] * arm.half * lane;
+          const ly = c[1] + r[1] * arm.half * lane;
+          const cross = wx * t[1] - wy * t[0];
+          let w = Math.abs(cross) < 1e-3 ? 0.5 : ((lx - a[0]) * t[1] - (ly - a[1]) * t[0]) / cross;
+          w = Math.max(0.1, Math.min(0.9, w));
+          const x = a[0] + wx * w;
+          const y = a[1] + wy * w;
+          heads.push({ x, y, face });
+          this.heads.push({
+            x,
+            y,
+            heading: arm.heading,
+            signal: control.signal[j]!,
+            axis: arm.axis,
+          });
+        }
+      }
+      this.at(c[0], c[1]).spans.push({ a, b, heads });
+      this.posts.set(j, [{ x: a[0], y: a[1], h: 3.3 }]);
+    });
+  }
+
+  /**
+   * Stand a stop or yield sign wherever the other cars stop or give way (`control.ts`): on the
+   * right of the way in, just short of the street it stops for.
+   */
+  private placeStops(): void {
+    this.stopWord = this.labels.add('STOP', 4, 1);
+    const control = controlOf(this.zone);
+    this.zone.junctions.forEach((junction, j) => {
+      const arms = control.arms[j]!;
+      const widest = arms.reduce((w, a) => Math.max(w, a.half), 0);
+      for (const arm of arms) {
+        if (!arm.inbound || (arm.stop !== 'sign' && arm.stop !== 'yield')) continue;
+        const face: XY = [Math.sin(arm.heading), Math.cos(arm.heading)];
+        // Driving in, the right-hand side is on the left of the way out.
+        const right: XY = [-face[1], face[0]];
+        for (const back of [1.5, 3.5, 5.5]) {
+          const x = junction.x + face[0] * (widest + back) + right[0] * (arm.half + 1);
+          const y = junction.y + face[1] * (widest + back) + right[1] * (arm.half + 1);
+          if (!this.open(x, y, 0.5)) continue;
+          this.at(x, y).stops.push({ x, y, face, yields: arm.stop === 'yield' });
+          const posts = this.posts.get(j) ?? [];
+          posts.push({ x, y, h: ROAD_SIGN.at + ROAD_SIGN.half + 0.1 });
+          this.posts.set(j, posts);
+          break;
+        }
+      }
+    });
+  }
+
+  /**
+   * Name the streets at every corner where two meet: a green blade for each, along its own
+   * street, on the stop sign's post or the signal's pole when there is one.
+   */
+  private placeNames(): void {
+    const { junctions, roads } = this.zone;
+    const control = controlOf(this.zone);
+    junctions.forEach((junction, j) => {
+      const named = control.arms[j]!.filter((a) => {
+        const road = roads[a.road]!;
+        return road.name && road.kind !== 'motorway' && road.kind !== 'link';
+      });
+      const first = named[0];
+      if (!first) return;
+      // The street that crosses it: a different name, and the one most square to it.
+      let other = first;
+      let square = 0.5;
+      for (const arm of named) {
+        if (roads[arm.road]!.name === roads[first.road]!.name) continue;
+        const off = Math.abs(Math.sin(arm.heading - first.heading));
+        if (off > square) {
+          square = off;
+          other = arm;
+        }
+      }
+      if (other === first) return;
+      const blades = [first, other].map((arm) => ({
+        dir: [Math.sin(arm.heading), Math.cos(arm.heading)] as XY,
+        label: this.labels.add(bladeText(roads[arm.road]!.name), 16, 1),
+      }));
+      // Every stop sign at the corner carries them, so each way in reads them on its own side.
+      const held = this.posts.get(j);
+      if (held) {
+        for (const p of held) this.at(p.x, p.y).names.push({ ...p, post: false, blades });
+        return;
+      }
+      // A signal a few metres from another shares its neighbour's wire, and its names.
+      if (junction.signal) return;
+      // Its own post, on whichever corner is free.
+      const [u, v] = blades.map((b) => b.dir) as [XY, XY];
+      for (const [su, sv] of [
+        [1, 1],
+        [-1, -1],
+        [1, -1],
+        [-1, 1],
+      ] as const) {
+        const x = junction.x + u[0] * (other.half + 1.2) * su + v[0] * (first.half + 1.2) * sv;
+        const y = junction.y + u[1] * (other.half + 1.2) * su + v[1] * (first.half + 1.2) * sv;
+        if (!this.open(x, y, 0.5)) continue;
+        this.at(x, y).names.push({ x, y, h: 2.9, post: true, blades });
+        return;
+      }
+    });
+  }
+
+  /**
+   * The signal head someone at (x, y) driving on `heading` is looking at: the nearest one ahead
+   * that faces them, within `reach` metres.
+   */
+  signalAhead(x: number, y: number, heading: number, reach = 150): SignalHead | null {
+    const sin = Math.sin(heading);
+    const cos = Math.cos(heading);
+    let best: SignalHead | null = null;
+    let nearest = reach;
+    for (const head of this.heads) {
+      const dx = head.x - x;
+      const dy = head.y - y;
+      const ahead = dx * sin + dy * cos;
+      if (ahead < 0 || ahead > nearest || Math.abs(dx * cos - dy * sin) > 20) continue;
+      // It faces you when it points back along the way you're going.
+      if (Math.sin(head.heading) * sin + Math.cos(head.heading) * cos > -0.7) continue;
+      nearest = ahead;
+      best = head;
+    }
+    return best;
   }
 
   /** Stand street lamps along the roads: evenly spaced, clear of walls and of other streets. */
@@ -531,7 +743,17 @@ export class World {
     const key = chunkKey(chunkOf(x), chunkOf(y));
     let s = this.stuff.get(key);
     if (!s) {
-      s = { buildings: [], signs: [], parked: [], lamps: [], trees: [], green: [] };
+      s = {
+        buildings: [],
+        signs: [],
+        parked: [],
+        lamps: [],
+        names: [],
+        stops: [],
+        spans: [],
+        trees: [],
+        green: [],
+      };
       this.stuff.set(key, s);
     }
     return s;
@@ -1006,7 +1228,7 @@ export class World {
     );
     this.roads.emit(key, ground, marks);
     const stuff = this.stuff.get(key);
-    // The first time a chunk is built, its parked cars and sign posts become things to hit.
+    // The first time a chunk is built, its parked cars, posts and trunks become things to hit.
     const first = !this.solid.has(key);
     this.solid.add(key);
     const park = (x: number, y: number, dir: XY, seed: number) => {
@@ -1044,12 +1266,36 @@ export class World {
       streetLamp(base, lamps[k]!, lamps[k + 1]!, dir, rule.tall, rule.arm);
       if (first) this.block(lamps[k]!, lamps[k + 1]!, dir, 0.15, 0.15);
     }
+    for (const s of stuff?.stops ?? []) {
+      if (s.yields) yieldSign(base, s.x, s.y, s.face);
+      else stopSign(base, s.x, s.y, s.face, this.labels.get(this.stopWord));
+      if (first) this.block(s.x, s.y, s.face, 0.08, 0.08);
+    }
+    for (const n of stuff?.names ?? []) {
+      streetBlades(
+        base,
+        n.x,
+        n.y,
+        n.h,
+        n.blades.map((b) => ({ dir: b.dir, label: this.labels.get(b.label) })),
+        n.post,
+      );
+      if (first && n.post) this.block(n.x, n.y, [1, 0], 0.08, 0.08);
+    }
+    for (const span of stuff?.spans ?? []) {
+      signalSpan(base, span.a, span.b, span.heads);
+      if (first) for (const p of [span.a, span.b]) this.block(p[0], p[1], [1, 0], 0.2, 0.2);
+    }
     const parked = stuff?.parked ?? [];
     for (let k = 0; k < parked.length; k += 3) {
       const a = parked[k + 2]!;
       park(parked[k]!, parked[k + 1]!, [Math.cos(a), Math.sin(a)], Math.round(parked[k]! * 7) + k);
     }
-    for (const tree of this.trees(cx, cy, stuff)) addTree(base, tree, this.season);
+    for (const tree of this.trees(cx, cy, stuff)) {
+      addTree(base, tree, this.season);
+      // Only the trunk is solid: you can brush through the leaves, not through the wood.
+      if (first) this.block(tree.x, tree.y, [1, 0], trunkHalf(tree), trunkHalf(tree));
+    }
 
     const meshes: Mesh[] = [];
     const add = (mesh: Mesh | null, casts: boolean) => {

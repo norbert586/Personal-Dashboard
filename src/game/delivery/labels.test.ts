@@ -44,3 +44,10 @@ test('each digit cell is its glyph with one texel of plate all round', () => {
       }
   }
 });
+
+test("a street-name blade is one line, however long the street's name", () => {
+  assert.deepEqual(layOut('E Auburn Rd', 16, 1), ['E AUBURN RD']);
+  assert.deepEqual(layOut('Drexelgate Pkwy', 16, 1), ['DREXELGATE PKWY']);
+  // A name too long for the blade loses its last word rather than wrapping.
+  assert.deepEqual(layOut('Stoney Creek Meadows Dr', 16, 1), ['STONEY CREEK']);
+});

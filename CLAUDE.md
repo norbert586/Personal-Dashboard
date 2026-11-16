@@ -62,6 +62,8 @@ npm run zone:import  # re-bake the delivery zone from OpenStreetMap (needs the n
 - TypeScript strict. Server-only logic in `src/lib/`. UI in `src/components/*.astro`. The town
   (client-side, three.js) goes in `src/game/`, and the delivery mode in `src/game/delivery/`.
   The delivery zone's importer and file format are in `src/lib/zone/`; the browser only decodes.
+  Who stops where is `control.ts`, and the signals' one timer is `signals.ts`: the signs and signal
+  heads you see and the other cars both read them, so change the rule there, never in one place.
   Landmarks the map doesn't name, and the pizzeria's shop front, are set in `site.config.ts`
   (`delivery.landmarks`, `delivery.storeFront`); re-run `npm run zone:import` after changing them.
 - The delivery mode's world is in real metres, east (+x) and north of the store; in three.js
@@ -112,7 +114,8 @@ npm run zone:import  # re-bake the delivery zone from OpenStreetMap (needs the n
 - The delivery page takes `?at=east,north` (metres from the store), `?heading=degrees` (0 is
   north, clockwise) and `?time=day|dusk|night`. Without `?at` you start in the delivery parking behind
   the store. Its canvas carries `data-street`, `data-place`, `data-address`, `data-traffic`, `data-mph`,
-  `data-gear` and `data-at`. `?shadows=0` turns shadows off (phones start without them), and
+  `data-gear`, `data-at` and `data-signal` (the light the signal ahead shows you: `green`, `yellow`,
+  `red`, or empty when none faces you within 150 m). `?shadows=0` turns shadows off (phones start without them), and
   `?traffic=0` empties the streets of other cars and people (they're random, so tests that drive
   use it).
   The sandbox's software renderer manages about 23 frames a second there; that says nothing

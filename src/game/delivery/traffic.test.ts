@@ -5,6 +5,7 @@ import { buildZone, type OsmElement } from '../../lib/zone/build.ts';
 import type { Road, Zone } from '../../lib/zone/format.ts';
 import { site } from '../../site.config.ts';
 import { newCar } from './car.ts';
+import { controlOf, lightFor } from './control.ts';
 import { SegGrid } from './grid.ts';
 import { Traffic, bump, dice, type Rider } from './traffic.ts';
 
@@ -102,6 +103,39 @@ test('a car on the side street stops for the main road, then pulls out', () => {
     `it stopped ${nearest.toFixed(1)} m short of the main road`,
   );
   assert.equal(car.road, 0, 'and then turned onto the main road');
+});
+
+/** The same main road, with a signal where a street crosses it. */
+const cross: Zone = {
+  ...tee,
+  name: 'cross',
+  roads: [tee.roads[0]!, road('residential', 'Cross Street', [0, -200, 0, 0, 0, 200], [3, 1, 4])],
+  junctions: [
+    ...tee.junctions.map((j, i) => ({ ...j, signal: i === 1 })),
+    { x: 0, y: 200, signal: false },
+  ],
+};
+
+test('a car that reaches a signal on yellow stops, waits out the red and goes on green', () => {
+  const traffic = new Traffic(cross, ...grids(cross), { ...nobody, random: () => 0 });
+  const control = controlOf(cross);
+  const east = Math.PI / 2;
+  // Timed to come within sight of the signal about a second into its yellow.
+  const car = rider({ road: 0, s: 44, x: -256, y: -4, heading: east, speed: 18 });
+  traffic.riders.push(car);
+  let waited = 0;
+  for (let i = 0; i < 60 * 50; i++) {
+    traffic.update(1 / 60, away, null);
+    const light = lightFor(control, 1, east, traffic.time);
+    if (light === 'red' && car.speed < 0.2) {
+      waited += 1 / 60;
+      assert.ok(car.x < -8 && car.x > -22, `waiting at x = ${car.x.toFixed(1)}`);
+    }
+    // It never sets off into a red light.
+    if (light !== 'green' && car.x < -8) assert.ok(car.x < -8.5 || car.speed < 0.5);
+  }
+  assert.ok(waited > 15, `it waited ${waited.toFixed(1)} s at the red`);
+  assert.ok(car.x > 30, `then went through, to x = ${car.x.toFixed(0)}`);
 });
 
 test('a car on the main road keeps to its side and goes straight through', () => {

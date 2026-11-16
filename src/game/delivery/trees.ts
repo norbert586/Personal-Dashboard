@@ -105,11 +105,14 @@ const LEAVES: Record<Season, { tints: Tint[]; scale: number }> = {
 const PINE: Tint = [0.26, 0.44, 0.32];
 const BARK: Tint = [1, 1, 1];
 
+/** Half the width of a tree's trunk, in metres: what's drawn, and what stops the car. */
+export const trunkHalf = (tree: Tree): number => (tree.pine ? 0.18 : 0.2 + tree.size * 0.03);
+
 export function addTree(out: MeshBuilder, tree: Tree, season: Season): void {
   const seed = Math.round(tree.x * 7) ^ Math.round(tree.y * 13);
   const { x, y } = tree;
   const trunk = tree.pine ? 1.1 : 2.2 + rnd(seed, 1) * 1.1;
-  const w = tree.pine ? 0.18 : 0.2 + tree.size * 0.03;
+  const w = trunkHalf(tree);
   // The trunk: four sides.
   const corners = [
     [x - w, y - w],

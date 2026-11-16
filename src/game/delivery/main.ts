@@ -40,6 +40,8 @@ import { Chase } from './chase.ts';
 import { collide, fence } from './collide.ts';
 import { roadWidth } from './roads.ts';
 import { Life } from './life.ts';
+import { SignalHeads } from './signal-heads.ts';
+import { lightAt } from './signals.ts';
 import { Sky } from './sky.ts';
 import { insideRing, points, type XY } from './space.ts';
 import { makeMaterials } from './tiles.ts';
@@ -212,6 +214,7 @@ async function boot(): Promise<void> {
     random: Math.random,
   });
   const life = new Life(scene, traffic, shadows, still);
+  const signalHeads = new SignalHeads(scene, world.heads);
   const body = new CarBody(scene, still);
   const chase = new Chase(car.heading, still);
 
@@ -440,6 +443,7 @@ async function boot(): Promise<void> {
     lightLamps(sky.night);
     body.sync(car, sky.night, dt);
     life.sync(sky.night, now);
+    signalHeads.sync(traffic.time, car.x, car.y);
     renderer.render(scene, chase.camera);
 
     // The dashboard: the dials every frame, the slower things a few times a second.
@@ -488,6 +492,10 @@ async function boot(): Promise<void> {
     if (data.street !== name) data.street = name;
     if (data.place !== here) data.place = here;
     if (data.address !== (address ?? '')) data.address = address ?? '';
+    // The signal ahead that faces you, as you'd read it through the windscreen.
+    const head = world.signalAhead(car.x, car.y, car.heading);
+    const light = head ? lightAt(head.axis, head.signal, traffic.time) : '';
+    if (data.signal !== light) data.signal = light;
     const cars = traffic.riders.filter((r) => !r.bike).length;
     data.traffic = `${cars} cars, ${traffic.riders.length - cars} bikes, ${traffic.walkers.length} on foot`;
     if (data.mph !== String(speed)) data.mph = String(speed);

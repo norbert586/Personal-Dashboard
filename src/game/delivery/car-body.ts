@@ -30,7 +30,7 @@ export class CarBody {
   private readonly tail = flat(0x7a1414, 0xff2a1e);
   private readonly head = flat(0xd9d2b0, 0xfff2c4);
   private readonly sign = flat(0xf2c14e, 0xffc94a);
-  private readonly lamp = new SpotLight(0xfff0c8, 0, 75, 0.52, 0.5, 1.2);
+  private readonly lamp = new SpotLight(0xfff0c8, 0, 80, 0.52, 0.5, 1.5);
   private roll = 0;
   private pitch = 0;
   private spin = 0;
@@ -133,8 +133,10 @@ export class CarBody {
       this.wheels.push(wheel);
       if (steers) this.steered.push(hub);
     }
-    this.lamp.position.set(0, 0.9, -1.8);
-    this.lamp.target.position.set(0, 0, -30);
+    // The light sits well above the real lamps: from bumper height it only grazes a flat road,
+    // which stays dark. From up here the road is lit from a few metres ahead of the nose.
+    this.lamp.position.set(0, 4, -1.8);
+    this.lamp.target.position.set(0, 0, -32);
     this.root.add(this.shell, this.lamp, this.lamp.target);
     scene.add(this.root);
   }
@@ -158,6 +160,6 @@ export class CarBody {
     this.tail.emissiveIntensity = car.brake > 0.05 ? 1.6 : night * 0.6;
     this.head.emissiveIntensity = night > 0.1 ? 1.4 : 0;
     this.sign.emissiveIntensity = night * 0.9;
-    this.lamp.intensity = night * 90;
+    this.lamp.intensity = night * 330;
   }
 }

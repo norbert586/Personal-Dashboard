@@ -287,3 +287,134 @@ export function parkedCar(out: MeshBuilder, x: number, y: number, dir: XY, seed:
     GLASS,
   );
 }
+
+/** A signal head hanging from a span wire: where it is, and the unit direction it faces. */
+export interface HeadSpot {
+  x: number;
+  y: number;
+  face: XY;
+}
+
+/**
+ * Signal heads, bigger than life so three lights read from a block away at this picture's size.
+ * Heights of the red, yellow and green lenses, the lens's size, and how far it stands out from
+ * the middle of its housing, in metres.
+ */
+export const HEAD = { lenses: [6.8, 6.25, 5.7], lens: 0.44, out: 0.24, wire: 7.6 } as const;
+const WOOD: Tint = [0.36, 0.27, 0.2];
+const HOUSING: Tint = [0.86, 0.66, 0.1];
+
+/**
+ * A signal the way they hang here: a wire strung between two wooden poles on opposite corners,
+ * with the yellow heads hanging from it over the lanes they're for. The lit lenses aren't here:
+ * they change, so `signal-heads.ts` draws them.
+ */
+export function signalSpan(out: MeshBuilder, a: XY, b: XY, heads: readonly HeadSpot[]): void {
+  const len = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+  const dir: XY = [(b[0] - a[0]) / len, (b[1] - a[1]) / len];
+  for (const p of [a, b]) box(out, p[0], p[1], dir, 0.14, 0.14, 0, HEAD.wire + 0.7, WOOD);
+  box(
+    out,
+    (a[0] + b[0]) / 2,
+    (a[1] + b[1]) / 2,
+    dir,
+    len / 2,
+    0.035,
+    HEAD.wire,
+    HEAD.wire + 0.08,
+    POST,
+  );
+  for (const head of heads) {
+    box(out, head.x, head.y, head.face, 0.04, 0.04, 7.1, HEAD.wire, POST);
+    box(out, head.x, head.y, head.face, 0.22, 0.36, 5.4, 7.1, HOUSING);
+  }
+}
+
+const SIGN_RED: Tint = [0.8, 0.09, 0.08];
+const SIGN_BACK: Tint = [0.5, 0.52, 0.55];
+/** Road signs: half the face's width, and the height of its middle, in metres. */
+export const ROAD_SIGN = { half: 0.5, at: 2.5 } as const;
+
+/** A point on a sign's face: `l` metres to the reader's left of the post and `h` up, `off` proud. */
+function onFace(x: number, y: number, face: XY, off: number, l: number, h: number): P3 {
+  return [x + face[0] * off + face[1] * l, y + face[1] * off - face[0] * l, h];
+}
+
+/**
+ * A stop sign on its post, facing `face`: a red octagon with the word across it, so it's told by
+ * its shape and its word as well as its colour. Lit a little at night, as a reflective sign is.
+ */
+export function stopSign(out: MeshBuilder, x: number, y: number, face: XY, word: Label): void {
+  const R = ROAD_SIGN.half;
+  const k = R * Math.tan(Math.PI / 8);
+  const z = ROAD_SIGN.at;
+  box(out, x, y, face, 0.05, 0.05, 0, z + R, POST);
+  for (const [off, tint, glow] of [
+    [0.07, SIGN_RED, -0.6],
+    [-0.07, SIGN_BACK, 0],
+  ] as const) {
+    const p = (l: number, h: number) => onFace(x, y, face, off, l, h);
+    const flat = (a: P3, b: P3, c: P3, d: P3) =>
+      out.quad(a, b, c, d, 0, 0, 0, 0, T.plain, tint, glow);
+    flat(p(R, z - k), p(-R, z - k), p(-R, z + k), p(R, z + k));
+    flat(p(R, z + k), p(-R, z + k), p(-k, z + R), p(k, z + R));
+    flat(p(k, z - R), p(-k, z - R), p(-R, z - k), p(R, z - k));
+  }
+  // The word fills the middle band.
+  const w = (k * 2 * word.w) / word.h / 2;
+  const a = onFace(x, y, face, 0.09, w, 0);
+  const b = onFace(x, y, face, 0.09, -w, 0);
+  panel(out, [a[0], a[1]], [b[0], b[1]], z - k, z + k, word, SIGN_RED, -1);
+}
+
+/** A yield sign: a red triangle, point down, with a white middle. */
+export function yieldSign(out: MeshBuilder, x: number, y: number, face: XY): void {
+  const R = ROAD_SIGN.half;
+  const z = ROAD_SIGN.at;
+  const top = z + R * 0.87;
+  const foot = z - R * 0.87;
+  box(out, x, y, face, 0.05, 0.05, 0, top, POST);
+  const tri = (off: number, size: number, tint: Tint, glow: number) => {
+    const mid = (top * 2 + foot) / 3;
+    const p = (l: number, h: number) => onFace(x, y, face, off, l * size, mid + (h - mid) * size);
+    out.tri(p(R, top), p(-R, top), p(0, foot), 0, 0, 0, 0, 0, 0, T.plain, tint, glow);
+  };
+  tri(-0.07, 1, SIGN_BACK, 0);
+  tri(0.07, 1, SIGN_RED, -0.6);
+  tri(0.09, 0.56, [1, 1, 1], -0.6);
+}
+
+const BLADE_GREEN: Tint = [0.05, 0.36, 0.2];
+/** Street-name blades: metres to a pixel of lettering, and how far apart two are stacked. */
+export const BLADE = { scale: 0.044, step: 0.46 } as const;
+
+/**
+ * Street names at a corner: a green blade for each street, running the way its street runs and
+ * read from both sides, stacked from `h0` up. Stands on its own post unless something else
+ * (a stop sign, a signal's pole) already holds it up.
+ */
+export function streetBlades(
+  out: MeshBuilder,
+  x: number,
+  y: number,
+  h0: number,
+  blades: ReadonlyArray<{ dir: XY; label: Label }>,
+  post: boolean,
+): void {
+  if (post) box(out, x, y, [1, 0], 0.05, 0.05, 0, h0 + BLADE.step * blades.length, POST);
+  blades.forEach(({ dir, label }, i) => {
+    const w = label.w * BLADE.scale;
+    const h = label.h * BLADE.scale;
+    const foot = h0 + i * BLADE.step;
+    const [dx, dy] = dir;
+    box(out, x, y, dir, w / 2 + 0.04, 0.03, foot, foot + h, BLADE_GREEN, -0.5);
+    for (const side of [1, -1]) {
+      // Each face reads left to right from its own side.
+      const ox = -dy * 0.05 * side;
+      const oy = dx * 0.05 * side;
+      const a: XY = [x + (dx * w * side) / 2 + ox, y + (dy * w * side) / 2 + oy];
+      const b: XY = [x - (dx * w * side) / 2 + ox, y - (dy * w * side) / 2 + oy];
+      panel(out, a, b, foot, foot + h, label, BLADE_GREEN, -1);
+    }
+  });
+}

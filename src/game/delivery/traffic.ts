@@ -7,18 +7,10 @@
  */
 import type { Road, RoadKind, Zone } from '../../lib/zone/format.ts';
 import type { CarState } from './car.ts';
+import { PRIORITY, controlOf, lightFor, type Control } from './control.ts';
 import type { SegGrid } from './grid.ts';
 import { roadWidth } from './roads.ts';
 
-/** Who gives way: a road with a lower number stops for one with a higher. */
-const PRIORITY: Partial<Record<RoadKind, number>> = {
-  motorway: 8,
-  primary: 6,
-  secondary: 5,
-  tertiary: 4,
-  residential: 3,
-  link: 2.5,
-};
 /** How likely a new car is to start on each kind of road: busy roads are busier. */
 const BUSY: Partial<Record<RoadKind, number>> = {
   motorway: 1,
@@ -155,28 +147,20 @@ export class Traffic {
   private readonly pathTracks = new Map<number, Track>();
   /** What meets at each intersection: road and point index, in pairs. */
   private readonly joins: number[][];
-  /** The highest priority of any road at each intersection, and of any that runs through it. */
-  private readonly major: Float32Array;
-  private readonly through: Float32Array;
-  private time = 0;
+  private readonly control: Control;
+  private clock = 0;
 
   constructor(zone: Zone, streets: SegGrid, walks: SegGrid, options: TrafficOptions) {
     this.zone = zone;
     this.streets = streets;
     this.walks = walks;
     this.options = options;
+    this.control = controlOf(zone);
     this.joins = zone.junctions.map(() => []);
-    this.major = new Float32Array(zone.junctions.length);
-    this.through = new Float32Array(zone.junctions.length).fill(-1);
     zone.roads.forEach((road, r) => {
-      const priority = PRIORITY[road.kind];
-      if (priority === undefined) return;
-      const last = road.nodes.length - 1;
+      if (PRIORITY[road.kind] === undefined) return;
       road.nodes.forEach((j, k) => {
-        if (j < 0) return;
-        this.joins[j]!.push(r, k);
-        this.major[j] = Math.max(this.major[j]!, priority);
-        if (k > 0 && k < last) this.through[j] = Math.max(this.through[j]!, priority);
+        if (j >= 0) this.joins[j]!.push(r, k);
       });
     });
   }
@@ -269,13 +253,12 @@ export class Traffic {
         ways.push({ road: r, k: i, dir: d, angle, weight: 1 + (PRIORITY[other.kind] ?? 0) * 0.4 });
       }
     }
-    const mine = PRIORITY[road.kind] ?? 0;
-    const ends = k === 0 || k === nodes.length - 1;
-    const ramp = road.kind === 'link' || road.kind === 'motorway';
-    let stop: Turn['stop'] = 'no';
-    if (this.zone.junctions[j]!.signal) stop = 'signal';
-    else if (ramp && this.major[j]! >= 8) stop = 'no';
-    else if (mine < this.major[j]! || (ends && this.through[j]! >= mine)) stop = 'sign';
+    // What it meets there is the same thing the signs and signal heads show (control.ts). It
+    // came in along the arm that points back at it. A yield is taken as a stop for now.
+    const met = this.control.arms[j]!.find(
+      (a) => a.road === rider.road && a.k === k && a.d === -rider.dir,
+    )?.stop;
+    const stop: Turn['stop'] = met === 'yield' ? 'sign' : (met ?? 'no');
     let widest = 6;
     for (let n = 0; n < joins.length; n += 2)
       widest = Math.max(widest, roadWidth(roads[joins[n]!]!));
@@ -313,10 +296,9 @@ export class Traffic {
     };
   }
 
-  /** Whether a signal shows green to someone heading this way. */
-  private green(junction: number, heading: number): boolean {
-    const eastWest = Math.abs(Math.sin(heading)) > Math.SQRT1_2 ? 0 : 1;
-    return Math.floor((this.time + (junction % 5) * 9) / 24) % 2 === eastWest;
+  /** Seconds the streets have been running: the signals keep time by it. */
+  get time(): number {
+    return this.clock;
   }
 
   /** Whether an intersection is clear to pull out into. */
@@ -342,7 +324,7 @@ export class Traffic {
         turn.stop === 'signal' &&
         !rider.go &&
         gap < 40 &&
-        this.green(turn.junction, rider.heading)
+        lightFor(this.control, turn.junction, rider.heading, this.clock) === 'green'
       )
         rider.go = rider.speed > 0.5 || rider.waited > 0.4;
       if (turn.stop !== 'no' && !rider.go) {
@@ -549,7 +531,7 @@ export class Traffic {
 
   /** Move everyone on, and keep the streets around the viewer peopled. */
   update(dt: number, view: Viewer, car: CarState | null): void {
-    this.time += dt;
+    this.clock += dt;
     for (const rider of this.riders) this.ride(rider, car, dt);
     for (const walker of this.walkers) this.walk(walker, car, dt);
     // Whoever is far behind you, or has run out of road, is gone.

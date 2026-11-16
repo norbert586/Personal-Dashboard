@@ -131,8 +131,14 @@ drive.
 - **Life on the streets:** a few other cars and cyclists on the roads and people on the
   sidewalks, enough that the place isn't empty and no more. They're around you only. Cars keep
   to their lane, give way to bigger roads, take turns at signals and wait behind you; you can't
-  drive through them. Signal lights you can see, and traffic that matters to a delivery, come
-  later.
+  drive through them. Traffic that matters to a delivery comes later.
+- **Traffic control** you can see. The 44 signal junctions have signal heads hung on a wire over
+  the middle, as they are here, cycling green, yellow and red on the one timer the other cars
+  obey. A stop sign stands wherever those cars stop: where a side street meets a bigger road, and
+  wherever the map marks one; the map's yield signs stand too. Corners carry both streets' names
+  on green blades. For me they're there to be seen and read: nothing happens yet if I run one
+  (open question 10).
+- **Things that stop the car:** walls, parked cars, posts and poles, and tree trunks.
 - **The look** is detailed, with a proper sky, in the 32-bit (PlayStation-era) pixel style. See
   `DESIGN.md`.
 - **Where it plays:** desktop first, with a keyboard or a controller; phones get on-screen
@@ -272,7 +278,9 @@ town as plain files, rebuilt about every half hour, with no aircraft and no edit
    M-53; ADR-032). Norbert hasn't confirmed either, so say so if something else would be better.
 10. **Traffic in the delivery mode:** Norbert asked for a few cars, cyclists and people to fill
     the void (2026-11-15), and that's built. How much traffic a real shift should have, and
-    whether it should slow a delivery down, is still open.
+    whether it should slow a delivery down, is still open. Signals and signs are visible from
+    2026-11-16 and the other cars obey them; whether running one costs me anything is part of
+    this question.
 11. **How a shift plays:** settled on 2026-11-16 (ADR-041 to 043): the modes, the store's
     dispatch screen, the hand-overs and the combined score. Still to walk through when they're
     built: how big a tip is and what moves it, how late is late, and how big a bunch of orders is.
