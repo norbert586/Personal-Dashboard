@@ -66,8 +66,7 @@ second. Start the next session by having Norbert play it, then work down this li
          landmarks. Streets the map left bare get stand-in homes (`src/lib/zone/fill.ts`, ADR-038),
          houses get driveways, and lots and driveways have parked cars you can't drive through.
    - [x] The pizzeria: a lit shop front with a striped awning and its sign, and marked delivery
-         stalls where the drive starts. It's on a stand-in shop front until Norbert says which
-         one is his (`delivery.storeFront` in `site.config.ts`, SPEC open question 12).
+         stalls where the drive starts.
    - [x] A little life (`traffic.ts`, `life.ts`): a few cars and cyclists on the real road graph
          and people on the real sidewalks, only around you. Cars keep their lane, stop for bigger
          roads, take turns at signals and wait behind you. `?traffic=0` empties the streets.
@@ -76,10 +75,14 @@ second. Start the next session by having Norbert play it, then work down this li
          `delivery.landmarks` in `site.config.ts` and re-run the import), and whether the hospital
          wants its real shape of towers rather than one tall block.
    - [ ] Signal heads you can see, showing the phase the other cars already follow.
+   - [x] Norbert's first drive (2026-11-15): the car slid under braking and swung wide. Both
+         were faults in the model, now fixed and tested (ADR-040), and the car is his 2006 HHR
+         2.4 automatic in size, weight, gearing and looks. The store is on its real shop front,
+         with the delivery parking behind it where he parks. Street lamps line the roads.
    - [ ] **Tune the feel with Norbert.** He plays; change `CAR` to match what he says. The values
          that matter most: `grip`, `steerOver` and `steerRate` (how sharp it turns), `inertia` and
-         `handbrakeGrip` (how easily it slides and spins: the handbrake held at full lock spins
-         the car in about a second, which may be too much), `torque` and the shift points, and
+         `handbrakeGrip` (how easily it slides and spins: the handbrake held at full lock for a second
+         still turns the car right round, which may be too much), `torque` and the shift points, and
          the camera's distance and lag in `chase.ts`.
    - [ ] Frame rate on his laptop and phone. If it's short of 60: shadows are the first cost
          (`?shadows=0` to compare), then the build distance (`BUILD` in `world.ts`) and the

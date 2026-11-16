@@ -9,7 +9,7 @@ import type { SegGrid } from './grid.ts';
 const VIEWS = [
   { name: 'Close', back: 6.4, up: 2.5 },
   { name: 'Far', back: 11, up: 4.4 },
-  { name: 'Hood', back: 0, up: 1.3 },
+  { name: 'Hood', back: 0, up: 1.4 },
 ] as const;
 
 export class Chase {

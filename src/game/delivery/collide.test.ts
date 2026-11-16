@@ -16,8 +16,8 @@ test('a wall straight ahead stops the car, nose against it', () => {
     hardest = Math.max(hardest, collide(car, walls));
   }
   assert.ok(hardest > 8, `hit at ${hardest.toFixed(1)} m/s`);
-  // The front circle (1.35 m ahead, 0.95 m wide) rests on the wall.
-  assert.ok(car.y < 40 - 2.25 && car.y > 40 - 2.6, `stopped at ${car.y.toFixed(2)}`);
+  // The front circle (1.1 m ahead of the centre of mass, 0.95 m wide) rests on the wall.
+  assert.ok(car.y < 40 - 1.95 && car.y > 40 - 2.3, `stopped at ${car.y.toFixed(2)}`);
   assert.ok(speedMph(car) < 4);
 });
 

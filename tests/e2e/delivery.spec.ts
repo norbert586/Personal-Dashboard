@@ -91,7 +91,7 @@ test('the gas pulls away through the gears, and the brake stops the car', async 
   const from = await world.getAttribute('data-at');
   await page.keyboard.down('KeyW');
   await expect.poll(mph(page), { timeout: 30_000 }).toBeGreaterThan(20);
-  await expect(world).toHaveAttribute('data-gear', /^[1-6]$/);
+  await expect(world).toHaveAttribute('data-gear', /^[1-4]$/);
   await page.keyboard.up('KeyW');
   expect(await world.getAttribute('data-at')).not.toBe(from);
 

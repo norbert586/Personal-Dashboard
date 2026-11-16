@@ -122,6 +122,35 @@ export function sign(out: MeshBuilder, s: SignSpec): void {
   }
 }
 
+/**
+ * A street lamp: a pole, an arm reaching `arm` metres along `dir` over the road, and a head
+ * that's lit at night.
+ */
+export function streetLamp(
+  out: MeshBuilder,
+  x: number,
+  y: number,
+  dir: XY,
+  tall: number,
+  arm: number,
+): void {
+  box(out, x, y, dir, 0.09, 0.09, 0, tall, POST);
+  box(
+    out,
+    x + (dir[0] * arm) / 2,
+    y + (dir[1] * arm) / 2,
+    dir,
+    arm / 2 + 0.09,
+    0.05,
+    tall,
+    tall + 0.1,
+    POST,
+  );
+  const hx = x + dir[0] * arm;
+  const hy = y + dir[1] * arm;
+  box(out, hx, hy, dir, 0.42, 0.17, tall - 0.14, tall, [1, 0.9, 0.7], -2.2);
+}
+
 /** A flagpole flying the flag, for schools and fire stations. */
 export function flagpole(out: MeshBuilder, x: number, y: number, dir: XY): void {
   const H = 9;

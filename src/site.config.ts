@@ -204,9 +204,9 @@ export const site: SiteConfig = {
     storeName: "Ratiu's Pizza",
     // Where Auburn Road crosses Dequindre Road, on the Oakland and Macomb county line.
     store: { lat: 42.63878, lon: -83.09214 },
-    // A stand-in until Norbert says which shop front it is: the Auburn Road end of the plaza
-    // on the south-east corner.
-    storeFront: { lat: 42.63848, lon: -83.08945 },
+    // The north end of the strip in the plaza south of Auburn Road, facing west onto the lot
+    // (Norbert's map, 2026-11-15). The drivers park behind it, off the service lane.
+    storeFront: { lat: 42.63845, lon: -83.08957 },
     radiusMiles: 2.5,
     landmarks: [
       // 45550 Dequindre Road, across from the Audi dealer; the map has the building unnamed.

@@ -9,6 +9,7 @@ import {
   LinearSRGBColorSpace,
   PointLight,
   Scene,
+  SpotLight,
   WebGLRenderer,
 } from 'three';
 import { path } from '../../lib/paths.ts';
@@ -43,7 +44,7 @@ import { Sky } from './sky.ts';
 import { insideRing, points, type XY } from './space.ts';
 import { makeMaterials } from './tiles.ts';
 import { Traffic, bump } from './traffic.ts';
-import { World } from './world.ts';
+import { World, type LampHead } from './world.ts';
 
 // Colours are painted in display space, as in the town.
 ColorManagement.enabled = false;
@@ -159,6 +160,27 @@ async function boot(): Promise<void> {
   const lots = zone.areas.filter((a) => a.kind === 'parking').map((a) => points(a.pts));
   // The store: its delivery stalls are paved, and its front throws light after dark.
   const glow = new PointLight(0xffb070, 0, 34, 1.4);
+  // Street lamps: every head glows, and the few nearest you throw real light on the road. Each
+  // fades out before it's handed to another lamp, so the light never jumps.
+  const heads: LampHead[] = [];
+  const beams = Array.from({ length: touch ? 4 : 6 }, () => {
+    const beam = new SpotLight(0xffd6a0, 0, 30, 1.05, 0.9, 1.1);
+    scene.add(beam, beam.target);
+    return beam;
+  });
+  const lightLamps = (night: number) => {
+    const count = night > 0.02 ? world.lampsNear(car.x, car.y, heads) : 0;
+    // Past the last beam's reach there's no light to give: the next lamp out sets the edge.
+    const edge = Math.min(120, heads[beams.length]?.d ?? 120);
+    beams.forEach((beam, i) => {
+      const head = i < count ? heads[i]! : null;
+      const fade = head ? Math.min(1, Math.max(0, (edge - head.d) / 25)) : 0;
+      beam.intensity = night * fade * 110;
+      if (!head || fade === 0) return;
+      beam.position.set(head.x, head.h, -head.y);
+      beam.target.position.set(head.x, 0, -head.y);
+    });
+  };
   if (world.shop) {
     lots.push(world.shop.apron);
     const { door, out } = world.shop;
@@ -415,6 +437,7 @@ async function boot(): Promise<void> {
     sky.update(L, eye.x, eye.y, eye.z, still ? 0 : now);
     materials.night.value = sky.night;
     glow.intensity = sky.night * 60;
+    lightLamps(sky.night);
     body.sync(car, sky.night, dt);
     life.sync(sky.night, now);
     renderer.render(scene, chase.camera);

@@ -12,7 +12,7 @@ import { SegGrid } from './grid.ts';
 import { Labels } from './labels.ts';
 import { dress, mainWall, wallOf } from './landmarks.ts';
 import { MeshBuilder } from './mesh.ts';
-import { box, flagpole, panel, parkedCar, sign } from './props.ts';
+import { box, flagpole, panel, parkedCar, sign, streetLamp } from './props.ts';
 import { Roads, roadHeight, roadWidth } from './roads.ts';
 import {
   CHUNK,
@@ -75,31 +75,68 @@ const SIGN: Record<PlaceKind, { tint: Tint; tall: boolean }> = {
 const MAIZE: Tint = [1, 0.8, 0.22];
 const HOMES = new Set(['house', 'townhouse', 'apartments', 'mobile', 'garage', 'shed']);
 
-/** The pizzeria's front: its door, which way it faces, and the delivery stalls beside it. */
+/**
+ * The pizzeria: its front door and which way it faces, and round the back, where the drivers
+ * park, its back door and the delivery stalls.
+ */
 export interface Shop {
   door: XY;
-  /** Unit vectors: out from the wall, and along it toward the stalls. */
+  /** The unit vector out from the front wall. */
   out: XY;
-  along: XY;
   building: number;
   wall: number;
+  /** The back door, on the wall facing away from the front. */
+  back: { door: XY; out: XY; wall: number };
+  /**
+   * The stalls: `head` is the middle of the line they back onto, `toward` the unit vector from
+   * there to the back door, and `along` the one across the stalls.
+   */
+  stalls: { head: XY; toward: XY; along: XY };
   /** The paved pad under the stalls, as a ring. */
   apron: XY[];
-  /** Where the car waits: the middle stall, nose in, so the first thing you see is the store. */
+  /** Where the car waits: the middle stall, backed in, so the first thing you see is the store. */
   park: { x: number; y: number; heading: number };
 }
 
-const STALL = { wide: 2.9, near: 2.4, far: 8.2, first: 3.4, count: 3 } as const;
+/** The stalls: how wide and how deep each is, how far in from the pad's edge, and how many. */
+const STALL = { wide: 2.9, near: 0.5, far: 6.3, count: 3 } as const;
 
 interface ChunkStuff {
   buildings: number[];
   signs: RoadSign[];
   /** Cars parked in lots: x, y and the direction they point, in threes. */
   parked: number[];
+  /** Street lamps: where the pole stands, the unit direction of its arm, and its kind, in fives. */
+  lamps: number[];
   /** Trees the map itself marks. */
   trees: Tree[];
   /** Woods and parks that reach into this square, as indices into `green`. */
   green: number[];
+}
+
+/**
+ * Street lamps by the kind of road: how far apart, how tall, how far the arm reaches over the
+ * road, and whether they alternate sides. The map has almost none, so they're placed by rule.
+ */
+const LAMPS: Partial<
+  Record<Road['kind'], { every: number; tall: number; arm: number; both: boolean }>
+> = {
+  motorway: { every: 70, tall: 12, arm: 3, both: false },
+  link: { every: 60, tall: 10, arm: 2.4, both: false },
+  primary: { every: 52, tall: 9.5, arm: 2.6, both: true },
+  secondary: { every: 52, tall: 9.5, arm: 2.6, both: true },
+  tertiary: { every: 60, tall: 8.5, arm: 2.2, both: true },
+  residential: { every: 85, tall: 6.5, arm: 1.2, both: false },
+};
+const LAMP_KINDS = Object.keys(LAMPS) as Array<Road['kind']>;
+
+/** A lit lamp's head: where it is, and how high. */
+export interface LampHead {
+  x: number;
+  y: number;
+  h: number;
+  /** How far it is from where you asked. */
+  d: number;
 }
 
 interface Green {
@@ -202,7 +239,68 @@ export class World {
     this.shop = this.findShop();
     this.placeSigns();
     this.parkLots();
+    this.placeLamps();
     materials.labels.value = this.labels.build();
+  }
+
+  /** Stand street lamps along the roads: evenly spaced, clear of walls and of other streets. */
+  private placeLamps(): void {
+    const taken = new Set<number>();
+    const cell = (x: number, y: number) => chunkKey(Math.floor(x / 30), Math.floor(y / 30));
+    this.zone.roads.forEach((road, r) => {
+      const rule = LAMPS[road.kind];
+      if (!rule) return;
+      const off = roadWidth(road) / 2 + 1.3;
+      // Start part-way along, differently on each road, so lamps don't line up across streets.
+      let next = rule.every * (0.25 + rnd(r, 17) * 0.5);
+      let n = Math.floor(rnd(r, 18) * 2);
+      for (let i = 0; i + 3 < road.pts.length; i += 2) {
+        const ax = road.pts[i]!;
+        const ay = road.pts[i + 1]!;
+        const ex = road.pts[i + 2]! - ax;
+        const ey = road.pts[i + 3]! - ay;
+        const len = Math.hypot(ex, ey);
+        if (len < 0.01) continue;
+        for (; next <= len; next += rule.every, n++) {
+          const side = rule.both && n % 2 ? -1 : 1;
+          // Out to the right of the way the road runs, or the left: (dy, -dx) is the right.
+          const nx = (ey / len) * side;
+          const ny = (-ex / len) * side;
+          const x = ax + (ex / len) * next + nx * off;
+          const y = ay + (ey / len) * next + ny * off;
+          const key = cell(x, y);
+          if (taken.has(key) || !this.open(x, y, 0.8)) continue;
+          taken.add(key);
+          this.at(x, y).lamps.push(x, y, -nx, -ny, LAMP_KINDS.indexOf(road.kind));
+        }
+        next -= len;
+      }
+    });
+  }
+
+  /**
+   * The lit heads of the street lamps nearest a point, nearest first, written into `out`.
+   * Returns how many there are within the squares around it.
+   */
+  lampsNear(x: number, y: number, out: LampHead[]): number {
+    let count = 0;
+    for (let cx = chunkOf(x - 130); cx <= chunkOf(x + 130); cx++)
+      for (let cy = chunkOf(y - 130); cy <= chunkOf(y + 130); cy++) {
+        const lamps = this.stuff.get(chunkKey(cx, cy))?.lamps;
+        if (!lamps) continue;
+        for (let k = 0; k < lamps.length; k += 5) {
+          const rule = LAMPS[LAMP_KINDS[lamps[k + 4]!]!]!;
+          const head = (out[count] ??= { x: 0, y: 0, h: 0, d: 0 });
+          head.x = lamps[k]! + lamps[k + 2]! * rule.arm;
+          head.y = lamps[k + 1]! + lamps[k + 3]! * rule.arm;
+          head.h = rule.tall;
+          head.d = Math.hypot(head.x - x, head.y - y);
+          count++;
+        }
+      }
+    out.length = count;
+    out.sort((a, b) => a.d - b.d);
+    return count;
   }
 
   /** Whether a spot is free: no wall within `room` metres, and off every street. */
@@ -248,35 +346,60 @@ export class World {
       Math.min(w.len - 3, (place.x - w.a[0]) * w.dir[0] + (place.y - w.a[1]) * w.dir[1]),
     );
     const door: XY = [w.a[0] + w.dir[0] * t, w.a[1] + w.dir[1] * t];
-    const span = STALL.first + STALL.wide * STALL.count;
-    const at = (side: number, s: number, d: number): XY => [
-      door[0] + w.dir[0] * s * side + w.out[0] * d,
-      door[1] + w.dir[1] * s * side + w.out[1] * d,
+    // The back door: straight through the building from the front one, on the wall that faces
+    // the other way.
+    let backWall = -1;
+    let through = Infinity;
+    for (let i = 0; i < ring.length; i++) {
+      const v = wallOf(ring, i);
+      if (v.out[0] * w.out[0] + v.out[1] * w.out[1] > -0.7 || v.len < 6) continue;
+      const depth = (v.a[0] - door[0]) * -w.out[0] + (v.a[1] - door[1]) * -w.out[1];
+      const s = (door[0] - v.a[0]) * v.dir[0] + (door[1] - v.a[1]) * v.dir[1];
+      const miss = Math.max(0, -s, s - v.len);
+      if (depth > 1 && depth + miss * 4 < through) {
+        through = depth + miss * 4;
+        backWall = i;
+      }
+    }
+    // A building with no back wall has its stalls out front.
+    const v = wallOf(ring, backWall < 0 ? wall : backWall);
+    const s = Math.max(
+      2,
+      Math.min(v.len - 2, (door[0] - v.a[0]) * v.dir[0] + (door[1] - v.a[1]) * v.dir[1]),
+    );
+    const backDoor: XY = [v.a[0] + v.dir[0] * s, v.a[1] + v.dir[1] * s];
+    // The stalls face the back door from across the lane that runs behind the building, or
+    // across a car's width of room where there's no lane.
+    const lane = this.streets.nearest(backDoor[0] + v.out[0] * 6, backDoor[1] + v.out[1] * 6, 7);
+    const clear = lane
+      ? (lane.x - backDoor[0]) * v.out[0] +
+        (lane.y - backDoor[1]) * v.out[1] +
+        roadWidth(this.zone.roads[lane.id]!) / 2 +
+        0.4
+      : 6;
+    const reach = Math.max(4, clear) + STALL.far + STALL.near;
+    const head: XY = [backDoor[0] + v.out[0] * reach, backDoor[1] + v.out[1] * reach];
+    const toward: XY = [-v.out[0], -v.out[1]];
+    const half = (STALL.wide * STALL.count) / 2;
+    const at = (across: number, d: number): XY => [
+      head[0] + v.dir[0] * across + toward[0] * d,
+      head[1] + v.dir[1] * across + toward[1] * d,
     ];
-    // The stalls go on whichever side of the door has the room.
-    const room = (side: number) => {
-      let free = 0;
-      for (let s = STALL.first; s <= span; s += 1.45)
-        for (const d of [3.5, 6.5]) if (!this.walls.nearest(...at(side, s, d), 1.2)) free++;
-      return free;
-    };
-    const side = room(1) >= room(-1) ? 1 : -1;
-    const along: XY = [w.dir[0] * side, w.dir[1] * side];
-    const mid = STALL.first + STALL.wide * (STALL.count / 2);
-    const [px, py] = at(side, mid, (STALL.near + STALL.far) / 2);
+    const [px, py] = at(0, (STALL.near + STALL.far) / 2);
     return {
       door,
       out: w.out,
-      along,
       building: place.building,
       wall,
+      back: { door: backDoor, out: v.out, wall: backWall < 0 ? wall : backWall },
+      stalls: { head, toward, along: v.dir },
       apron: [
-        at(side, STALL.first - 0.8, 0.3),
-        at(side, span + 0.8, 0.3),
-        at(side, span + 0.8, STALL.far + 1),
-        at(side, STALL.first - 0.8, STALL.far + 1),
+        at(-half - 0.8, -0.4),
+        at(half + 0.8, -0.4),
+        at(half + 0.8, STALL.far + 0.5),
+        at(-half - 0.8, STALL.far + 0.5),
       ],
-      park: { x: px, y: py, heading: Math.atan2(-w.out[0], -w.out[1]) },
+      park: { x: px, y: py, heading: Math.atan2(toward[0], toward[1]) },
     };
   }
 
@@ -388,7 +511,7 @@ export class World {
     const key = chunkKey(chunkOf(x), chunkOf(y));
     let s = this.stuff.get(key);
     if (!s) {
-      s = { buildings: [], signs: [], parked: [], trees: [], green: [] };
+      s = { buildings: [], signs: [], parked: [], lamps: [], trees: [], green: [] };
       this.stuff.set(key, s);
     }
     return s;
@@ -623,7 +746,7 @@ export class World {
       park(gx + ux * 3.4, gy + uy * 3.4, rnd(seed, 72) < 0.6 ? [-ux, -uy] : [ux, uy], seed);
   }
 
-  /** The pizzeria's front: a lit shop front under a striped awning, and the delivery stalls. */
+  /** The pizzeria: a lit shop front under a striped awning, and the delivery stalls out back. */
   private dressShop(
     base: MeshBuilder,
     ground: MeshBuilder,
@@ -701,9 +824,35 @@ export class World {
       -1.6,
     );
 
+    // Round the back: a plain steel door under a lamp, where the orders come out.
+    const rear = wallOf(built.ring, shop.back.wall);
+    const behind = (s: number, d: number): XY => [
+      shop.back.door[0] + rear.dir[0] * s + rear.out[0] * d,
+      shop.back.door[1] + rear.dir[1] * s + rear.out[1] * d,
+    ];
+    if (shop.back.wall !== shop.wall) {
+      base.quad(
+        up(behind(-0.6, 0.06), 0),
+        up(behind(0.6, 0.06), 0),
+        up(behind(0.6, 0.06), 2.2),
+        up(behind(-0.6, 0.06), 2.2),
+        0,
+        0,
+        0.1,
+        0.1,
+        T.plain,
+        [0.5, 0.52, 0.55],
+      );
+      box(base, ...behind(0, 0.25), rear.dir, 0.3, 0.2, 2.5, 2.7, [1, 0.86, 0.6], -1.6);
+    }
+
     // The delivery stalls: a paved pad, maize lines, and the word in each stall.
-    const side = shop.along[0] * w.dir[0] + shop.along[1] * w.dir[1] >= 0 ? 1 : -1;
-    const lot = (s: number, d: number) => at(s * side, d);
+    const { head, toward, along } = shop.stalls;
+    const lot = (s: number, d: number): XY => [
+      head[0] + along[0] * s + toward[0] * d,
+      head[1] + along[1] * s + toward[1] * d,
+    ];
+    const span = (STALL.wide * STALL.count) / 2;
     const h = roadHeight('aisle');
     const [a, b, c, d] = shop.apron as [XY, XY, XY, XY];
     const ring = area2([a, b, c, d]) > 0 ? [a, b, c, d] : [d, c, b, a];
@@ -730,7 +879,7 @@ export class World {
     };
     const word = this.labels.get(this.labels.add('DELIVERY', 8, 1));
     for (let k = 0; k <= STALL.count; k++) {
-      const s = STALL.first + k * STALL.wide;
+      const s = -span + k * STALL.wide;
       line(lot(s, STALL.near), lot(s, STALL.far), 0.16);
       if (k === STALL.count) break;
       // The word reads the right way up as you pull in, at the mouth of the stall.
@@ -740,10 +889,10 @@ export class World {
       const foot = STALL.far - 0.6;
       // Corners as you see them pulling in: far left, far right, near right, near left.
       const corners: Array<[XY, number, number]> = [
-        [lot(mid - (ww / 2) * side, foot - wh), word.u0, word.v1],
-        [lot(mid + (ww / 2) * side, foot - wh), word.u1, word.v1],
-        [lot(mid + (ww / 2) * side, foot), word.u1, word.v0],
-        [lot(mid - (ww / 2) * side, foot), word.u0, word.v0],
+        [lot(mid - ww / 2, foot - wh), word.u0, word.v1],
+        [lot(mid + ww / 2, foot - wh), word.u1, word.v1],
+        [lot(mid + ww / 2, foot), word.u1, word.v0],
+        [lot(mid - ww / 2, foot), word.u0, word.v0],
       ];
       // Whichever way round faces up.
       const order = area2(corners.map((c) => c[0])) > 0 ? [0, 1, 2, 0, 2, 3] : [0, 2, 1, 0, 3, 2];
@@ -764,17 +913,13 @@ export class World {
         );
       }
     }
-    line(
-      lot(STALL.first, STALL.near),
-      lot(STALL.first + STALL.wide * STALL.count, STALL.near),
-      0.16,
-    );
-    // A sign at the head of the stalls.
-    const post = lot(STALL.first + (STALL.wide * STALL.count) / 2, 1.5);
+    line(lot(-span, STALL.near), lot(span, STALL.near), 0.16);
+    // A sign at the end of the row, clear of the view from behind the car.
+    const post = lot(span + 2.4, 0.3);
     sign(base, {
       x: post[0],
       y: post[1],
-      dir: w.dir,
+      dir: along,
       label: this.labels.get(this.labels.add('DELIVERY PARKING', 8, 2)),
       scale: 0.05,
       tint: [0.1, 0.25, 0.5],
@@ -828,6 +973,13 @@ export class World {
         const fy = s.y + s.dir[0] * 4.5;
         if (this.open(fx, fy, 1)) flagpole(base, fx, fy, [-s.dir[1], s.dir[0]]);
       }
+    }
+    const lamps = stuff?.lamps ?? [];
+    for (let k = 0; k < lamps.length; k += 5) {
+      const rule = LAMPS[LAMP_KINDS[lamps[k + 4]!]!]!;
+      const dir: XY = [lamps[k + 2]!, lamps[k + 3]!];
+      streetLamp(base, lamps[k]!, lamps[k + 1]!, dir, rule.tall, rule.arm);
+      if (first) this.block(lamps[k]!, lamps[k + 1]!, dir, 0.15, 0.15);
     }
     const parked = stuff?.parked ?? [];
     for (let k = 0; k < parked.length; k += 3) {
