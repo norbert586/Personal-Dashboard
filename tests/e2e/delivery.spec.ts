@@ -175,3 +175,19 @@ test('stopped beside a house, the dashboard names its address; driving on, it st
     .toBe(true);
   await page.keyboard.up('KeyW');
 });
+
+test('a tree stops the car at its trunk', async ({ page }) => {
+  // South of Auburn Road, pointing north across it at a tree the map has at (-40.1, 3.1).
+  await clockIn(page, '?at=-40.1,-22&heading=0&traffic=0');
+  const world = page.locator('#world');
+  const north = async () => Number((await world.getAttribute('data-at'))!.split(',')[1]);
+  await page.keyboard.down('KeyW');
+  await expect.poll(mph(page), { timeout: 30_000 }).toBeGreaterThan(8);
+  // Foot still down, it stops with its nose on the trunk, and stays there.
+  await expect.poll(mph(page), { timeout: 30_000 }).toBe(0);
+  await page.waitForTimeout(800);
+  await page.keyboard.up('KeyW');
+  const y = await north();
+  expect(y).toBeGreaterThan(-1);
+  expect(y).toBeLessThan(1.6);
+});

@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import { PAVEMENT, driveCar, newCar, speedMph, type CarInput, type CarState } from './car.ts';
 import { collide, fence } from './collide.ts';
 import { SegGrid } from './grid.ts';
+import { trunkHalf } from './trees.ts';
 
 const MPH = 2.236936;
 const gas: CarInput = { gas: 1, back: 0, steer: 0, handbrake: false };
@@ -95,6 +96,23 @@ test("running into a parked car's tail stops the car against it, with no spring 
   assert.ok(back.metres < 0.1, `sprang back ${back.metres.toFixed(2)} m`);
   assert.ok(Math.abs(car.y - (40 - 2.3 - 2.05)) < 0.02, `stopped at ${car.y.toFixed(2)}`);
   assert.ok(speedMph(car) < 0.1);
+});
+
+test('a tree trunk stops the car dead when hit square, and lets it by when only clipped', () => {
+  const tree = { x: 0, y: 40, size: 3, pine: false };
+  const half = trunkHalf(tree);
+  const trunk = () => parked(tree.x, tree.y, [1, 0], half, half);
+  const car = newCar(0, 0, 0);
+  const { frames, first } = crash(car, [trunk()]);
+  const back = springBack(frames, first, [0, -1]);
+  assert.ok(back.mph < 0.3, `sprang back at ${back.mph.toFixed(1)} mph`);
+  assert.ok(Math.abs(car.y - (40 - half - 2.05)) < 0.03, `stopped at ${car.y.toFixed(2)}`);
+  assert.ok(speedMph(car) < 0.1);
+  // A metre to one side, the trunk only catches the car's corner: it's pushed aside and goes on.
+  const clip = newCar(1, 0, 0);
+  crash(clip, [trunk()], { seconds: 6, after: gas });
+  assert.ok(clip.y > 60, `got to ${clip.y.toFixed(1)}`);
+  assert.ok(clip.x > 1, `pushed aside to ${clip.x.toFixed(2)}`);
 });
 
 test('nose first into a corner, the car comes to rest in it instead of rattling round', () => {

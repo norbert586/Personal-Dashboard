@@ -39,7 +39,7 @@ import {
   type XY,
 } from './space.ts';
 import { T, type Materials } from './tiles.ts';
-import { addTree, type Tree } from './trees.ts';
+import { addTree, trunkHalf, type Tree } from './trees.ts';
 
 /** Squares are built within this many metres of you, and dropped past the second distance. */
 const BUILD = 1180;
@@ -171,7 +171,7 @@ export class World {
   private readonly built = new Map<number, Mesh[]>();
   private readonly stuff = new Map<number, ChunkStuff>();
   private readonly green: Green[] = [];
-  /** Parked cars and sign posts, by chunk: they stop the car but not the camera. */
+  /** Parked cars, sign posts and tree trunks, by chunk: they stop the car but not the camera. */
   readonly things = new SegGrid(24);
   private readonly solid = new Set<number>();
   private readonly labels = new Labels();
@@ -1006,7 +1006,7 @@ export class World {
     );
     this.roads.emit(key, ground, marks);
     const stuff = this.stuff.get(key);
-    // The first time a chunk is built, its parked cars and sign posts become things to hit.
+    // The first time a chunk is built, its parked cars, posts and trunks become things to hit.
     const first = !this.solid.has(key);
     this.solid.add(key);
     const park = (x: number, y: number, dir: XY, seed: number) => {
@@ -1049,7 +1049,11 @@ export class World {
       const a = parked[k + 2]!;
       park(parked[k]!, parked[k + 1]!, [Math.cos(a), Math.sin(a)], Math.round(parked[k]! * 7) + k);
     }
-    for (const tree of this.trees(cx, cy, stuff)) addTree(base, tree, this.season);
+    for (const tree of this.trees(cx, cy, stuff)) {
+      addTree(base, tree, this.season);
+      // Only the trunk is solid: you can brush through the leaves, not through the wood.
+      if (first) this.block(tree.x, tree.y, [1, 0], trunkHalf(tree), trunkHalf(tree));
+    }
 
     const meshes: Mesh[] = [];
     const add = (mesh: Mesh | null, casts: boolean) => {
