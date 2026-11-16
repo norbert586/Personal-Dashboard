@@ -1,6 +1,6 @@
 # Spec: Ratiu Twp
 
-**Status:** v1.4, MVP defined, delivery mode in progress · **Updated:** 2026-11-15
+**Status:** v1.5, MVP defined, delivery mode in progress · **Updated:** 2026-11-16
 
 This is the only spec. Change it here, in place; don't fork it.
 
@@ -83,22 +83,41 @@ drive.
   place wears its real name on its wall and on a sign by the road, in the game's own lettering,
   with no logos (ADR-039); the dashboard names the landmark or neighborhood you're in, and the
   small map marks the landmarks.
-- **Real time.** A mile takes as long as a mile takes, the clock is the real clock, and the sun,
-  seasons and weather are the real ones.
+- **Real distances, game time.** A mile takes as long as a mile takes, and the sun, seasons and
+  weather are the real ones. But a shift is a game, not a real evening: each mode runs its own
+  clock, and you can play at any hour (ADR-041).
 - **Driving** is light and fun, in the spirit of Schedule I and GTA rather than a hard sim. The car
   is mine: a silver 2006 Chevrolet HHR with the 2.4 litre engine and the four-speed automatic, at
   its real size, weight and gearing, with gear shifts you can hear and feel. Steering is all
   yours: nothing steers or brakes for you. It brakes in a straight line, turns in the real car's
   36 feet, pushes wide before it spins, and slides when you pull the handbrake. It's a
   hand-written model with no physics engine (ADR-036, ADR-040).
-- **A delivery:** drive there, park, get out and walk to the door, and knock. The customer answers
-  in an RPG-style dialogue: a character portrait and text.
-- **A shift:** orders arrive by the real clock, each one an address on a ticket. You take singles,
-  doubles and triples, a GPS route shows the way, the clock runs, and the shift ends with how it
-  went (times, tips), with your best shift saved on the device.
-- **Addresses:** every building gets a street address on its real street, with a house number
-  from the Census Bureau's public block ranges, so numbers sit in the right block on the right side
-  of the street. They are not the real houses' exact numbers, and no order is a real person's.
+- **Modes** (ADR-041). All of them play the same delivery loop under different rules:
+  - **Rush:** 5, 10 or 20 orders, as fast and as well as you can. Ranked by one combined score.
+  - **Time trial:** a set time; deliver as many orders as well as you can.
+  - **Story:** a career, where you earn upgrades and get better as a driver. Designed with me
+    before it's built.
+  - **Free drive:** the streets with no orders.
+- **The store** is the hub (ADR-043). You park in the delivery parking, walk in the back door, and
+  at the dispatch screen assign yourself a single, double or triple. Orders come in bunches, and
+  pacing them is up to you. If what you bundle isn't really one run, the customers are quoted a
+  bad time and are angrier when you're late.
+- **A delivery:** each ticket has an address, the order, and how to hand it over: leave it on the
+  porch, call or text first, knock, or ring. Drive there, park, get out and walk to the door, every
+  time: the walk is where the game's jokes live. Do the hand-over, and the customer answers in an
+  RPG-style dialogue, a portrait and their line. Then back to the store.
+- **GPS** is off by default, and delivering without it earns a small bonus. Turned on, it draws
+  the route as a path on the ground.
+- **What goes wrong:** a late order, the wrong address, the wrong hand-over, and a damaged pizza.
+  Only collisions damage it, and harder hits do more.
+- **Scoring:** one combined score from time against the quote, the tip, the pizza's condition, the
+  right address and hand-over, and the no-GPS bonus. The customer's mood sets the tip, the rating
+  and what they say at the door. Best runs are saved on the device.
+- **People:** customers with names, faces and lines, many of them people I know and love, grown a
+  lot over time. They're the heart of the game's humour.
+- **Addresses:** every building gets a number on its real street, generated from how far along the
+  street its door is, even on one side and odd on the other (ADR-042). The numbers show on houses
+  and shops. They aren't accurate, and no order is a real person's.
 - **The pizzeria** stands on its real corner under a stand-in name, with no real brand or logo.
   It's the brightest thing on the street: a lit shop front under a striped awning, its name in
   lights. Round the back, off the service lane, are its back door and the marked delivery
@@ -114,8 +133,8 @@ drive.
   `DESIGN.md`.
 - **Where it plays:** desktop first, with a keyboard or a controller; phones get on-screen
   controls. It needs WebGL, like the town.
-- **Later:** a pizzeria door in town opens the mode, the radio, real rain and snow that change
-  the grip, and M-59's bridges. Order lives in `ROADMAP.md`.
+- **Later:** a pizzeria door in town opens the mode, engine sound, the radio, real rain and snow
+  that change the grip, and M-59's bridges. Order lives in `ROADMAP.md`.
 
 ## Why, in order
 
@@ -250,12 +269,16 @@ town as plain files, rebuilt about every half hour, with no aircraft and no edit
 10. **Traffic in the delivery mode:** Norbert asked for a few cars, cyclists and people to fill
     the void (2026-11-15), and that's built. How much traffic a real shift should have, and
     whether it should slow a delivery down, is still open.
-11. **How a shift plays:** tips, what counts as late, how orders are paced, and what happens at
-    the store between runs. Norbert knows the job; walk him through it before building the
-    delivery loop.
+11. **How a shift plays:** settled on 2026-11-16 (ADR-041 to 043): the modes, the store's
+    dispatch screen, the hand-overs and the combined score. Still to walk through when they're
+    built: how big a tip is and what moves it, how late is late, and how big a bunch of orders is.
+    Story mode gets its own session.
 12. **The store and the car:** settled on 2026-11-15. The pizzeria is the north end of the strip
     in the plaza south of Auburn Road, facing west, with the drivers' parking behind it
     (`delivery.storeFront` in `site.config.ts`). The car is his silver 2006 HHR (ADR-040).
 13. **Real names on signs:** landmarks and shops wear their real names in plain lettering, as a
     map does, with no logos or brand colours (ADR-039). Say so if any should be left off or
     renamed.
+14. **The people in the game:** Norbert wants customers who are people he knows and loves. The
+    site is public, so before any is written: real names or nicknames, and does each person get
+    a say in how they're shown?
