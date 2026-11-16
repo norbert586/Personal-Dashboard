@@ -39,8 +39,17 @@ import { CarBody } from './car-body.ts';
 import { Chase } from './chase.ts';
 import { collide, fence } from './collide.ts';
 import { GpsPath } from './gps.ts';
+import {
+  HAND_OVER,
+  clockText,
+  drawTicket,
+  money,
+  orderText,
+  writeTicket,
+  type Ticket,
+} from './ticket.ts';
 import { roadWidth } from './roads.ts';
-import { alongLine, doorSpot, route, spotNear, type Route, type Spot } from './route.ts';
+import { alongLine, route, spotNear, type Route, type Spot } from './route.ts';
 import { Life } from './life.ts';
 import { SignalHeads } from './signal-heads.ts';
 import { lightAt } from './signals.ts';
@@ -223,10 +232,19 @@ async function boot(): Promise<void> {
   /** Seconds until the dashboard's slower lines are next brought up to date. */
   let slow = 0;
 
-  // ---- GPS (SPEC: Delivery mode, GPS): off until you ask. Until there are orders, turning it
-  // on picks a random address to find (ADR-047). ----
+  const say = (el: HTMLElement, text: string) => {
+    if (el.textContent !== text) el.textContent = text;
+  };
+
+  // ---- The ticket (SPEC: Delivery mode, a delivery; ADR-048): stopping in the delivery parking
+  // gets you one, and its clock runs from when you drive out. ----
+  const stall = world.shop ? spotNear(zone, world.shop.park.x, world.shop.park.y, 90) : null;
+  let ticket: Ticket | null = null;
+  /** Seconds since you left the parking with this ticket, or null while you're still there. */
+  let gone: number | null = null;
+
+  // ---- GPS (SPEC: Delivery mode, GPS): off until you ask; on, it finds the ticket's door. ----
   interface Guide {
-    address: string;
     /** Where you pull up for the door. */
     spot: Spot;
     /** The way there from where you last were on it, or null when no road is near you. */
@@ -236,6 +254,7 @@ async function boot(): Promise<void> {
     seconds: number;
     arrived: boolean;
   }
+  let gpsOn = false;
   let guide: Guide | null = null;
   const ground = new GpsPath(
     scene,
@@ -244,6 +263,7 @@ async function boot(): Promise<void> {
   );
   /** How far along the painted route the car is, in metres. */
   let gpsAlong = 0;
+  let gpsDue = 0;
   /** Paint the guide's route on the road, or take the paint away. */
   const paintGps = () => {
     ground.show(zone, guide?.way ?? null, guide?.spot ?? null);
@@ -253,49 +273,77 @@ async function boot(): Promise<void> {
     const here = spotNear(zone, car.x, car.y, 90);
     return here ? route(zone, here, spot, { facing: car.heading }) : null;
   };
-  const guideTo = (building: number): boolean => {
-    const b = zone.buildings[building];
-    const spot = b && b.number > 0 ? doorSpot(zone, b) : null;
-    if (!b || !spot) return false;
-    const way = wayTo(spot);
-    guide = {
-      address: `${b.number} ${zone.roads[b.street]!.name}`,
-      spot,
-      way,
-      metres: way?.metres ?? 0,
-      seconds: way?.seconds ?? 0,
-      arrived: false,
-    };
+  /** Point the GPS at the ticket's door when it's on, and at nothing when it isn't. */
+  const aim = () => {
+    const way = gpsOn && ticket ? wayTo(ticket.spot) : null;
+    guide =
+      gpsOn && ticket
+        ? {
+            spot: ticket.spot,
+            way,
+            metres: way?.metres ?? 0,
+            seconds: way?.seconds ?? 0,
+            arrived: false,
+          }
+        : null;
     paintGps();
-    return true;
+    gpsDue = 0;
+    slow = 0;
   };
   const gpsButton = $<HTMLButtonElement>('#b-gps');
   const showGps = () => {
-    gpsButton.textContent = guide ? 'GPS: on' : 'GPS: off';
-    gpsButton.setAttribute('aria-pressed', String(guide !== null));
+    gpsButton.textContent = gpsOn ? 'GPS: on' : 'GPS: off';
+    gpsButton.setAttribute('aria-pressed', String(gpsOn));
   };
   const toggleGps = () => {
-    if (guide) {
-      guide = null;
-      paintGps();
-    } else
-      // Somewhere at least half a mile off, so there's a drive in it.
-      for (let tries = 0; tries < 400 && !guide; tries++) {
-        const i = Math.floor(Math.random() * zone.buildings.length);
-        const b = zone.buildings[i]!;
-        if (Math.hypot(b.pts[0]! - car.x, b.pts[1]! - car.y) > 800) guideTo(i);
-      }
+    gpsOn = !gpsOn;
+    aim();
     showGps();
-    gpsDue = 0;
-    slow = 0;
   };
   gpsButton.addEventListener('click', () => {
     toggleGps();
     canvas.focus({ focusVisible: false });
   });
-  let gpsDue = 0;
-  // ?to=<building> starts with the GPS on and set for that door.
-  if (asked.has('to')) guideTo(Number(asked.get('to')));
+
+  const ticketTo = $<HTMLElement>('#ticket-to');
+  const ticketOrder = $<HTMLElement>('#ticket-order');
+  const ticketTotal = $<HTMLElement>('#ticket-total');
+  const ticketNote = $<HTMLElement>('#ticket-note');
+  const ticketHow = $<HTMLElement>('#ticket-how');
+  const ticketClock = $<HTMLElement>('#ticket-clock');
+  const ticketBody = $<HTMLElement>('#ticket-body');
+  const ticketNone = $<HTMLElement>('#ticket-none');
+  /** Take a ticket, or hand it back with null, and put it on the dashboard. */
+  const take = (next: Ticket | null) => {
+    ticket = next;
+    gone = null;
+    ticketBody.hidden = !next;
+    ticketNone.hidden = next !== null;
+    if (next) {
+      say(ticketTo, next.address);
+      say(ticketOrder, orderText(next.lines));
+      say(ticketTotal, money(next.total));
+      say(ticketNote, `“${next.note}”`);
+      say(ticketHow, HAND_OVER[next.handOver]);
+    }
+    canvas.dataset.ticket = next
+      ? [
+          next.address,
+          orderText(next.lines),
+          money(next.total),
+          HAND_OVER[next.handOver],
+          `${next.quote / 60} min`,
+        ].join(' | ')
+      : '';
+    aim();
+  };
+  // ?to=<building> starts with a ticket for that door and the GPS on, wherever you start.
+  if (asked.has('to')) {
+    const to = Number(asked.get('to'));
+    const from = stall ?? spotNear(zone, car.x, car.y, 90);
+    gpsOn = true;
+    take(from ? writeTicket(zone, to, from, to) : null);
+  } else take(null);
   showGps();
 
   // ---- The picture: about 360 lines, scaled up by whole device pixels ----
@@ -435,10 +483,6 @@ async function boot(): Promise<void> {
     minute: '2-digit',
     hourCycle: site.hourCycle,
   });
-  const say = (el: HTMLElement, text: string) => {
-    if (el.textContent !== text) el.textContent = text;
-  };
-
   /** A small map of the streets around you, turned so that ahead is up. */
   const drawMap = () => {
     if (!pen) return;
@@ -535,6 +579,8 @@ async function boot(): Promise<void> {
       traffic.update(dt, car, car);
       bump(car, traffic.riders);
       fence(car, edge);
+      // The order's clock is game time: it holds still behind the menu (ADR-041).
+      if (gone !== null) gone += dt;
     }
     world.update(car.x, car.y, 5);
     chase.update(car, world.walls, dt);
@@ -588,9 +634,22 @@ async function boot(): Promise<void> {
     placeBox.hidden = !shown;
     if (shown) say(placeLine, shown);
     say(clock, clockFormat.format(new Date()));
+    // The ticket: stopped in the delivery parking you're handed one, unless the one you hold
+    // hasn't left yet. Its clock starts as you drive out.
+    if (home && speed === 0 && stall && (!ticket || gone !== null))
+      take(drawTicket(zone, stall, Math.random));
+    else if (ticket && gone === null && !home) gone = 0;
+    const due = ticket ? clockText(ticket.quote, gone) : '';
+    if (ticket) say(ticketClock, due);
+    ticketClock.classList.toggle('late', ticket !== null && gone !== null && gone > ticket.quote);
     // The GPS: what's left of the way, and a new way when you've left it.
     let gpsLine = '';
-    if (guide) {
+    if (gpsOn && !ticket) {
+      say(gpsTo, 'No order to find');
+      say(gpsLeft, '');
+      gpsLine = 'No order to find';
+    }
+    if (guide && ticket) {
       let at = guide.way ? alongLine(guide.way.line, car.x, car.y) : null;
       gpsDue -= 1;
       if ((!at || at.off > 40) && gpsDue <= 0) {
@@ -618,11 +677,11 @@ async function boot(): Promise<void> {
         : guide.way
           ? `${miles} · ${Math.max(1, Math.round(guide.seconds / 60))} min`
           : 'No road near you';
-      say(gpsTo, guide.address);
+      say(gpsTo, ticket.address);
       say(gpsLeft, `· ${left}`);
-      gpsLine = `${guide.address}, ${left.replace(' · ', ', ')}`;
+      gpsLine = `${ticket.address}, ${left.replace(' · ', ', ')}`;
     }
-    gpsBox.hidden = !guide;
+    gpsBox.hidden = !gpsOn;
     drawMap();
     // For tests and tools: what the drive is showing, written only when it changes.
     const data = canvas.dataset;
@@ -636,6 +695,7 @@ async function boot(): Promise<void> {
     const light = head ? lightAt(head.axis, head.signal, traffic.time) : '';
     if (data.signal !== light) data.signal = light;
     if (data.gps !== gpsLine) data.gps = gpsLine;
+    if (data.ticketClock !== due) data.ticketClock = due;
     const gpsMetres = guide?.way ? String(Math.round(guide.metres)) : '';
     if (data.gpsMetres !== gpsMetres) data.gpsMetres = gpsMetres;
     if (data.gpsMarks !== String(ground.marks)) data.gpsMarks = String(ground.marks);

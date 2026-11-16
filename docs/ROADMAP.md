@@ -42,29 +42,34 @@ lit pizzeria with its delivery parking, a few other cars, cyclists and people, s
 signals that cycle, stop signs and street names at the corners, a sky with the real sun, and
 Norbert's HHR with its automatic gearbox, walls that stop it, a chase camera and a dashboard.
 Every numbered building has an address, and the router gives a drive time between any two doors
-(ADR-047); G turns on a GPS that picks a random address and paints the way. The order below
+(ADR-047). Stopped in the delivery parking you're handed a ticket (ADR-048): an address, an order
+and its total, the customer's note and a quoted time that counts down once you drive out; G
+turns on a GPS that paints the way to its door. The order below
 builds the loop rough first, then the store, then the scoring, and leaves polish until playing
 shows what matters. Story mode waits for its own design session.
 
-**Next chat: step 5, the loop, rough, starting in the car.** Read SPEC (Delivery mode: a
-delivery, GPS, what goes wrong) and ADR-041, 043 and 047. Build it as slices Norbert can play:
+**Next chat: step 5, second slice: park, get out and walk to the door.** Read SPEC (Delivery
+mode: a delivery, the ticket, GPS) and ADR-041, 047 and 048. The ticket is done (`ticket.ts`, and
+its wiring in `main.ts`); build the next slice and stop there:
 
-1. A ticket in free drive: an address the router can reach (`doorSpot` isn't null), an order, a
-   hand-over and a quoted time. The GPS's random pick (`toggleGps` in `main.ts`) becomes the
-   ticket's address, and the GPS goes back to off by default.
-2. Park and get out: the town's figure (`src/game/bodies.ts`) in metres, a camera that follows on
-   foot, and walking from the car to the door (`doorAt` in `route.ts` is the door; `doorSpot` is
-   where the GPS ends).
-3. The hand-over at the door and the customer's answer in an HTML dialog, then back to the car
-   and back to the stalls behind the store.
-4. Rush, crudely: a set of orders, a timer and a results screen.
+1. Park and get out: the town's figure (`src/game/bodies.ts`) in metres, a camera that follows on
+   foot (DESIGN: "on foot it follows you the same way"), and walking from the car to the door.
+   `doorAt` in `route.ts` is the door; the ticket's `spot` is where the GPS ends and `walk` is
+   how far the door is from it. Getting back in the car is part of it.
+2. Later slices, not this one: the hand-over at the door and the customer's answer in an HTML
+   dialog, which is what ends a ticket and stops its clock; then Rush, crudely.
 
-Choices to walk Norbert through first, since no doc makes them: how much slack a quote adds to
-the router's drive time (the walk to the door and the hand-over aren't in it); the keys for
-getting out and for each hand-over, and their buttons on a phone; whether parking has to be near
-the door or anywhere; and how the wrong address is noticed (at the door, or only in the score).
-Open from this step: the route can turn left where a real sign forbids it, and the GPS says
-nothing aloud or in words about the next turn.
+Choices to walk Norbert through first, since no doc makes them: the key for getting out and back
+in, and its button on a phone (the pedals are where thumbs are); whether you can get out only
+when stopped, and whether parking has to be near the door or anywhere (the quote's walk assumes
+the GPS's spot); what stops you on foot (walls and trees as for the car, or nothing yet); how
+fast you walk, and whether you can run (`PACE.walk` is what the quote assumes); what the on-foot
+camera does at a wall; and what the dashboard shows on foot (speed and gear mean nothing there).
+Open from the ticket: nothing ends a ticket or happens when it's late; the only way to the next
+one is to stop in the delivery parking again; the notes are a first handful to rewrite with
+Norbert (step 8); the ticket takes a fair share of a phone's screen above the car. Still open
+from routing: the route can turn left where a real sign forbids it, and the GPS says nothing
+aloud or in words about the next turn.
 
 1. [x] **Drive the zone.** The sandbox, done 2026-11-15.
    - [x] Map import: `npm run zone:import` bakes the 2.5 miles around Auburn and Dequindre from
@@ -115,9 +120,11 @@ nothing aloud or in words about the next turn.
        road (`gps.ts`) and a line on the small map. 266 doors on streets the zone's edge cuts
        off have no route; orders skip them.
 5. [ ] **The loop, rough, starting in the car.** Does delivering feel good before the store exists?
-   - [ ] A ticket: an address, the order, and how to hand it over (leave on the porch, call or
-         text first, knock, or ring).
-   - [ ] GPS off by default; turned on, it draws the path on the ground.
+   - [x] A ticket (ADR-048), done 2026-11-16: an address the router can reach, the order and its
+         total, the customer's note with the hand-over under it (leave on the porch, call first,
+         text first, knock, or ring), and a quote that counts down from when you leave the
+         delivery parking. Stopping in the parking hands you one.
+   - [x] GPS off by default; turned on, it draws the path on the ground to the ticket's door.
    - [ ] Park, get out and walk to the door (the town's figure from `src/game/bodies.ts`, in
          metres). At the door, choose the hand-over; the phone in the car calls or texts. The
          customer answers in an RPG-style dialogue: an HTML dialog with a portrait painted by code

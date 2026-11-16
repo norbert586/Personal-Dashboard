@@ -116,7 +116,10 @@ drew a driving game: low-poly streets at true scale, from behind the car. Values
   away and nudges on each gear shift, so you feel what it's doing.
 - **On screen:** speed, gear and revs, the street you're on and its limit, the landmark or
   neighborhood you're in, a small heading-up map with a letter for each landmark
-  and the real clock, in the game's bevelled panels. Phones get steering buttons on the left and
+  and the real clock, in the game's bevelled panels. The ticket is one more panel, laid out like
+  a slip: the address biggest, the order and its total, the customer's note dimmer, and under a
+  dashed tear line the hand-over in plain words and the clock in maize. Late is said in words,
+  on a red tab. Phones get steering buttons on the left and
   pedals on the right.
 - **Reduced motion:** no camera roll or shake.
 

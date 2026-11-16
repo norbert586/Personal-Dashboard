@@ -732,3 +732,30 @@ numbered doors are on streets the zone's edge cuts off from the rest; they get n
 orders must never go to them (`doorSpot` returns null). A route knows which way the car faces and
 charges 12 seconds to set off the other way. The path is blue (`--route`), not maize: maize
 chevrons read as more yellow lane paint. On a phone the GPS button sits under the dashboard.
+
+## ADR-048: A ticket: what's on it, what a quote adds, and where you get one
+
+**Accepted · 2026-11-16 · Norbert's picks**
+Context: step 5 starts with the ticket alone. No doc said how much a quote adds to the router's
+drive time (ADR-047 leaves out parking, the walk and the hand-over), what an order or a hand-over
+looks like, or how a ticket reaches you before the store's room exists (ADR-043).
+Decision: a quote is the drive with 15% to spare, plus the walk from where you pull up to that
+door and back at walking pace, plus 30 seconds to park and hand it over, rounded up to a whole
+minute. Norbert chose it over a flat minute (a far door or a long walk is late unless you speed)
+and over half as much again (no pressure on a single). The values are in `PACE` with the rest of
+what a quote depends on. A typical door, a bit over five minutes away, quotes 8 minutes. An order
+is one to three pizzas, sometimes a side and a drink, from a small made-up menu with prices, and
+the ticket shows the total: tips can be a share of it when scoring comes. The hand-over is the
+customer's note in their own words with the plain instruction under it; there are five (leave it
+on the porch, call first, text first, knock, ring the bell), so calling and texting are different
+answers, and only homes ask for the porch. You're handed a ticket when you're stopped in the
+delivery parking, so every drive starts with one; coming back and stopping there swaps it for the
+next. Its clock starts as you drive out and is game time, so it holds behind the menu (ADR-041).
+The GPS is off by default again and goes to the ticket's door.
+Consequences: the notes are a first handful, written without Norbert; step 8 writes the real ones
+with him. Until the hand-over exists nothing ends a ticket or happens when it's late, and the only
+way to the next one is back at the store, which the walk-in and the dispatch screen replace
+(step 6). A quote is from the delivery parking, wherever the ticket is written, except a ticket
+named in the address bar away from the store. The quote adds nothing for other cars or for a red
+light beyond the router's average wait. A ticket is a pure function of the building, the start
+and a seed (`ticket.ts`), so `?to=` always writes the same one.

@@ -212,7 +212,7 @@ test('away from any signal, the drive reports none', async ({ page }) => {
 /** Building 5000 is a house on Mayapple Drive, about three miles south of the store. */
 const TO_MAYAPPLE = '?to=5000&traffic=0';
 
-test('the GPS names an address with the miles and minutes to it, and G turns it off and on', async ({
+test("the GPS names the order's address with the miles and minutes to it, and G turns it off and on", async ({
   page,
 }) => {
   await clockIn(page, TO_MAYAPPLE);
@@ -231,10 +231,10 @@ test('the GPS names an address with the miles and minutes to it, and G turns it 
     'false',
   );
 
-  // On again, it picks an address of its own, at least half a mile off.
+  // On again, it's the same order's door: the GPS no longer picks an address of its own.
   await page.keyboard.press('KeyG');
-  await expect(world).toHaveAttribute('data-gps', /^\d{5} .+, \d+\.\d mi, \d+ min$/);
-  expect(Number(await world.getAttribute('data-gps-metres'))).toBeGreaterThan(800);
+  await expect(world).toHaveAttribute('data-gps', /^40775 Mayapple Drive, 3\.\d mi, [5-8] min$/);
+  expect(Number(await world.getAttribute('data-gps-metres'))).toBeGreaterThan(4000);
 });
 
 test('without the GPS there is no route, and the page with it on passes axe', async ({ page }) => {
@@ -263,4 +263,91 @@ test('the GPS paints the way on the road, and driving it shortens what is left',
   await page.keyboard.down('KeyW');
   await expect.poll(left, { timeout: 40_000 }).toBeLessThan(from - 40);
   await page.keyboard.up('KeyW');
+});
+
+const HAND_OVERS = /^(Leave it on the porch|Call first|Text first|Knock|Ring the bell)$/;
+
+test('parked behind the store you hold a ticket: an address, an order, a hand-over and a quote', async ({
+  page,
+}) => {
+  await clockIn(page, '?traffic=0');
+  const world = page.locator('#world');
+  await expect(world).toHaveAttribute(
+    'data-ticket',
+    /^\d{5} .+ \| .+ \| \$\d+\.\d\d \| .+ \| \d+ min$/,
+  );
+  const ticket = page.getByRole('region', { name: 'Your order' });
+  await expect(ticket).toBeVisible();
+  await expect(page.locator('#ticket-none')).toBeHidden();
+  const address = (await page.locator('#ticket-to').textContent()) ?? '';
+  expect(address).toMatch(/^\d{5} \S/);
+  await expect(page.locator('#ticket-order')).toHaveText(/(large|medium|deep dish) /);
+  await expect(page.locator('#ticket-total')).toHaveText(/^\$\d+\.\d\d$/);
+  await expect(page.locator('#ticket-note')).toHaveText(/^“.+”$/);
+  await expect(page.locator('#ticket-how')).toHaveText(HAND_OVERS);
+  // Still in the stall, the clock hasn't started: it's the quote, in whole minutes.
+  await expect(page.locator('#ticket-clock')).toHaveText(/^Quoted ([2-9]|1[0-5]) min$/);
+
+  // The GPS is off until you ask, and then it finds this ticket's door.
+  await expect(world).toHaveAttribute('data-gps', '');
+  await expect(page.locator('#gps-box')).toBeHidden();
+  await page.keyboard.press('KeyG');
+  await expect(page.locator('#gps-to')).toHaveText(address);
+  await expect(world).toHaveAttribute('data-gps', /, \d+\.\d mi, \d+ min$/);
+  const results = await new AxeBuilder({ page }).analyze();
+  expect(results.violations).toEqual([]);
+});
+
+test("the ticket's clock starts as you drive out, and back in the stall you get the next one", async ({
+  page,
+}) => {
+  test.slow();
+  await clockIn(page, '?traffic=0');
+  const world = page.locator('#world');
+  const clock = page.locator('#ticket-clock');
+  await expect(clock).toHaveText(/^Quoted \d+ min$/);
+  const first = await world.getAttribute('data-ticket');
+  // Back out of the stall: S from a stop is reverse.
+  await page.keyboard.down('KeyS');
+  await expect(world).not.toHaveAttribute('data-street', 'Delivery parking', { timeout: 40_000 });
+  await page.keyboard.up('KeyS');
+  await expect(clock).toHaveText(/^\d+:\d\d left$/);
+  await expect(world).toHaveAttribute('data-ticket', first ?? '');
+  const left = async () => {
+    const [m, s] = ((await clock.textContent()) ?? '').split(' ')[0]!.split(':').map(Number);
+    return m! * 60 + s!;
+  };
+  const from = await left();
+  await expect.poll(left, { timeout: 20_000 }).toBeLessThan(from);
+
+  // R is back in the stall, stopped: that order is swapped for a new one, not yet running.
+  await page.keyboard.press('KeyR');
+  await expect(clock).toHaveText(/^Quoted \d+ min$/, { timeout: 20_000 });
+  await expect(world).not.toHaveAttribute('data-ticket', first ?? '');
+});
+
+test('away from the store with no order, the ticket and the GPS say so', async ({ page }) => {
+  await clockIn(page, '?at=-60,-13&heading=257&traffic=0');
+  const world = page.locator('#world');
+  await expect(world).toHaveAttribute('data-ticket', '');
+  await expect(page.locator('#ticket-none')).toHaveText(/^No order\. Stop in the delivery parking/);
+  await expect(page.locator('#ticket-body')).toBeHidden();
+  await page.keyboard.press('KeyG');
+  await expect(page.locator('#gps-to')).toHaveText('No order to find');
+  await expect(world).toHaveAttribute('data-gps', 'No order to find');
+  await expect(world).toHaveAttribute('data-gps-marks', '0');
+});
+
+test('a ticket named in the address bar is the same every time, and already on the clock away from the store', async ({
+  page,
+}) => {
+  await clockIn(page, `${TO_MAYAPPLE}&at=-60,-13&heading=257`);
+  await expect(page.locator('#world')).toHaveAttribute(
+    'data-ticket',
+    '40775 Mayapple Drive | large ham and pineapple, 2-litre cola | $18.98 | Call first | 9 min',
+  );
+  await expect(page.locator('#ticket-note')).toHaveText(
+    '“Please call first. Do not wake the baby.”',
+  );
+  await expect(page.locator('#ticket-clock')).toHaveText(/^8:\d\d left$/);
 });

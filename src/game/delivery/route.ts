@@ -41,6 +41,15 @@ export const PACE = {
   reach: 70,
   /** A door takes the street it faces unless other pavement is this much nearer, in metres. */
   preferFaced: 12,
+  /**
+   * What a customer is quoted on top of the drive (ADR-048): the drive with this much to spare,
+   * the walk from the car to the door and back at `walk` m/s, and `atDoor` seconds to park and
+   * hand it over, rounded up to a whole `quoteStep` seconds.
+   */
+  slack: 1.15,
+  walk: 1.4,
+  atDoor: 30,
+  quoteStep: 60,
 } as const;
 
 /** A signal's loop, the share of it a street isn't green, and the average wait when it isn't. */
@@ -385,6 +394,16 @@ export function doorSpot(zone: Zone, building: Building): Spot | null {
   if (near) return near;
   if (building.street < 0) return null;
   return spotNear(zone, x, y, 400, (r) => r === building.street);
+}
+
+/**
+ * The time a customer is quoted, in seconds, for a drive of `driveSeconds` that ends
+ * `walkMetres` from the door: fair for a legal drive, with a little to spare (ADR-048).
+ */
+export function quote(driveSeconds: number, walkMetres: number): number {
+  const seconds =
+    driveSeconds * PACE.slack + (2 * Math.max(0, walkMetres)) / PACE.walk + PACE.atDoor;
+  return Math.ceil(seconds / PACE.quoteStep - 1e-9) * PACE.quoteStep;
 }
 
 const dist = (spot: Spot, x: number, y: number): number => Math.hypot(spot.x - x, spot.y - y);
