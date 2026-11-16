@@ -38,7 +38,9 @@ import {
 import { CarBody } from './car-body.ts';
 import { Chase } from './chase.ts';
 import { collide, fence } from './collide.ts';
+import { GpsPath } from './gps.ts';
 import { roadWidth } from './roads.ts';
+import { alongLine, doorSpot, route, spotNear, type Route, type Spot } from './route.ts';
 import { Life } from './life.ts';
 import { SignalHeads } from './signal-heads.ts';
 import { lightAt } from './signals.ts';
@@ -218,6 +220,84 @@ async function boot(): Promise<void> {
   const body = new CarBody(scene, still);
   const chase = new Chase(car.heading, still);
 
+  /** Seconds until the dashboard's slower lines are next brought up to date. */
+  let slow = 0;
+
+  // ---- GPS (SPEC: Delivery mode, GPS): off until you ask. Until there are orders, turning it
+  // on picks a random address to find (ADR-047). ----
+  interface Guide {
+    address: string;
+    /** Where you pull up for the door. */
+    spot: Spot;
+    /** The way there from where you last were on it, or null when no road is near you. */
+    way: Route | null;
+    /** Metres and seconds still to go. */
+    metres: number;
+    seconds: number;
+    arrived: boolean;
+  }
+  let guide: Guide | null = null;
+  const ground = new GpsPath(
+    scene,
+    getComputedStyle(document.documentElement).getPropertyValue('--route').trim() || '#5b8cff',
+    still,
+  );
+  /** How far along the painted route the car is, in metres. */
+  let gpsAlong = 0;
+  /** Paint the guide's route on the road, or take the paint away. */
+  const paintGps = () => {
+    ground.show(zone, guide?.way ?? null, guide?.spot ?? null);
+    gpsAlong = 0;
+  };
+  const wayTo = (spot: Spot): Route | null => {
+    const here = spotNear(zone, car.x, car.y, 90);
+    return here ? route(zone, here, spot, { facing: car.heading }) : null;
+  };
+  const guideTo = (building: number): boolean => {
+    const b = zone.buildings[building];
+    const spot = b && b.number > 0 ? doorSpot(zone, b) : null;
+    if (!b || !spot) return false;
+    const way = wayTo(spot);
+    guide = {
+      address: `${b.number} ${zone.roads[b.street]!.name}`,
+      spot,
+      way,
+      metres: way?.metres ?? 0,
+      seconds: way?.seconds ?? 0,
+      arrived: false,
+    };
+    paintGps();
+    return true;
+  };
+  const gpsButton = $<HTMLButtonElement>('#b-gps');
+  const showGps = () => {
+    gpsButton.textContent = guide ? 'GPS: on' : 'GPS: off';
+    gpsButton.setAttribute('aria-pressed', String(guide !== null));
+  };
+  const toggleGps = () => {
+    if (guide) {
+      guide = null;
+      paintGps();
+    } else
+      // Somewhere at least half a mile off, so there's a drive in it.
+      for (let tries = 0; tries < 400 && !guide; tries++) {
+        const i = Math.floor(Math.random() * zone.buildings.length);
+        const b = zone.buildings[i]!;
+        if (Math.hypot(b.pts[0]! - car.x, b.pts[1]! - car.y) > 800) guideTo(i);
+      }
+    showGps();
+    gpsDue = 0;
+    slow = 0;
+  };
+  gpsButton.addEventListener('click', () => {
+    toggleGps();
+    canvas.focus({ focusVisible: false });
+  });
+  let gpsDue = 0;
+  // ?to=<building> starts with the GPS on and set for that door.
+  if (asked.has('to')) guideTo(Number(asked.get('to')));
+  showGps();
+
   // ---- The picture: about 360 lines, scaled up by whole device pixels ----
   const resize = () => {
     const s = driveScale(innerWidth, innerHeight, window.devicePixelRatio || 1);
@@ -280,6 +360,7 @@ async function boot(): Promise<void> {
       event.preventDefault();
       openMenu();
     } else if (event.code === 'KeyC') cycleCamera();
+    else if (event.code === 'KeyG') toggleGps();
     else if (event.code === 'KeyN') cycleTime();
     else if (event.code === 'KeyR') reset();
     else return false;
@@ -334,6 +415,9 @@ async function boot(): Promise<void> {
   const limitMph = $<HTMLElement>('#limit-mph');
   const placeLine = $<HTMLElement>('#place');
   const placeBox = $<HTMLElement>('#place-box');
+  const gpsBox = $<HTMLElement>('#gps-box');
+  const gpsTo = $<HTMLElement>('#gps-to');
+  const gpsLeft = $<HTMLElement>('#gps-left');
   const clock = $<HTMLElement>('#clock');
   const map = $<HTMLCanvasElement>('#minimap');
   const pen = map.getContext('2d');
@@ -342,6 +426,7 @@ async function boot(): Promise<void> {
   const INK = colour('--ink');
   const DIM = colour('--ink-dim');
   const MAIZE = colour('--maize');
+  const ROUTE = colour('--route');
   const WELL = colour('--panel-lo');
   const FONT = colour('--font-ui') || 'sans-serif';
   const clockFormat = new Intl.DateTimeFormat(site.locale, {
@@ -385,6 +470,25 @@ async function boot(): Promise<void> {
       pen.lineWidth = pass ? 2 : 1;
       pen.stroke();
     }
+    // The GPS's route, and a ring where it ends; the ring waits at the map's edge until it's near.
+    if (guide) {
+      const way = guide.way?.line ?? [];
+      pen.beginPath();
+      for (let i = 0; i < way.length; i += 2) {
+        const [x, y] = put(way[i]!, way[i + 1]!);
+        if (i) pen.lineTo(x, y);
+        else pen.moveTo(x, y);
+      }
+      pen.strokeStyle = ROUTE;
+      pen.lineWidth = 3;
+      pen.stroke();
+      const [x, y] = put(guide.spot.x, guide.spot.y);
+      pen.beginPath();
+      pen.arc(Math.max(8, Math.min(size - 8, x)), Math.max(8, Math.min(size - 8, y)), 5, 0, 7);
+      pen.fillStyle = WELL;
+      pen.fill();
+      pen.stroke();
+    }
     // The landmarks around you, each with its letter.
     pen.font = `10px ${FONT}`;
     pen.textAlign = 'center';
@@ -422,7 +526,6 @@ async function boot(): Promise<void> {
   document.documentElement.dataset.time = time;
   canvas.focus({ focusVisible: false });
 
-  let slow = 0;
   let surface = PAVEMENT;
   const solids = [world.walls, world.things];
   startLoop((dt, now) => {
@@ -444,6 +547,7 @@ async function boot(): Promise<void> {
     body.sync(car, sky.night, dt);
     life.sync(sky.night, now);
     signalHeads.sync(traffic.time, car.x, car.y);
+    ground.sync(gpsAlong, now);
     renderer.render(scene, chase.camera);
 
     // The dashboard: the dials every frame, the slower things a few times a second.
@@ -484,6 +588,41 @@ async function boot(): Promise<void> {
     placeBox.hidden = !shown;
     if (shown) say(placeLine, shown);
     say(clock, clockFormat.format(new Date()));
+    // The GPS: what's left of the way, and a new way when you've left it.
+    let gpsLine = '';
+    if (guide) {
+      let at = guide.way ? alongLine(guide.way.line, car.x, car.y) : null;
+      gpsDue -= 1;
+      if ((!at || at.off > 40) && gpsDue <= 0) {
+        // Not more than about once a second: a search is quick, not free.
+        gpsDue = 7;
+        guide.way = wayTo(guide.spot);
+        paintGps();
+        at = guide.way ? alongLine(guide.way.line, car.x, car.y) : null;
+      }
+      gpsAlong = at?.along ?? 0;
+      if (guide.way && at) {
+        guide.metres = Math.max(0, guide.way.metres - at.along);
+        guide.seconds = guide.way.metres
+          ? (guide.way.seconds * guide.metres) / guide.way.metres
+          : 0;
+      }
+      const near = Math.hypot(car.x - guide.spot.x, car.y - guide.spot.y) < 25;
+      guide.arrived = near && (guide.arrived || speed === 0);
+      const miles =
+        guide.metres >= 160
+          ? `${(guide.metres / 1609.344).toFixed(1)} mi`
+          : `${Math.round((guide.metres * 3.28084) / 50) * 50} ft`;
+      const left = guide.arrived
+        ? 'Arrived'
+        : guide.way
+          ? `${miles} · ${Math.max(1, Math.round(guide.seconds / 60))} min`
+          : 'No road near you';
+      say(gpsTo, guide.address);
+      say(gpsLeft, `· ${left}`);
+      gpsLine = `${guide.address}, ${left.replace(' · ', ', ')}`;
+    }
+    gpsBox.hidden = !guide;
     drawMap();
     // For tests and tools: what the drive is showing, written only when it changes.
     const data = canvas.dataset;
@@ -496,6 +635,10 @@ async function boot(): Promise<void> {
     const head = world.signalAhead(car.x, car.y, car.heading);
     const light = head ? lightAt(head.axis, head.signal, traffic.time) : '';
     if (data.signal !== light) data.signal = light;
+    if (data.gps !== gpsLine) data.gps = gpsLine;
+    const gpsMetres = guide?.way ? String(Math.round(guide.metres)) : '';
+    if (data.gpsMetres !== gpsMetres) data.gpsMetres = gpsMetres;
+    if (data.gpsMarks !== String(ground.marks)) data.gpsMarks = String(ground.marks);
     const cars = traffic.riders.filter((r) => !r.bike).length;
     data.traffic = `${cars} cars, ${traffic.riders.length - cars} bikes, ${traffic.walkers.length} on foot`;
     if (data.mph !== String(speed)) data.mph = String(speed);

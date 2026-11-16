@@ -208,3 +208,59 @@ test('away from any signal, the drive reports none', async ({ page }) => {
   await clockIn(page, '?at=-99,-90&heading=178&traffic=0');
   await expect(page.locator('#world')).toHaveAttribute('data-signal', '');
 });
+
+/** Building 5000 is a house on Mayapple Drive, about three miles south of the store. */
+const TO_MAYAPPLE = '?to=5000&traffic=0';
+
+test('the GPS names an address with the miles and minutes to it, and G turns it off and on', async ({
+  page,
+}) => {
+  await clockIn(page, TO_MAYAPPLE);
+  const world = page.locator('#world');
+  await expect(world).toHaveAttribute('data-gps', /^40775 Mayapple Drive, 3\.\d mi, [5-8] min$/);
+  await expect(page.locator('#gps-to')).toHaveText('40775 Mayapple Drive');
+  await expect(page.locator('#gps-left')).toHaveText(/^· 3\.\d mi · [5-8] min$/);
+  const button = page.getByRole('button', { name: 'GPS: on' });
+  await expect(button).toHaveAttribute('aria-pressed', 'true');
+
+  await page.keyboard.press('KeyG');
+  await expect(world).toHaveAttribute('data-gps', '');
+  await expect(page.locator('#gps-box')).toBeHidden();
+  await expect(page.getByRole('button', { name: 'GPS: off' })).toHaveAttribute(
+    'aria-pressed',
+    'false',
+  );
+
+  // On again, it picks an address of its own, at least half a mile off.
+  await page.keyboard.press('KeyG');
+  await expect(world).toHaveAttribute('data-gps', /^\d{5} .+, \d+\.\d mi, \d+ min$/);
+  expect(Number(await world.getAttribute('data-gps-metres'))).toBeGreaterThan(800);
+});
+
+test('without the GPS there is no route, and the page with it on passes axe', async ({ page }) => {
+  await clockIn(page);
+  await expect(page.locator('#world')).toHaveAttribute('data-gps', '');
+  await expect(page.locator('#gps-box')).toBeHidden();
+  await page.goto(`/delivery${TO_MAYAPPLE}`);
+  await expect(page.locator('#gps-box')).toBeVisible();
+  const results = await new AxeBuilder({ page }).analyze();
+  expect(results.violations).toEqual([]);
+});
+
+test('the GPS paints the way on the road, and driving it shortens what is left', async ({
+  page,
+}) => {
+  test.slow();
+  // Westbound on Auburn Road, the way this route sets off.
+  await clockIn(page, `${TO_MAYAPPLE}&at=-60,-13&heading=257`);
+  const world = page.locator('#world');
+  const left = async () => Number(await world.getAttribute('data-gps-metres'));
+  await expect
+    .poll(async () => Number(await world.getAttribute('data-gps-marks')))
+    .toBeGreaterThan(100);
+  const from = await left();
+  expect(from).toBeGreaterThan(4000);
+  await page.keyboard.down('KeyW');
+  await expect.poll(left, { timeout: 40_000 }).toBeLessThan(from - 40);
+  await page.keyboard.up('KeyW');
+});

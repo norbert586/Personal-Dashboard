@@ -21,6 +21,8 @@
     --ink: #ece6d6;
     --ink-dim: #a3adc8;
     --maize: #f2c14e;
+    /* The GPS's route, on the road and the small map: not a colour road paint comes in. */
+    --route: #5b8cff;
 
     /* Status, always paired with a word */
     --win: #6cc982;

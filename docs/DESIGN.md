@@ -101,6 +101,10 @@ drew a driving game: low-poly streets at true scale, from behind the car. Values
   with the word, yield signs red triangles point down, street names white on green blades. All
   are drawn larger than life so they read at this picture's size, and each is told by its shape
   or position as well as its colour (red is always the top lens).
+- **GPS:** the route is blue (`--route`), a colour no road paint comes in: bold chevrons in
+  your lane that point the way and go out as you pass them, a ring that beats and a thin beam of
+  light where it ends, and a thick line on the small map. Unshaded, like the signal lenses. It's
+  told by shape as well as colour, and the dashboard says the address, miles and minutes in words.
 - **The pizzeria:** red and white awning, warm lit windows, the name in lights and a real pool
   of light on the pavement at night. Delivery stalls are painted in maize, the game's accent.
 - **People and traffic:** boxy like your car, in ordinary colours (mostly white, black, grey and
