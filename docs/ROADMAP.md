@@ -61,6 +61,8 @@ waits for its own design session.
        tad quicker, and collisions bounce him badly off things.
    - [x] Quicker: more `torque` and later shift points in `CAR` (`car.ts`); keep its test on 0 to
          60 and move the target with him. About 7 s to 60 now, from 7.5.
+   - [x] Third drive: more pep still, a tighter circle and steering that answers (ADR-045).
+         6.3 s to 60, a 31 foot circle, full lock in a sixth of a second.
    - [x] Collisions that don't bounce (ADR-044). Proved first in `collide.test.ts`: a 40 mph hit
          sprang back at 4.8 mph. Now every wall and parked car settles in one pass after each step
          of the car, with no bounce, and `driveCar` reports the hardest hit for the pizza (step 6).

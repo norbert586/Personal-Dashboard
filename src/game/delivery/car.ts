@@ -10,14 +10,14 @@
 /**
  * Every tuning value in one place, to adjust by feel. The car is Norbert's: a 2006 Chevrolet HHR
  * with the 2.4 litre engine and the four-speed automatic. Its size, weight, tyres and gearing are
- * the real car's; grip and the engine's pull are set by feel, and a little stronger than the real
- * engine's: about seven seconds to 60.
+ * the real car's; grip, the engine's pull and the steering are set by feel, a little livelier
+ * than the real car: about six and a half seconds to 60, and a tighter turning circle.
  */
 export const CAR = {
   /** The car and its driver, in kg. */
   mass: 1510,
   /** Resistance to turning, in kg·m². Lower is more eager to rotate. */
-  inertia: 2500,
+  inertia: 2000,
   /** Centre of mass to the front and rear axles, in metres: the engine sits over the front. */
   front: 1.05,
   rear: 1.58,
@@ -25,7 +25,7 @@ export const CAR = {
   height: 0.58,
   wheelRadius: 0.32,
   /** Tyre grip on dry pavement, and how sharply the tyres answer a slip angle. */
-  grip: 1,
+  grip: 1.15,
   stiffnessFront: 9.5,
   stiffnessRear: 11.5,
   /**
@@ -42,7 +42,7 @@ export const CAR = {
   /** The rear tyres' grip with the handbrake on. */
   handbrakeGrip: 0.6,
   /** Engine: peak torque (N·m) at `peakRpm`, falling away either side over `torqueSpan` rpm. */
-  torque: 290,
+  torque: 320,
   peakRpm: 4800,
   torqueSpan: 6200,
   idleRpm: 800,
@@ -80,19 +80,19 @@ export const CAR = {
    */
   driveSteals: 0.5,
   brakeSteals: 0.93,
-  drag: 0.56,
+  drag: 0.62,
   rolling: 190,
   engineBraking: 0.38,
-  /** The most the front wheels turn, in radians: a 36 foot turning circle. */
-  steerLock: 0.575,
+  /** The most the front wheels turn, in radians: a 31 foot turning circle (the real car's is 36). */
+  steerLock: 0.68,
   /**
    * At speed, full lock asks for this many times the grip the tyres have: a little over 1 puts
    * the front right at its limit without pushing it wide.
    */
   steerOver: 1.1,
   /** How fast the wheel goes to full lock and back to centre, in locks a second. */
-  steerRate: 3.2,
-  steerReturn: 5,
+  steerRate: 6,
+  steerReturn: 8,
   /** How quickly the gas and the brake come on and off, per second. */
   pedalRate: 7,
   brakeRate: 6,

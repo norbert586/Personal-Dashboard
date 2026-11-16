@@ -645,3 +645,22 @@ there. The outline is still three round circles, so clipping a corner with the n
 car aside rather than stopping it; a boxier outline is the next thing to try if that feels wrong.
 People and bikes (`bump` in `traffic.ts`) still bounce a little: hitting people is its own open
 question.
+
+## ADR-045: The HHR is livelier than the real one: more pep, tighter and quicker steering
+
+**Accepted · 2026-11-16 · Norbert's call**
+Context: after the collision fix (ADR-044) Norbert drove again: still too slow to pull away,
+the turning circle too wide, and the steering sluggish. Measured: the wheel took a third of a
+second to reach lock and the car most of a second to settle into a turn at town speeds, full
+lock from a stop was a 14 m circle (the real car's 36 feet), the tyres gave out at about 0.9 g,
+and 0 to 60 took 7 seconds, with 0 to 30 held back by the front tyres' grip.
+Decision: this part of ADR-040 gives way to the game. The car keeps its real size, weight and
+gearbox, but grip goes up by 15%, the steering turns further (a 31 foot circle), the wheel
+reaches lock in about a sixth of a second and comes back faster, the body turns more readily
+(`inertia`), and the engine pulls harder, with a little more drag so top speed stays near
+133 mph. 0 to 60 is about 6.3 seconds. Everything ADR-040 built for stability stays: the rear
+brakes held back, braking using the front's grip, the rear gripping more, and the steering's
+reach shrinking with speed so a full-lock swerve at 60 mph slides under 2 degrees.
+Consequences: the car tests now hold the new targets (0 to 60, the 31 foot circle, a quick
+wheel). Story mode's upgrades (step 9) start from this car, so the real HHR is no longer the
+baseline. If it's now too twitchy, `steerRate` and `inertia` are the first values to ease back.
