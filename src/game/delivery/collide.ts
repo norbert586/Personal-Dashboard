@@ -10,8 +10,8 @@ import { CAR, type CarState } from './car.ts';
 import type { SegGrid } from './grid.ts';
 
 /** The car's outline: circles this far ahead of and behind its centre of mass, each this wide. */
-const OFFSETS = [1.1, -0.25, -1.6] as const;
-const RADIUS = 0.95;
+export const OFFSETS = [1.1, -0.25, -1.6] as const;
+export const RADIUS = 0.95;
 /** In a knock the car turns as if it were this many times harder to turn: a nudge, not a spin. */
 const KNOCK = 10;
 /** Grip along a wall while pressed against it: scraping a wall at speed costs speed. */
