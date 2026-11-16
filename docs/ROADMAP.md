@@ -125,10 +125,11 @@ aloud or in words about the next turn.
          text first, knock, or ring), and a quote that counts down from when you leave the
          delivery parking. Stopping in the parking hands you one.
    - [x] GPS off by default; turned on, it draws the path on the ground to the ticket's door.
-   - [ ] Park, get out and walk to the door (the town's figure from `src/game/bodies.ts`, in
-         metres). At the door, choose the hand-over; the phone in the car calls or texts. The
-         customer answers in an RPG-style dialogue: an HTML dialog with a portrait painted by code
-         and their line.
+   - [ ] Park, get out and walk to the door (ADR-049): the town's figure from
+         `src/game/bodies.ts`, in metres, a camera that follows on foot, and back into the car.
+   - [ ] At the door, choose the hand-over; the phone in the car calls or texts. The customer
+         answers in an RPG-style dialogue: an HTML dialog with a portrait painted by code and
+         their line.
    - [ ] Walk back, drive back, park behind the store. Rush mode, crudely: a set of orders, a
          timer, a results screen.
 6. [ ] **The store** (ADR-043). Walk from the delivery parking through the back door into one

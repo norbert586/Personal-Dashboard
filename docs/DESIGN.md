@@ -80,7 +80,10 @@ drew a driving game: low-poly streets at true scale, from behind the car. Values
 `src/game/delivery/`.
 
 - **Camera:** perspective, behind and above the car, on a spring. It widens a little with speed.
-  On foot it follows you the same way.
+  On foot it follows you the same way, nearer and lower. It comes in close rather than pass
+  through a wall, and when something still hides you, you show as the town's maize silhouette.
+- **You:** the town's figure at a person's real height, in the store's red jacket. Arms and legs
+  swing as you walk and faster as you run; with reduced motion you glide.
 - **Pixels:** the scene renders at about 360 lines on the screen's short side and is scaled up by
   whole device pixels, like the town. Up close a texel is a clear square; in the distance textures
   average out instead of sparkling. The town's "no mipmaps" rule is for its fixed camera and
@@ -120,7 +123,9 @@ drew a driving game: low-poly streets at true scale, from behind the car. Values
   a slip: the address biggest, the order and its total, the customer's note dimmer, and under a
   dashed tear line the hand-over in plain words and the clock in maize. Late is said in words,
   on a red tab. Phones get steering buttons on the left and
-  pedals on the right.
+  pedals on the right. On foot the speed panel says "On foot" or "Running" and how far the car
+  is, and the pedals say Walk and Run. A prompt names the key that gets you out or in; on a
+  phone it's a button over the gas.
 - **Reduced motion:** no camera roll or shake.
 
 ## Interface
