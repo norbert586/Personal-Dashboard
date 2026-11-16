@@ -576,3 +576,50 @@ hold each of these. It's harder to drift than before: if that turns out less fun
 split (60% front) are best estimates; sources disagree on the first and don't give the second.
 The store's point in the zone file was moved by hand to match `delivery.storeFront`, which is
 what a fresh import produces.
+
+## ADR-041: The delivery mode is a game with modes, on game time
+
+**Accepted · 2026-11-16 · Norbert's call**
+Context: the spec had orders arriving by the real clock over a real evening. At true scale a
+median run is 2.5 miles each way, so a real shift is hours of play, and the real clock would
+close the store when Norbert plays in the morning. He asked for fun time instead.
+Decision: every mode plays one delivery loop under its own rules and its own clock. Rush is a
+set of 5, 10 or 20 orders, ranked by one combined score (time against the quote, tip, the
+pizza's condition, address, hand-over, a small bonus for no GPS). Time trial is a set time to
+deliver as many as you can, well. Story mode is a career with upgrades, designed with Norbert
+before it's built. Free drive keeps the sandbox. You can play at any hour; the sky, seasons and
+weather stay real. Driving stays at real distances and real speed: the pressure comes from the
+order clock (ADR-035). GPS is off by default and draws a path on the ground when on. Only
+collisions damage the pizza, by how hard the hit is. You walk to every door; it isn't skipped in
+any mode.
+Consequences: ADR-035's "drives take real time" still holds; "orders arrive by the real clock"
+doesn't. A run is short enough to replay, which is what makes a best score worth saving. Story
+mode's upgrades change values in `CAR`, so every car value stays in that one object (ADR-036).
+
+## ADR-042: House numbers are generated, not looked up
+
+**Accepted · 2026-11-16 · Norbert's call**
+Context: a wrong-address mistake needs numbers you can read on houses. The plan was the Census
+Bureau's TIGER address ranges, which are zipped shapefiles and needed a parser or a new
+dependency. Norbert: the numbers don't have to be accurate; take the easiest system.
+Decision: the importer numbers every building on its real street by how far along the street its
+front door is, even on one side and odd on the other, rising away from one end of the street.
+Same zone file in, same numbers out. No new data and no dependency.
+Consequences: numbers rise in the right direction and sit on the right side, but don't match the
+real houses, which also keeps any real home from being named as an order. The same scheme is the
+one M1 step 7 planned for the town, so it can be shared.
+
+## ADR-043: The pizzeria gets a room, and dispatch is a game
+
+**Accepted · 2026-11-16 · Norbert's call**
+Context: ADR-027 kept the town to short entrances with no rooms, and real interiors waited for
+M5. Norbert wants to drive back, walk in the back door and assign himself orders the way he does
+at work, choosing singles, doubles and triples, where a bad bundle means a bad time estimate and
+angry customers.
+Decision: the pizzeria's back room is built in the delivery mode, as its first interior: one room
+with the heat rack, the counter and the dispatch screen. Orders arrive in bunches and you pace
+them. The routing that draws the GPS path also gives every quote and judges each bundle: drops
+that aren't on one run are quoted a time you can't make. ADR-027 still holds for the town.
+Consequences: it's built after the rough loop, so delivering is shown to be fun before the room
+is made. What the room teaches (walking indoors at true scale, a screen you use in the world) is
+reused when M5 builds the town's hero interiors.
