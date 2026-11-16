@@ -10,7 +10,8 @@
 /**
  * Every tuning value in one place, to adjust by feel. The car is Norbert's: a 2006 Chevrolet HHR
  * with the 2.4 litre engine and the four-speed automatic. Its size, weight, tyres and gearing are
- * the real car's; grip and the engine's pull are set by feel.
+ * the real car's; grip and the engine's pull are set by feel, and a little stronger than the real
+ * engine's: about seven seconds to 60.
  */
 export const CAR = {
   /** The car and its driver, in kg. */
@@ -41,7 +42,7 @@ export const CAR = {
   /** The rear tyres' grip with the handbrake on. */
   handbrakeGrip: 0.6,
   /** Engine: peak torque (N·m) at `peakRpm`, falling away either side over `torqueSpan` rpm. */
-  torque: 258,
+  torque: 290,
   peakRpm: 4800,
   torqueSpan: 6200,
   idleRpm: 800,
@@ -58,8 +59,8 @@ export const CAR = {
   shiftTime: 0.3,
   shiftPower: 0.12,
   /** Upshift at this many rpm on a light throttle, and this many with your foot down. */
-  shiftUpLight: 2100,
-  shiftUpHard: 6200,
+  shiftUpLight: 2400,
+  shiftUpHard: 6400,
   shiftDownLight: 1150,
   shiftDownHard: 3300,
   /** Seconds a new gear is held before the gearbox thinks again, so it never hunts. */
@@ -79,7 +80,7 @@ export const CAR = {
    */
   driveSteals: 0.5,
   brakeSteals: 0.93,
-  drag: 0.52,
+  drag: 0.56,
   rolling: 190,
   engineBraking: 0.38,
   /** The most the front wheels turn, in radians: a 36 foot turning circle. */

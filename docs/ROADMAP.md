@@ -59,8 +59,8 @@ waits for its own design session.
          life on the roads and sidewalks (`traffic.ts`, `life.ts`).
 2. [ ] **The car, second pass.** From Norbert's drive on 2026-11-16: better, but it should be a
        tad quicker, and collisions bounce him badly off things.
-   - [ ] Quicker: more `torque` and later shift points in `CAR` (`car.ts`); keep its test on 0 to
-         60 and move the target with him.
+   - [x] Quicker: more `torque` and later shift points in `CAR` (`car.ts`); keep its test on 0 to
+         60 and move the target with him. About 7 s to 60 now, from 7.5.
    - [x] Collisions that don't bounce (ADR-044). Proved first in `collide.test.ts`: a 40 mph hit
          sprang back at 4.8 mph. Now every wall and parked car settles in one pass after each step
          of the car, with no bounce, and `driveCar` reports the hardest hit for the pizza (step 6).
