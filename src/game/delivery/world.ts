@@ -8,6 +8,7 @@ import { Group, type Mesh, type Scene } from 'three';
 import { doorOf, nearestOnRoad } from '../../lib/zone/addresses.ts';
 import type { Building, Place, PlaceKind, Road, Zone } from '../../lib/zone/format.ts';
 import type { Season } from '../world/materials.ts';
+import { controlOf } from './control.ts';
 import { addBuilding, fill, up, wallHeight, type Built } from './buildings.ts';
 import { SegGrid } from './grid.ts';
 import { Labels } from './labels.ts';
@@ -22,9 +23,12 @@ import {
   panel,
   parkedCar,
   sign,
+  signalSpan,
   streetLamp,
+  type HeadSpot,
 } from './props.ts';
 import { Roads, roadHeight, roadWidth } from './roads.ts';
+import type { SignalHead } from './signal-heads.ts';
 import {
   CHUNK,
   area2,
@@ -120,6 +124,8 @@ interface ChunkStuff {
   parked: number[];
   /** Street lamps: where the pole stands, the unit direction of its arm, and its kind, in fives. */
   lamps: number[];
+  /** Signals: the two poles a wire is strung between, and the heads hanging from it. */
+  spans: Array<{ a: XY; b: XY; heads: HeadSpot[] }>;
   /** Trees the map itself marks. */
   trees: Tree[];
   /** Woods and parks that reach into this square, as indices into `green`. */
@@ -181,6 +187,8 @@ export class World {
   private readonly doors = new SegGrid(48);
   /** The pizzeria, when the zone has one. */
   readonly shop: Shop | null = null;
+  /** Every signal head in the zone: `signal-heads.ts` lights them. */
+  readonly heads: SignalHead[] = [];
   /** Whether buildings and trees throw shadows. */
   shadows = true;
 
@@ -258,9 +266,109 @@ export class World {
     }
     this.shop = this.findShop();
     this.placeSigns();
+    this.placeSignals();
     this.parkLots();
     this.placeLamps();
     materials.labels.value = this.labels.build();
+  }
+
+  /**
+   * Hang the signals (SPEC: traffic control): at each signal junction a wire between two poles on
+   * opposite corners, and a head over every lane that drives in, facing it.
+   */
+  private placeSignals(): void {
+    const { junctions, roads } = this.zone;
+    const control = controlOf(this.zone);
+    const hung: XY[] = [];
+    junctions.forEach((junction, j) => {
+      const arms = control.arms[j]!;
+      if (!junction.signal || !arms.length) return;
+      const c: XY = [junction.x, junction.y];
+      // Two signals a few metres apart are one intersection in life: one wire does for both.
+      if (hung.some((h) => Math.hypot(h[0] - c[0], h[1] - c[1]) < 25)) return;
+      hung.push(c);
+      const widest = (axis: 0 | 1) =>
+        arms.filter((a) => a.axis === axis).reduce((w, a) => Math.max(w, a.half), 0) || 4;
+      const main = arms.find((a) => a.axis === 0) ?? arms[0]!;
+      const u: XY = [Math.sin(main.heading), Math.cos(main.heading)];
+      const v: XY = [u[1], -u[0]];
+      // The corner: clear of the crossing street along the main one, and of the main one across.
+      const along = widest(1) + 2.5;
+      const across = widest(0) + 2.5;
+      const reach = Math.hypot(along, across);
+      const d: XY = [
+        (u[0] * along + v[0] * across) / reach,
+        (u[1] * along + v[1] * across) / reach,
+      ];
+      const pole = (side: 1 | -1): XY => {
+        for (let out = reach; out < reach + 12; out += 2) {
+          const p: XY = [c[0] + d[0] * out * side, c[1] + d[1] * out * side];
+          if (this.open(p[0], p[1], 0.6)) return p;
+        }
+        return [c[0] + d[0] * reach * side, c[1] + d[1] * reach * side];
+      };
+      const a = pole(-1);
+      const b = pole(1);
+      const wx = b[0] - a[0];
+      const wy = b[1] - a[1];
+      const heads: HeadSpot[] = [];
+      for (const arm of arms) {
+        if (!arm.inbound) continue;
+        const road = roads[arm.road]!;
+        const face: XY = [Math.sin(arm.heading), Math.cos(arm.heading)];
+        // Driving in, the way is the other way, and the right-hand side is on its right.
+        const t: XY = [-face[0], -face[1]];
+        const r: XY = [t[1], -t[0]];
+        const lanes = road.oneway
+          ? road.lanes > 1
+            ? [-0.4, 0.4]
+            : [0]
+          : road.lanes >= 4
+            ? [0.28, 0.72]
+            : [0.5];
+        for (const lane of lanes) {
+          // Where this lane's line passes under the wire.
+          const lx = c[0] + r[0] * arm.half * lane;
+          const ly = c[1] + r[1] * arm.half * lane;
+          const cross = wx * t[1] - wy * t[0];
+          let w = Math.abs(cross) < 1e-3 ? 0.5 : ((lx - a[0]) * t[1] - (ly - a[1]) * t[0]) / cross;
+          w = Math.max(0.1, Math.min(0.9, w));
+          const x = a[0] + wx * w;
+          const y = a[1] + wy * w;
+          heads.push({ x, y, face });
+          this.heads.push({
+            x,
+            y,
+            heading: arm.heading,
+            signal: control.signal[j]!,
+            axis: arm.axis,
+          });
+        }
+      }
+      this.at(c[0], c[1]).spans.push({ a, b, heads });
+    });
+  }
+
+  /**
+   * The signal head someone at (x, y) driving on `heading` is looking at: the nearest one ahead
+   * that faces them, within `reach` metres.
+   */
+  signalAhead(x: number, y: number, heading: number, reach = 150): SignalHead | null {
+    const sin = Math.sin(heading);
+    const cos = Math.cos(heading);
+    let best: SignalHead | null = null;
+    let nearest = reach;
+    for (const head of this.heads) {
+      const dx = head.x - x;
+      const dy = head.y - y;
+      const ahead = dx * sin + dy * cos;
+      if (ahead < 0 || ahead > nearest || Math.abs(dx * cos - dy * sin) > 20) continue;
+      // It faces you when it points back along the way you're going.
+      if (Math.sin(head.heading) * sin + Math.cos(head.heading) * cos > -0.7) continue;
+      nearest = ahead;
+      best = head;
+    }
+    return best;
   }
 
   /** Stand street lamps along the roads: evenly spaced, clear of walls and of other streets. */
@@ -531,7 +639,7 @@ export class World {
     const key = chunkKey(chunkOf(x), chunkOf(y));
     let s = this.stuff.get(key);
     if (!s) {
-      s = { buildings: [], signs: [], parked: [], lamps: [], trees: [], green: [] };
+      s = { buildings: [], signs: [], parked: [], lamps: [], spans: [], trees: [], green: [] };
       this.stuff.set(key, s);
     }
     return s;
@@ -1043,6 +1151,10 @@ export class World {
       const dir: XY = [lamps[k + 2]!, lamps[k + 3]!];
       streetLamp(base, lamps[k]!, lamps[k + 1]!, dir, rule.tall, rule.arm);
       if (first) this.block(lamps[k]!, lamps[k + 1]!, dir, 0.15, 0.15);
+    }
+    for (const span of stuff?.spans ?? []) {
+      signalSpan(base, span.a, span.b, span.heads);
+      if (first) for (const p of [span.a, span.b]) this.block(p[0], p[1], [1, 0], 0.2, 0.2);
     }
     const parked = stuff?.parked ?? [];
     for (let k = 0; k < parked.length; k += 3) {

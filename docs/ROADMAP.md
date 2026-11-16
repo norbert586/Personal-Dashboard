@@ -77,7 +77,9 @@ waits for its own design session.
    - [x] Trees stop the car at the trunk (`trunkHalf` in `trees.ts`), and the headlights checked
          at night: from bumper height they only grazed the road and left it dark, so the light
          now sits higher and brighter (`car-body.ts`).
-   - [ ] Signal heads at the 44 signal junctions, cycling on the timer the other cars obey.
+   - [x] Signal heads at the 44 signal junctions, cycling on the timer the other cars obey
+         (ADR-046): yellow heads on a wire between two poles, green, yellow and red from
+         `signals.ts`, with `control.ts` pairing up each signal's streets.
    - [ ] Stop signs by rule (where the other cars stop) and from the map, and the map's yield
          signs.
    - [ ] Street-name signs at corners.

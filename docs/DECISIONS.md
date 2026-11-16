@@ -670,3 +670,25 @@ reach shrinking with speed so a full-lock swerve at 60 mph slides under 2 degree
 Consequences: the car tests now hold the new targets (0 to 60, the 31 foot circle, a quick
 wheel). Story mode's upgrades (step 9) start from this car, so the real HHR is no longer the
 baseline. If it's now too twitchy, `steerRate` and `inertia` are the first values to ease back.
+
+## ADR-046: Signals hang on span wires, on one timer, and only the other cars have to obey
+
+**Accepted · 2026-11-16 · Norbert picked the feature; the look is Claude's proposal**
+Context: Norbert wants the map more alive before routing, starting with traffic control he can
+see. The other cars already took turns at the 44 signal junctions, on a timer hidden inside
+`traffic.ts` that guessed a street's turn from the compass, so two roads meeting at a slant could
+both get green, and nothing showed the player whose turn it was.
+Decision: one timer, `signals.ts`: each street gets 20 seconds of green, 3 of yellow and a second
+of red all round. `control.ts` works out, once per zone, what meets at every intersection, pairs a
+signal's streets by the biggest road through it, and makes signals within 40 m of each other keep
+time together, since the map draws one big intersection as several. Cars and signal heads both
+read these two modules. The heads hang the way they do around here: a wire between two wooden
+poles on opposite corners, a yellow head over each lane that drives in (two on roads of four lanes
+or more). They're drawn about twice life size, because at this picture's 360 lines a real 12 inch
+lens is a pixel a block away. Poles, wires and housings go in the world's own meshes; the lit
+lenses are one instanced mesh, the only draw call this adds. Red is always the top lens and green
+the bottom, and `data-signal` on the canvas says what the signal ahead shows.
+Consequences: signals are for looking at: nothing happens when Norbert runs a red, and the other
+cars don't expect him to. Whether it should cost him is SPEC open question 10. There are no turn
+arrows and no walk signals. Where the map has a divided road's signals a few metres apart, one
+wire serves both, so a head can hang a little off its lane.

@@ -287,3 +287,45 @@ export function parkedCar(out: MeshBuilder, x: number, y: number, dir: XY, seed:
     GLASS,
   );
 }
+
+/** A signal head hanging from a span wire: where it is, and the unit direction it faces. */
+export interface HeadSpot {
+  x: number;
+  y: number;
+  face: XY;
+}
+
+/**
+ * Signal heads, bigger than life so three lights read from a block away at this picture's size.
+ * Heights of the red, yellow and green lenses, the lens's size, and how far it stands out from
+ * the middle of its housing, in metres.
+ */
+export const HEAD = { lenses: [6.8, 6.25, 5.7], lens: 0.44, out: 0.24, wire: 7.6 } as const;
+const WOOD: Tint = [0.36, 0.27, 0.2];
+const HOUSING: Tint = [0.86, 0.66, 0.1];
+
+/**
+ * A signal the way they hang here: a wire strung between two wooden poles on opposite corners,
+ * with the yellow heads hanging from it over the lanes they're for. The lit lenses aren't here:
+ * they change, so `signal-heads.ts` draws them.
+ */
+export function signalSpan(out: MeshBuilder, a: XY, b: XY, heads: readonly HeadSpot[]): void {
+  const len = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+  const dir: XY = [(b[0] - a[0]) / len, (b[1] - a[1]) / len];
+  for (const p of [a, b]) box(out, p[0], p[1], dir, 0.14, 0.14, 0, HEAD.wire + 0.7, WOOD);
+  box(
+    out,
+    (a[0] + b[0]) / 2,
+    (a[1] + b[1]) / 2,
+    dir,
+    len / 2,
+    0.035,
+    HEAD.wire,
+    HEAD.wire + 0.08,
+    POST,
+  );
+  for (const head of heads) {
+    box(out, head.x, head.y, head.face, 0.04, 0.04, 7.1, HEAD.wire, POST);
+    box(out, head.x, head.y, head.face, 0.22, 0.36, 5.4, 7.1, HOUSING);
+  }
+}
