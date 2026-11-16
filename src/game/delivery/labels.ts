@@ -53,6 +53,9 @@ export class Labels {
   private readonly ids = new Map<string, number>();
   private readonly texts: string[][] = [];
   private readonly rects: Label[] = [];
+  private height = 16;
+  /** 0 to 9, always painted: house numbers are laid out a digit at a time. */
+  private readonly digits = [...'0123456789'].map((d) => this.add(d, 1, 1));
 
   /** Ask for a label; returns its id. The same words asked for twice share one. */
   add(text: string, chars = 11, lines = 3): number {
@@ -68,6 +71,17 @@ export class Labels {
 
   get(id: number): Label {
     return this.rects[id]!;
+  }
+
+  /**
+   * One digit's cell, after `build`: its 3 by 5 glyph with a texel of plate all round, so digits
+   * laid side by side read as one number on one plate.
+   */
+  digit(d: number): Label {
+    const r = this.rects[this.digits[d]!]!;
+    const u0 = r.u0 + (PAD - 1) / WIDTH;
+    const v0 = r.v0 + (PAD - 1) / this.height;
+    return { u0, v0, u1: u0 + 5 / WIDTH, v1: v0 + 7 / this.height, w: 5, h: 7 };
   }
 
   /** Paint every label asked for so far. */
@@ -91,6 +105,7 @@ export class Labels {
     }
     let height = 16;
     while (height < y + shelf + 1) height *= 2;
+    this.height = height;
     const data = new Uint8Array(WIDTH * height * 4).fill(255);
     this.texts.forEach((lines, id) => {
       const { x: left, y: bottom, w, h } = spots[id]!;

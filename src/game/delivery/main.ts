@@ -472,8 +472,13 @@ async function boot(): Promise<void> {
     if (posted) say(limitMph, String(posted));
     const place = past ? null : world.placeNear(car.x, car.y);
     const here = place ? `${PLACE_WORD[place.kind]} · ${place.name}` : '';
-    placeBox.hidden = !place;
-    if (place) say(placeLine, here);
+    // Stopped beside a building, the line names its address instead: finding the house is
+    // reading the mailboxes while you drive (ADR-042).
+    const address = past ? null : world.addressAt(car.x, car.y);
+    // Back at the store, it stays the store.
+    const shown = address && speed === 0 && !home ? address : here;
+    placeBox.hidden = !shown;
+    if (shown) say(placeLine, shown);
     say(clock, clockFormat.format(new Date()));
     drawMap();
     // For tests and tools: what the drive is showing, written only when it changes.
@@ -482,6 +487,7 @@ async function boot(): Promise<void> {
     if (data.at !== at) data.at = at;
     if (data.street !== name) data.street = name;
     if (data.place !== here) data.place = here;
+    if (data.address !== (address ?? '')) data.address = address ?? '';
     const cars = traffic.riders.filter((r) => !r.bike).length;
     data.traffic = `${cars} cars, ${traffic.riders.length - cars} bikes, ${traffic.walkers.length} on foot`;
     if (data.mph !== String(speed)) data.mph = String(speed);

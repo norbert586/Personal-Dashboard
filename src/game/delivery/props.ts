@@ -87,6 +87,67 @@ export function panel(
 }
 
 const POST: Tint = [0.3, 0.31, 0.33];
+/** Reflective address signs, like the township's: white digits on blue, lit up at night. */
+const ADDRESS: Tint = [0.16, 0.3, 0.62];
+const MAILBOX: Tint = [0.14, 0.14, 0.16];
+
+/**
+ * A house number in the sign font, one digit cell at a time, centred at (x, y) on a face whose
+ * outward normal is `n`, from height `h0`, `height` metres tall. It reads left to right from in
+ * front of the face.
+ */
+export function houseNumber(
+  out: MeshBuilder,
+  x: number,
+  y: number,
+  n: XY,
+  h0: number,
+  height: number,
+  text: string,
+  digit: (d: number) => Label,
+  tint: Tint = ADDRESS,
+): void {
+  const cell = (height * 5) / 7;
+  // Facing the face, its left is to the right of the normal.
+  const along: XY = [-n[1], n[0]];
+  const start = -(text.length * cell) / 2;
+  [...text].forEach((ch, k) => {
+    const s0 = start + k * cell;
+    const a: XY = [x + along[0] * s0, y + along[1] * s0];
+    const b: XY = [a[0] + along[0] * cell, a[1] + along[1] * cell];
+    panel(out, a, b, h0, h0 + height, digit(Number(ch)), tint, -1);
+  });
+}
+
+/** How wide a house number of `digits` digits is, `height` metres tall. */
+export const numberWidth = (digits: number, height: number): number => (digits * height * 5) / 7;
+
+/**
+ * A mailbox at the curb, its box pointing at the street along `toward`, with the house number on
+ * a blue board under it, double-sided and square to the street so it reads from a car either way.
+ */
+export function mailbox(
+  out: MeshBuilder,
+  x: number,
+  y: number,
+  toward: XY,
+  text: string,
+  digit: (d: number) => Label,
+): void {
+  const height = 0.3;
+  const w = numberWidth(text.length, height);
+  box(out, x, y, toward, 0.045, 0.045, 0, 1.02, POST);
+  box(out, x + toward[0] * 0.08, y + toward[1] * 0.08, toward, 0.26, 0.12, 1.02, 1.26, MAILBOX);
+  // The board hangs off the post, back from the street.
+  const bx = x - toward[0] * (w / 2 - 0.06);
+  const by = y - toward[1] * (w / 2 - 0.06);
+  box(out, bx, by, toward, w / 2 + 0.05, 0.02, 0.5, 0.56 + height, ADDRESS);
+  const side: XY = [-toward[1], toward[0]];
+  for (const s of [1, -1]) {
+    const n: XY = [side[0] * s, side[1] * s];
+    houseNumber(out, bx + n[0] * 0.025, by + n[1] * 0.025, n, 0.53, height, text, digit);
+  }
+}
 const BRICK: Tint = [1, 1, 1];
 
 export interface SignSpec {

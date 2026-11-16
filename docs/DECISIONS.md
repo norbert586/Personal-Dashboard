@@ -608,6 +608,12 @@ Same zone file in, same numbers out. No new data and no dependency.
 Consequences: numbers rise in the right direction and sit on the right side, but don't match the
 real houses, which also keeps any real home from being named as an order. The same scheme is the
 one M1 step 7 planned for the town, so it can be shared.
+Built 2026-11-16 (`src/lib/zone/addresses.ts`), with Norbert's picks: one grid across the zone
+rather than counting from each street's end, about 2,000 numbers a mile and five digits
+everywhere, so nearby streets share their hundreds. A street counts east or north by which way it
+mostly runs. The importer now also decides which road each building faces (it was worked out in
+the browser), so the number and the front door always agree; a building facing an unnamed lane
+takes its address from the nearest named street. The zone file went to version 3.
 
 ## ADR-043: The pizzeria gets a room, and dispatch is a game
 
