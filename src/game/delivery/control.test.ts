@@ -122,3 +122,97 @@ test('the real zone: 44 signals, and each one that has two streets gives both a 
   assert.equal(control.arms[home]!.filter((a) => a.inbound).length, 4);
   assert.ok(crossed >= 35, `${crossed} signals have a crossing street`);
 });
+
+/** A main road, a side street that ends at it, and two equal streets that cross further east. */
+const signs = (spots: Zone['spots']): Zone => ({
+  ...town,
+  name: 'signs',
+  roads: [
+    road('secondary', 'Main Road', [-300, 0, 0, 0, 300, 0], [0, 1, 2]),
+    road('residential', 'Side Street', [0, -200, 0, -30, 0, 0], [3, -1, 1]),
+    road('residential', 'Elm Street', [100, 100, 200, 100, 300, 100], [4, 5, 6]),
+    road('residential', 'Oak Street', [200, 0, 200, 70, 200, 100, 200, 200], [-1, -1, 5, 7]),
+  ],
+  junctions: [
+    { x: -300, y: 0, signal: false },
+    { x: 0, y: 0, signal: false },
+    { x: 300, y: 0, signal: false },
+    { x: 0, y: -200, signal: false },
+    { x: 100, y: 100, signal: false },
+    { x: 200, y: 100, signal: false },
+    { x: 300, y: 100, signal: false },
+    { x: 200, y: 200, signal: false },
+  ],
+  spots,
+});
+
+const stopsAt = (zone: Zone, junction: number) =>
+  controlOf(zone)
+    .arms[junction]!.filter((a) => a.inbound)
+    .map((a) => `${zone.roads[a.road]!.name} ${a.stop}`)
+    .sort();
+
+test('by rule, the side street stops for the main road and nobody else does', () => {
+  const zone = signs([]);
+  assert.deepEqual(stopsAt(zone, 1), ['Main Road no', 'Main Road no', 'Side Street sign']);
+  // Two equal streets that both run through: nobody has a sign.
+  assert.deepEqual(stopsAt(zone, 5), [
+    'Elm Street no',
+    'Elm Street no',
+    'Oak Street no',
+    'Oak Street no',
+  ]);
+});
+
+test("a stop sign the map marks on a street's way in stops that way in only", () => {
+  // On Oak Street, 30 m south of where it crosses Elm.
+  const zone = signs([{ kind: 'stop', x: 200, y: 70 }]);
+  const arms = controlOf(zone).arms[5]!;
+  const fromSouth = arms.find((a) => a.road === 3 && a.d === -1)!;
+  assert.equal(fromSouth.stop, 'sign');
+  assert.equal(arms.filter((a) => a.stop === 'sign').length, 1);
+});
+
+test("a stop the map marks on the intersection's own point is an all-way stop", () => {
+  const zone = signs([{ kind: 'stop', x: 200, y: 100 }]);
+  assert.deepEqual(stopsAt(zone, 5), [
+    'Elm Street sign',
+    'Elm Street sign',
+    'Oak Street sign',
+    'Oak Street sign',
+  ]);
+});
+
+test('a yield sign the map marks takes the place of the stop the rule would give', () => {
+  const zone = signs([{ kind: 'yield', x: 0, y: -30 }]);
+  assert.deepEqual(stopsAt(zone, 1), ['Main Road no', 'Main Road no', 'Side Street yield']);
+});
+
+test('the real zone: signs stand where cars stop, and never at a signal', () => {
+  const zone = decodeZone(
+    JSON.parse(
+      readFileSync(new URL('../../../public/zone/auburn-dequindre.json', import.meta.url), 'utf8'),
+    ) as ZoneFile,
+  );
+  const control = controlOf(zone);
+  const count = { no: 0, sign: 0, yield: 0, signal: 0 };
+  control.arms.forEach((arms, j) => {
+    for (const arm of arms) {
+      if (!arm.inbound) continue;
+      count[arm.stop]++;
+      assert.equal(arm.stop === 'signal', zone.junctions[j]!.signal);
+    }
+  });
+  // About 1,200 stop signs by the rule and the map together; the map alone marks 68.
+  assert.ok(count.sign > 900 && count.sign < 1600, `${count.sign} stop signs`);
+  assert.ok(count.yield >= 20 && count.yield <= 40, `${count.yield} yield signs`);
+  // Hessel Avenue stops for Auburn Road on both sides, a block west of the store.
+  const hessel = zone.junctions.findIndex((p) => Math.hypot(p.x + 99, p.y + 22) < 3);
+  const there = control.arms[hessel]!.map((a) => `${zone.roads[a.road]!.name} ${a.stop}`).sort();
+  assert.deepEqual(there, [
+    'East Auburn Road no',
+    'East Auburn Road no',
+    'Hessel Avenue sign',
+    'Hessel Avenue sign',
+  ]);
+});

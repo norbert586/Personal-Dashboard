@@ -80,8 +80,9 @@ waits for its own design session.
    - [x] Signal heads at the 44 signal junctions, cycling on the timer the other cars obey
          (ADR-046): yellow heads on a wire between two poles, green, yellow and red from
          `signals.ts`, with `control.ts` pairing up each signal's streets.
-   - [ ] Stop signs by rule (where the other cars stop) and from the map, and the map's yield
-         signs.
+   - [x] Stop signs by rule (where the other cars stop) and from the map, and the map's yield
+         signs: about 1,230 stop signs and 33 yields, the yields at the Auburn Road roundabouts.
+         The rule is in `control.ts`, and the cars read it from there too.
    - [ ] Street-name signs at corners.
 4. [ ] **Routing.** A* over the zone file's junctions and roads, giving a drive time between any
        two doors. One piece of code serves three things: the GPS path on the ground, the time

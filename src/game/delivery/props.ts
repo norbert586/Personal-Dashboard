@@ -329,3 +329,57 @@ export function signalSpan(out: MeshBuilder, a: XY, b: XY, heads: readonly HeadS
     box(out, head.x, head.y, head.face, 0.22, 0.36, 5.4, 7.1, HOUSING);
   }
 }
+
+const SIGN_RED: Tint = [0.8, 0.09, 0.08];
+const SIGN_BACK: Tint = [0.5, 0.52, 0.55];
+/** Road signs: half the face's width, and the height of its middle, in metres. */
+export const ROAD_SIGN = { half: 0.5, at: 2.5 } as const;
+
+/** A point on a sign's face: `l` metres to the reader's left of the post and `h` up, `off` proud. */
+function onFace(x: number, y: number, face: XY, off: number, l: number, h: number): P3 {
+  return [x + face[0] * off + face[1] * l, y + face[1] * off - face[0] * l, h];
+}
+
+/**
+ * A stop sign on its post, facing `face`: a red octagon with the word across it, so it's told by
+ * its shape and its word as well as its colour. Lit a little at night, as a reflective sign is.
+ */
+export function stopSign(out: MeshBuilder, x: number, y: number, face: XY, word: Label): void {
+  const R = ROAD_SIGN.half;
+  const k = R * Math.tan(Math.PI / 8);
+  const z = ROAD_SIGN.at;
+  box(out, x, y, face, 0.05, 0.05, 0, z + R, POST);
+  for (const [off, tint, glow] of [
+    [0.07, SIGN_RED, -0.6],
+    [-0.07, SIGN_BACK, 0],
+  ] as const) {
+    const p = (l: number, h: number) => onFace(x, y, face, off, l, h);
+    const flat = (a: P3, b: P3, c: P3, d: P3) =>
+      out.quad(a, b, c, d, 0, 0, 0, 0, T.plain, tint, glow);
+    flat(p(R, z - k), p(-R, z - k), p(-R, z + k), p(R, z + k));
+    flat(p(R, z + k), p(-R, z + k), p(-k, z + R), p(k, z + R));
+    flat(p(k, z - R), p(-k, z - R), p(-R, z - k), p(R, z - k));
+  }
+  // The word fills the middle band.
+  const w = (k * 2 * word.w) / word.h / 2;
+  const a = onFace(x, y, face, 0.09, w, 0);
+  const b = onFace(x, y, face, 0.09, -w, 0);
+  panel(out, [a[0], a[1]], [b[0], b[1]], z - k, z + k, word, SIGN_RED, -1);
+}
+
+/** A yield sign: a red triangle, point down, with a white middle. */
+export function yieldSign(out: MeshBuilder, x: number, y: number, face: XY): void {
+  const R = ROAD_SIGN.half;
+  const z = ROAD_SIGN.at;
+  const top = z + R * 0.87;
+  const foot = z - R * 0.87;
+  box(out, x, y, face, 0.05, 0.05, 0, top, POST);
+  const tri = (off: number, size: number, tint: Tint, glow: number) => {
+    const mid = (top * 2 + foot) / 3;
+    const p = (l: number, h: number) => onFace(x, y, face, off, l * size, mid + (h - mid) * size);
+    out.tri(p(R, top), p(-R, top), p(0, foot), 0, 0, 0, 0, 0, 0, T.plain, tint, glow);
+  };
+  tri(-0.07, 1, SIGN_BACK, 0);
+  tri(0.07, 1, SIGN_RED, -0.6);
+  tri(0.09, 0.56, [1, 1, 1], -0.6);
+}

@@ -35,7 +35,11 @@ export interface Arm {
   inbound: boolean;
   /** At a signal: which of its two crossing streets this is. */
   axis: 0 | 1;
+  /** What someone driving in along it meets: nothing, a stop sign, a yield sign or the signal. */
+  stop: Stop;
 }
+
+export type Stop = 'no' | 'sign' | 'yield' | 'signal';
 
 export interface Control {
   /** Every intersection's arms, by junction index. */
@@ -68,7 +72,16 @@ function build(zone: Zone): Control {
           road.pts[to * 2]! - road.pts[k * 2]!,
           road.pts[to * 2 + 1]! - road.pts[k * 2 + 1]!,
         );
-        arms[j]!.push({ road: r, k, d, heading, half, inbound: !road.oneway || d < 0, axis: 0 });
+        arms[j]!.push({
+          road: r,
+          k,
+          d,
+          heading,
+          half,
+          inbound: !road.oneway || d < 0,
+          axis: 0,
+          stop: 'no',
+        });
       }
     });
   });
@@ -82,6 +95,80 @@ function build(zone: Zone): Control {
       arm.axis = off < Math.PI / 4 || off > (Math.PI * 3) / 4 ? 0 : 1;
     }
   });
+  // Stop signs by rule: a smaller road stops for a bigger one, and a road that ends stops for one
+  // that runs through. A ramp joins the freeway without stopping.
+  arms.forEach((list, j) => {
+    let major = 0;
+    let through = -1;
+    for (const arm of list) {
+      const road = roads[arm.road]!;
+      const priority = PRIORITY[road.kind]!;
+      major = Math.max(major, priority);
+      if (arm.k > 0 && arm.k < road.nodes.length - 1) through = Math.max(through, priority);
+    }
+    for (const arm of list) {
+      const road = roads[arm.road]!;
+      const mine = PRIORITY[road.kind]!;
+      const ends = arm.k === 0 || arm.k === road.nodes.length - 1;
+      const ramp = road.kind === 'link' || road.kind === 'motorway';
+      if (junctions[j]!.signal) arm.stop = 'signal';
+      else if (ramp && major >= 8) arm.stop = 'no';
+      else if (mine < major || (ends && through >= mine)) arm.stop = 'sign';
+    }
+  });
+  // Then the signs the map itself marks, which is where all-way stops come from. A sign is a
+  // point on its road a little before the intersection, or the intersection's own point.
+  const where = new Map<string, Array<[road: number, point: number]>>();
+  const key = (x: number, y: number) => `${Math.round(x * 10)},${Math.round(y * 10)}`;
+  roads.forEach((road, r) => {
+    if (PRIORITY[road.kind] === undefined) return;
+    for (let i = 0; i < road.nodes.length; i++) {
+      const k = key(road.pts[i * 2]!, road.pts[i * 2 + 1]!);
+      const list = where.get(k);
+      if (list) list.push([r, i]);
+      else where.set(k, [[r, i]]);
+    }
+  });
+  for (const spot of zone.spots) {
+    if (spot.kind !== 'stop' && spot.kind !== 'yield') continue;
+    const stop: Stop = spot.kind === 'stop' ? 'sign' : 'yield';
+    for (const [r, i] of where.get(key(spot.x, spot.y)) ?? []) {
+      const { nodes, pts } = roads[r]!;
+      const mark = (j: number, k: number, d: 1 | -1 | 0) => {
+        for (const arm of arms[j]!)
+          if (
+            arm.stop !== 'signal' &&
+            arm.inbound &&
+            (d === 0 || (arm.road === r && arm.k === k && arm.d === d))
+          )
+            arm.stop = stop;
+      };
+      if (nodes[i]! >= 0) {
+        mark(nodes[i]!, i, 0);
+        continue;
+      }
+      // The nearer intersection along the road, within a short block, is the one it's for.
+      let best: [number, number, 1 | -1] | null = null;
+      let nearest = 60;
+      for (const d of [1, -1] as const) {
+        let far = 0;
+        for (let k = i + d; k >= 0 && k < nodes.length && far < nearest; k += d) {
+          far += Math.hypot(
+            pts[k * 2]! - pts[(k - d) * 2]!,
+            pts[k * 2 + 1]! - pts[(k - d) * 2 + 1]!,
+          );
+          if (nodes[k]! < 0) continue;
+          if (far < nearest) {
+            nearest = far;
+            // The arm points from the intersection back toward the sign.
+            best = [nodes[k]!, k, -d as 1 | -1];
+          }
+          break;
+        }
+      }
+      if (best) mark(...best);
+    }
+  }
   const signal = new Int32Array(junctions.length).fill(-1);
   const lit: number[] = [];
   junctions.forEach((junction, j) => {

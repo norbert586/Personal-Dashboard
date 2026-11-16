@@ -24,7 +24,9 @@ import {
   parkedCar,
   sign,
   signalSpan,
+  stopSign,
   streetLamp,
+  yieldSign,
   type HeadSpot,
 } from './props.ts';
 import { Roads, roadHeight, roadWidth } from './roads.ts';
@@ -124,6 +126,8 @@ interface ChunkStuff {
   parked: number[];
   /** Street lamps: where the pole stands, the unit direction of its arm, and its kind, in fives. */
   lamps: number[];
+  /** Stop and yield signs: where the post stands and the unit direction the sign faces. */
+  stops: Array<{ x: number; y: number; face: XY; yields: boolean }>;
   /** Signals: the two poles a wire is strung between, and the heads hanging from it. */
   spans: Array<{ a: XY; b: XY; heads: HeadSpot[] }>;
   /** Trees the map itself marks. */
@@ -187,6 +191,7 @@ export class World {
   private readonly doors = new SegGrid(48);
   /** The pizzeria, when the zone has one. */
   readonly shop: Shop | null = null;
+  private stopWord = 0;
   /** Every signal head in the zone: `signal-heads.ts` lights them. */
   readonly heads: SignalHead[] = [];
   /** Whether buildings and trees throw shadows. */
@@ -267,6 +272,7 @@ export class World {
     this.shop = this.findShop();
     this.placeSigns();
     this.placeSignals();
+    this.placeStops();
     this.parkLots();
     this.placeLamps();
     materials.labels.value = this.labels.build();
@@ -346,6 +352,32 @@ export class World {
         }
       }
       this.at(c[0], c[1]).spans.push({ a, b, heads });
+    });
+  }
+
+  /**
+   * Stand a stop or yield sign wherever the other cars stop or give way (`control.ts`): on the
+   * right of the way in, just short of the street it stops for.
+   */
+  private placeStops(): void {
+    this.stopWord = this.labels.add('STOP', 4, 1);
+    const control = controlOf(this.zone);
+    this.zone.junctions.forEach((junction, j) => {
+      const arms = control.arms[j]!;
+      const widest = arms.reduce((w, a) => Math.max(w, a.half), 0);
+      for (const arm of arms) {
+        if (!arm.inbound || (arm.stop !== 'sign' && arm.stop !== 'yield')) continue;
+        const face: XY = [Math.sin(arm.heading), Math.cos(arm.heading)];
+        // Driving in, the right-hand side is on the left of the way out.
+        const right: XY = [-face[1], face[0]];
+        for (const back of [1.5, 3.5, 5.5]) {
+          const x = junction.x + face[0] * (widest + back) + right[0] * (arm.half + 1);
+          const y = junction.y + face[1] * (widest + back) + right[1] * (arm.half + 1);
+          if (!this.open(x, y, 0.5)) continue;
+          this.at(x, y).stops.push({ x, y, face, yields: arm.stop === 'yield' });
+          break;
+        }
+      }
     });
   }
 
@@ -639,7 +671,16 @@ export class World {
     const key = chunkKey(chunkOf(x), chunkOf(y));
     let s = this.stuff.get(key);
     if (!s) {
-      s = { buildings: [], signs: [], parked: [], lamps: [], spans: [], trees: [], green: [] };
+      s = {
+        buildings: [],
+        signs: [],
+        parked: [],
+        lamps: [],
+        stops: [],
+        spans: [],
+        trees: [],
+        green: [],
+      };
       this.stuff.set(key, s);
     }
     return s;
@@ -1151,6 +1192,11 @@ export class World {
       const dir: XY = [lamps[k + 2]!, lamps[k + 3]!];
       streetLamp(base, lamps[k]!, lamps[k + 1]!, dir, rule.tall, rule.arm);
       if (first) this.block(lamps[k]!, lamps[k + 1]!, dir, 0.15, 0.15);
+    }
+    for (const s of stuff?.stops ?? []) {
+      if (s.yields) yieldSign(base, s.x, s.y, s.face);
+      else stopSign(base, s.x, s.y, s.face, this.labels.get(this.stopWord));
+      if (first) this.block(s.x, s.y, s.face, 0.08, 0.08);
     }
     for (const span of stuff?.spans ?? []) {
       signalSpan(base, span.a, span.b, span.heads);

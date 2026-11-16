@@ -147,9 +147,6 @@ export class Traffic {
   private readonly pathTracks = new Map<number, Track>();
   /** What meets at each intersection: road and point index, in pairs. */
   private readonly joins: number[][];
-  /** The highest priority of any road at each intersection, and of any that runs through it. */
-  private readonly major: Float32Array;
-  private readonly through: Float32Array;
   private readonly control: Control;
   private clock = 0;
 
@@ -160,17 +157,10 @@ export class Traffic {
     this.options = options;
     this.control = controlOf(zone);
     this.joins = zone.junctions.map(() => []);
-    this.major = new Float32Array(zone.junctions.length);
-    this.through = new Float32Array(zone.junctions.length).fill(-1);
     zone.roads.forEach((road, r) => {
-      const priority = PRIORITY[road.kind];
-      if (priority === undefined) return;
-      const last = road.nodes.length - 1;
+      if (PRIORITY[road.kind] === undefined) return;
       road.nodes.forEach((j, k) => {
-        if (j < 0) return;
-        this.joins[j]!.push(r, k);
-        this.major[j] = Math.max(this.major[j]!, priority);
-        if (k > 0 && k < last) this.through[j] = Math.max(this.through[j]!, priority);
+        if (j >= 0) this.joins[j]!.push(r, k);
       });
     });
   }
@@ -263,13 +253,12 @@ export class Traffic {
         ways.push({ road: r, k: i, dir: d, angle, weight: 1 + (PRIORITY[other.kind] ?? 0) * 0.4 });
       }
     }
-    const mine = PRIORITY[road.kind] ?? 0;
-    const ends = k === 0 || k === nodes.length - 1;
-    const ramp = road.kind === 'link' || road.kind === 'motorway';
-    let stop: Turn['stop'] = 'no';
-    if (this.zone.junctions[j]!.signal) stop = 'signal';
-    else if (ramp && this.major[j]! >= 8) stop = 'no';
-    else if (mine < this.major[j]! || (ends && this.through[j]! >= mine)) stop = 'sign';
+    // What it meets there is the same thing the signs and signal heads show (control.ts). It
+    // came in along the arm that points back at it. A yield is taken as a stop for now.
+    const met = this.control.arms[j]!.find(
+      (a) => a.road === rider.road && a.k === k && a.d === -rider.dir,
+    )?.stop;
+    const stop: Turn['stop'] = met === 'yield' ? 'sign' : (met ?? 'no');
     let widest = 6;
     for (let n = 0; n < joins.length; n += 2)
       widest = Math.max(widest, roadWidth(roads[joins[n]!]!));

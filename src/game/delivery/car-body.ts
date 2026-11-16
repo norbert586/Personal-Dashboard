@@ -30,7 +30,7 @@ export class CarBody {
   private readonly tail = flat(0x7a1414, 0xff2a1e);
   private readonly head = flat(0xd9d2b0, 0xfff2c4);
   private readonly sign = flat(0xf2c14e, 0xffc94a);
-  private readonly lamp = new SpotLight(0xfff0c8, 0, 80, 0.52, 0.5, 1.2);
+  private readonly lamp = new SpotLight(0xfff0c8, 0, 80, 0.52, 0.5, 1.5);
   private roll = 0;
   private pitch = 0;
   private spin = 0;
@@ -160,6 +160,6 @@ export class CarBody {
     this.tail.emissiveIntensity = car.brake > 0.05 ? 1.6 : night * 0.6;
     this.head.emissiveIntensity = night > 0.1 ? 1.4 : 0;
     this.sign.emissiveIntensity = night * 0.9;
-    this.lamp.intensity = night * 420;
+    this.lamp.intensity = night * 330;
   }
 }
