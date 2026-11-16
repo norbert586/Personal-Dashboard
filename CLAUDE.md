@@ -8,12 +8,12 @@ three.js island; plain CSS with design tokens for the HTML parts.
 
 ## Read before you work
 
-| When                                | Read                                                          |
-| ----------------------------------- | ------------------------------------------------------------- |
-| Any feature work                    | `docs/SPEC.md`: what we're building and why (the only spec)   |
-| Any UI work                         | `docs/DESIGN.md`: the design language and its rules           |
-| Before undoing or changing a choice | `docs/DECISIONS.md`: why things are the way they are          |
-| Start and end of every session      | `docs/ROADMAP.md`: what's next; tick boxes as you finish them |
+| When                                | Read                                                           |
+| ----------------------------------- | -------------------------------------------------------------- |
+| Any feature work                    | `docs/SPEC.md`: what we're building and why (the only spec)    |
+| Any UI work                         | `docs/DESIGN.md`: the design language and its rules            |
+| Before undoing or changing a choice | `docs/DECISIONS.md`: why things are the way they are           |
+| Start and end of every session      | `docs/ROADMAP.md`: "Next chat" first; tick boxes as you finish |
 
 ## Commands
 
@@ -36,6 +36,9 @@ npm run zone:import  # re-bake the delivery zone from OpenStreetMap (needs the n
 3. Tick the box in `docs/ROADMAP.md`. If you made a choice someone could reasonably
    question, add an entry to `docs/DECISIONS.md`.
 4. Small commit whose message says why, not just what.
+5. Hand off. Norbert works in separate chats, one step each. Before the last push, rewrite
+   "Next chat" at the top of `docs/ROADMAP.md`: the next step, a prompt he can paste to start it,
+   and anything waiting on him. End your last message with that step and prompt.
 
 ## How we work
 

@@ -9,6 +9,28 @@ build one slice at a time: built, tested, screenshotted, and small enough for No
 one sitting. When a step needs a choice no doc makes, walk Norbert through it before building; he
 asked to work that way. Questions that block a step are listed in `SPEC.md` under Open questions.
 
+## Next chat
+
+Norbert works in separate chats, one step each. This section is the hand-off: the last thing every
+session does is rewrite it for the chat after (CLAUDE.md: Definition of done). Paste the prompt as
+it stands.
+
+**Next: delivery step 4, routing.**
+
+> Plan mode first. Read CLAUDE.md, then docs/ROADMAP.md (Next chat, and delivery step 4),
+> docs/SPEC.md (Delivery mode) and docs/DECISIONS.md (ADR-041 to 046). Start from the latest main.
+> Build step 4, routing: A\* over the zone file's junctions and roads, giving a drive time between
+> any two doors, as small playable slices. Walk me through any choice no doc makes before
+> building. Prove it with unit tests between real corners, send me 390 px screenshots of anything
+> I can see, commit small, push to the session branch, and don't open a PR unless I ask. Finish by
+> rewriting "Next chat" in the roadmap and telling me the next step.
+
+Carried over, for Norbert to say when he's played (none of it blocks step 4):
+
+- How step 3a feels on his phone: the frame rate (step 2's check is still skipped), the brighter
+  headlights, and whether the signal heads, stop signs and street names are the right size.
+- Whether running a red light or a stop sign should ever cost him (SPEC open question 10).
+
 ## M0: Foundation ✅
 
 - [x] Lean doc system, Astro 7 + TypeScript, CSP, fail-closed gate, `npm run verify`
