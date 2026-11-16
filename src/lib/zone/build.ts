@@ -5,6 +5,7 @@
  * the usual value for that kind of road or place stands in.
  */
 import { fillHomes } from './fill.ts';
+import { addresses } from './addresses.ts';
 import type {
   Area,
   AreaKind,
@@ -505,6 +506,9 @@ export function buildZone(elements: readonly OsmElement[], spec: ZoneSpec): Zone
       levels: Math.max(0, Math.round(Number.parseFloat(tags['building:levels'] ?? '') || 0)),
       name: tags.name ?? '',
       made: false,
+      faces: -1,
+      street: -1,
+      number: 0,
       pts: flat(ring),
     });
     rings.push(ring);
@@ -658,6 +662,9 @@ export function buildZone(elements: readonly OsmElement[], spec: ZoneSpec): Zone
       reach,
     }),
   );
+
+  // ---- Which street each building faces, and its house number (ADR-042) ----
+  addresses(roads, buildings).forEach((address, i) => Object.assign(buildings[i]!, address));
 
   return {
     name: spec.name,

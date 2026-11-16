@@ -121,6 +121,11 @@ export interface Building {
   /** A stand-in the importer placed where the map has a street but no footprints (ADR-038). */
   made: boolean;
   pts: Line;
+  /** The road its front faces, as an index into `roads`, or -1 (`addresses.ts`). */
+  faces: number;
+  /** The road its address is on, or -1 when it has none, and its house number, or 0. */
+  street: number;
+  number: number;
 }
 
 /** A place with a name: it gets a sign in the world and a mark on the map. */
@@ -163,7 +168,7 @@ export interface Zone {
   places: Place[];
 }
 
-export const ZONE_VERSION = 2;
+export const ZONE_VERSION = 3;
 
 /** Road flags in the file. */
 const ONEWAY = 1;
@@ -195,8 +200,19 @@ export interface ZoneFile {
   /** x, y, flags for each junction, in decimetres. */
   junctions: number[];
   paths: Array<[kind: number, pts: number[]]>;
-  /** A fifth entry of 1 marks a stand-in the importer placed. */
-  buildings: Array<[kind: number, levels: number, name: number, pts: number[], made?: number]>;
+  /** `made` is 1 for a stand-in the importer placed; `faces` and `street` are road indexes or -1. */
+  buildings: Array<
+    [
+      kind: number,
+      levels: number,
+      name: number,
+      pts: number[],
+      made: number,
+      faces: number,
+      street: number,
+      number: number,
+    ]
+  >;
   areas: Array<[kind: number, pts: number[]]>;
   /** kind, x, y for each spot, in decimetres. */
   spots: number[];
@@ -271,11 +287,16 @@ export function encodeZone(zone: Zone): ZoneFile {
     }),
     junctions: zone.junctions.flatMap((j) => [dm(j.x), dm(j.y), j.signal ? 1 : 0]),
     paths: zone.paths.map((p) => [PATH_KINDS.indexOf(p.kind), pack(p.pts)]),
-    buildings: zone.buildings.map((b) =>
-      b.made
-        ? [BUILDING_KINDS.indexOf(b.kind), b.levels, nameOf(b.name), pack(b.pts), 1]
-        : [BUILDING_KINDS.indexOf(b.kind), b.levels, nameOf(b.name), pack(b.pts)],
-    ),
+    buildings: zone.buildings.map((b) => [
+      BUILDING_KINDS.indexOf(b.kind),
+      b.levels,
+      nameOf(b.name),
+      pack(b.pts),
+      b.made ? 1 : 0,
+      b.faces,
+      b.street,
+      b.number,
+    ]),
     areas: zone.areas.map((a) => [AREA_KINDS.indexOf(a.kind), pack(a.pts)]),
     spots: zone.spots.flatMap((s) => [POINT_KINDS.indexOf(s.kind), dm(s.x), dm(s.y)]),
     places: zone.places.flatMap((p) => [
@@ -343,12 +364,15 @@ export function decodeZone(file: ZoneFile): Zone {
       kind: PATH_KINDS[kind] ?? 'walk',
       pts: unpack(steps),
     })),
-    buildings: file.buildings.map(([kind, levels, nameAt, steps, made]) => ({
+    buildings: file.buildings.map(([kind, levels, nameAt, steps, made, faces, street, number]) => ({
       kind: BUILDING_KINDS[kind] ?? 'house',
       levels,
       name: name(nameAt),
       made: made === 1,
       pts: unpack(steps),
+      faces,
+      street,
+      number,
     })),
     areas: file.areas.map(([kind, steps]) => ({
       kind: AREA_KINDS[kind] ?? 'park',
