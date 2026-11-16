@@ -39,12 +39,32 @@ so. Each slice ends with something he can play.
 **Where it stands (2026-11-16).** `/delivery` is a driving sandbox: every real street, the
 footprints as textured buildings with landmarks and signs, homes on every residential street, the
 lit pizzeria with its delivery parking, a few other cars, cyclists and people, street lamps,
-signals that cycle, stop signs and street names at the corners, a
-sky with the real sun, and Norbert's HHR with its automatic gearbox, walls that stop it, a chase
-camera and a dashboard. On 2026-11-16 Norbert and Claude planned the game itself (SPEC: Delivery
-mode, the modes, the store, scoring; ADR-041 to 043). The order below builds the loop rough first,
-then the store, then the scoring, and leaves polish until playing shows what matters. Story mode
-waits for its own design session.
+signals that cycle, stop signs and street names at the corners, a sky with the real sun, and
+Norbert's HHR with its automatic gearbox, walls that stop it, a chase camera and a dashboard.
+Every numbered building has an address, and the router gives a drive time between any two doors
+(ADR-047); G turns on a GPS that picks a random address and paints the way. The order below
+builds the loop rough first, then the store, then the scoring, and leaves polish until playing
+shows what matters. Story mode waits for its own design session.
+
+**Next chat: step 5, the loop, rough, starting in the car.** Read SPEC (Delivery mode: a
+delivery, GPS, what goes wrong) and ADR-041, 043 and 047. Build it as slices Norbert can play:
+
+1. A ticket in free drive: an address the router can reach (`doorSpot` isn't null), an order, a
+   hand-over and a quoted time. The GPS's random pick (`toggleGps` in `main.ts`) becomes the
+   ticket's address, and the GPS goes back to off by default.
+2. Park and get out: the town's figure (`src/game/bodies.ts`) in metres, a camera that follows on
+   foot, and walking from the car to the door (`doorAt` in `route.ts` is the door; `doorSpot` is
+   where the GPS ends).
+3. The hand-over at the door and the customer's answer in an HTML dialog, then back to the car
+   and back to the stalls behind the store.
+4. Rush, crudely: a set of orders, a timer and a results screen.
+
+Choices to walk Norbert through first, since no doc makes them: how much slack a quote adds to
+the router's drive time (the walk to the door and the hand-over aren't in it); the keys for
+getting out and for each hand-over, and their buttons on a phone; whether parking has to be near
+the door or anywhere; and how the wrong address is noticed (at the door, or only in the score).
+Open from this step: the route can turn left where a real sign forbids it, and the GPS says
+nothing aloud or in words about the next turn.
 
 1. [x] **Drive the zone.** The sandbox, done 2026-11-15.
    - [x] Map import: `npm run zone:import` bakes the 2.5 miles around Auburn and Dequindre from
@@ -86,10 +106,14 @@ waits for its own design session.
          The rule is in `control.ts`, and the cars read it from there too.
    - [x] Street-name signs at corners: green blades for both streets, on the stop signs' posts
          or the signal's pole, else on a post of their own (`bladeText` in `control.ts`).
-4. [ ] **Routing.** A* over the zone file's junctions and roads, giving a drive time between any
-       two doors. One piece of code serves three things: the GPS path on the ground, the time
-       estimate a customer is quoted, and the check on whether a bundle is a real double or triple
-       (ADR-043). Unit-test it between real corners.
+4. [x] **Routing** (ADR-047), done 2026-11-16. A\* over the zone file's junctions and roads
+       (`route.ts`) gives a drive time between any two doors: every street at its limit, plus
+       stop signs, signals and turns, ending at the nearest pavement to the door. One piece of
+       code for the GPS path, the customer's quote and the bundle check (`planRun`), unit-tested
+       between real corners. To see it before tickets exist, G in free drive picks a random
+       address: the dashboard gives the miles and minutes, and the way is blue chevrons on the
+       road (`gps.ts`) and a line on the small map. 266 doors on streets the zone's edge cuts
+       off have no route; orders skip them.
 5. [ ] **The loop, rough, starting in the car.** Does delivering feel good before the store exists?
    - [ ] A ticket: an address, the order, and how to hand it over (leave on the porch, call or
          text first, knock, or ring).
