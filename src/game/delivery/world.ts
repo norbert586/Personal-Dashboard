@@ -8,13 +8,14 @@ import { Group, type Mesh, type Scene } from 'three';
 import { doorOf, nearestOnRoad } from '../../lib/zone/addresses.ts';
 import type { Building, Place, PlaceKind, Road, Zone } from '../../lib/zone/format.ts';
 import type { Season } from '../world/materials.ts';
-import { controlOf } from './control.ts';
+import { bladeText, controlOf } from './control.ts';
 import { addBuilding, fill, up, wallHeight, type Built } from './buildings.ts';
 import { SegGrid } from './grid.ts';
 import { Labels } from './labels.ts';
 import { dress, mainWall, wallOf } from './landmarks.ts';
 import { MeshBuilder } from './mesh.ts';
 import {
+  ROAD_SIGN,
   box,
   flagpole,
   houseNumber,
@@ -25,6 +26,7 @@ import {
   sign,
   signalSpan,
   stopSign,
+  streetBlades,
   streetLamp,
   yieldSign,
   type HeadSpot,
@@ -126,6 +128,14 @@ interface ChunkStuff {
   parked: number[];
   /** Street lamps: where the pole stands, the unit direction of its arm, and its kind, in fives. */
   lamps: number[];
+  /** Street names at corners: where, how high, the blades, and whether they need their own post. */
+  names: Array<{
+    x: number;
+    y: number;
+    h: number;
+    post: boolean;
+    blades: Array<{ dir: XY; label: number }>;
+  }>;
   /** Stop and yield signs: where the post stands and the unit direction the sign faces. */
   stops: Array<{ x: number; y: number; face: XY; yields: boolean }>;
   /** Signals: the two poles a wire is strung between, and the heads hanging from it. */
@@ -192,6 +202,8 @@ export class World {
   /** The pizzeria, when the zone has one. */
   readonly shop: Shop | null = null;
   private stopWord = 0;
+  /** Posts already standing at a junction, for its street names: stop signs', a signal's pole. */
+  private readonly posts = new Map<number, Array<{ x: number; y: number; h: number }>>();
   /** Every signal head in the zone: `signal-heads.ts` lights them. */
   readonly heads: SignalHead[] = [];
   /** Whether buildings and trees throw shadows. */
@@ -273,6 +285,7 @@ export class World {
     this.placeSigns();
     this.placeSignals();
     this.placeStops();
+    this.placeNames();
     this.parkLots();
     this.placeLamps();
     materials.labels.value = this.labels.build();
@@ -352,6 +365,7 @@ export class World {
         }
       }
       this.at(c[0], c[1]).spans.push({ a, b, heads });
+      this.posts.set(j, [{ x: a[0], y: a[1], h: 3.3 }]);
     });
   }
 
@@ -375,8 +389,66 @@ export class World {
           const y = junction.y + face[1] * (widest + back) + right[1] * (arm.half + 1);
           if (!this.open(x, y, 0.5)) continue;
           this.at(x, y).stops.push({ x, y, face, yields: arm.stop === 'yield' });
+          const posts = this.posts.get(j) ?? [];
+          posts.push({ x, y, h: ROAD_SIGN.at + ROAD_SIGN.half + 0.1 });
+          this.posts.set(j, posts);
           break;
         }
+      }
+    });
+  }
+
+  /**
+   * Name the streets at every corner where two meet: a green blade for each, along its own
+   * street, on the stop sign's post or the signal's pole when there is one.
+   */
+  private placeNames(): void {
+    const { junctions, roads } = this.zone;
+    const control = controlOf(this.zone);
+    junctions.forEach((junction, j) => {
+      const named = control.arms[j]!.filter((a) => {
+        const road = roads[a.road]!;
+        return road.name && road.kind !== 'motorway' && road.kind !== 'link';
+      });
+      const first = named[0];
+      if (!first) return;
+      // The street that crosses it: a different name, and the one most square to it.
+      let other = first;
+      let square = 0.5;
+      for (const arm of named) {
+        if (roads[arm.road]!.name === roads[first.road]!.name) continue;
+        const off = Math.abs(Math.sin(arm.heading - first.heading));
+        if (off > square) {
+          square = off;
+          other = arm;
+        }
+      }
+      if (other === first) return;
+      const blades = [first, other].map((arm) => ({
+        dir: [Math.sin(arm.heading), Math.cos(arm.heading)] as XY,
+        label: this.labels.add(bladeText(roads[arm.road]!.name), 16, 1),
+      }));
+      // Every stop sign at the corner carries them, so each way in reads them on its own side.
+      const held = this.posts.get(j);
+      if (held) {
+        for (const p of held) this.at(p.x, p.y).names.push({ ...p, post: false, blades });
+        return;
+      }
+      // A signal a few metres from another shares its neighbour's wire, and its names.
+      if (junction.signal) return;
+      // Its own post, on whichever corner is free.
+      const [u, v] = blades.map((b) => b.dir) as [XY, XY];
+      for (const [su, sv] of [
+        [1, 1],
+        [-1, -1],
+        [1, -1],
+        [-1, 1],
+      ] as const) {
+        const x = junction.x + u[0] * (other.half + 1.2) * su + v[0] * (first.half + 1.2) * sv;
+        const y = junction.y + u[1] * (other.half + 1.2) * su + v[1] * (first.half + 1.2) * sv;
+        if (!this.open(x, y, 0.5)) continue;
+        this.at(x, y).names.push({ x, y, h: 2.9, post: true, blades });
+        return;
       }
     });
   }
@@ -676,6 +748,7 @@ export class World {
         signs: [],
         parked: [],
         lamps: [],
+        names: [],
         stops: [],
         spans: [],
         trees: [],
@@ -1197,6 +1270,17 @@ export class World {
       if (s.yields) yieldSign(base, s.x, s.y, s.face);
       else stopSign(base, s.x, s.y, s.face, this.labels.get(this.stopWord));
       if (first) this.block(s.x, s.y, s.face, 0.08, 0.08);
+    }
+    for (const n of stuff?.names ?? []) {
+      streetBlades(
+        base,
+        n.x,
+        n.y,
+        n.h,
+        n.blades.map((b) => ({ dir: b.dir, label: this.labels.get(b.label) })),
+        n.post,
+      );
+      if (first && n.post) this.block(n.x, n.y, [1, 0], 0.08, 0.08);
     }
     for (const span of stuff?.spans ?? []) {
       signalSpan(base, span.a, span.b, span.heads);

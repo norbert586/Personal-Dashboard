@@ -213,3 +213,37 @@ export function lightFor(control: Control, junction: number, heading: number, ti
   const arm = armFor(control, junction, heading);
   return lightAt(arm?.axis ?? 0, control.signal[junction]!, time);
 }
+
+const POINTS: Record<string, string> = { north: 'N', south: 'S', east: 'E', west: 'W' };
+const ENDS: Record<string, string> = {
+  avenue: 'Ave',
+  boulevard: 'Blvd',
+  circle: 'Cir',
+  court: 'Ct',
+  drive: 'Dr',
+  highway: 'Hwy',
+  lane: 'Ln',
+  parkway: 'Pkwy',
+  place: 'Pl',
+  road: 'Rd',
+  street: 'St',
+  terrace: 'Ter',
+  trail: 'Trl',
+};
+
+/**
+ * A street's name as its sign at the corner has it: "East Auburn Road" is "E Auburn Rd". The
+ * compass point is only shortened when a name follows it, so South Boulevard stays "South Blvd".
+ */
+export function bladeText(name: string): string {
+  const words = name.trim().split(/\s+/);
+  const last = words.length - 1;
+  return words
+    .map((word, i) => {
+      const lower = word.toLowerCase();
+      if (i === 0 && words.length > 2 && POINTS[lower]) return POINTS[lower];
+      if (i === last && i > 0 && ENDS[lower]) return ENDS[lower];
+      return word;
+    })
+    .join(' ');
+}

@@ -96,6 +96,11 @@ drew a driving game: low-poly streets at true scale, from behind the car. Values
   kind of place, on the wall and on a roadside sign (tall on a pole for shops and gas, low on
   brick for schools and churches). Letters and panels are lit after dark. The dashboard backs
   every sign with words, so nothing depends on reading small lettering.
+- **Traffic control:** signal heads are yellow and hang from a wire between two wooden poles;
+  the lit lens is unshaded, so it reads at noon and glows at night. Stop signs are red octagons
+  with the word, yield signs red triangles point down, street names white on green blades. All
+  are drawn larger than life so they read at this picture's size, and each is told by its shape
+  or position as well as its colour (red is always the top lens).
 - **The pizzeria:** red and white awning, warm lit windows, the name in lights and a real pool
   of light on the pavement at night. Delivery stalls are painted in maize, the game's accent.
 - **People and traffic:** boxy like your car, in ordinary colours (mostly white, black, grey and

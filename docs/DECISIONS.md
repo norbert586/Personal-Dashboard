@@ -692,3 +692,13 @@ Consequences: signals are for looking at: nothing happens when Norbert runs a re
 cars don't expect him to. Whether it should cost him is SPEC open question 10. There are no turn
 arrows and no walk signals. Where the map has a divided road's signals a few metres apart, one
 wire serves both, so a head can hang a little off its lane.
+Built with it, the same day: stop and yield signs and street names. A stop sign stands wherever
+the other cars stop, by the rule they already followed (a smaller road stops for a bigger one, a
+road that ends stops for one that runs through), with the map's own 68 stop and 33 yield signs
+laid over it; Norbert chose the rule over the map alone, which would have left most corners bare.
+That's about 1,230 stop signs that are plausible, not surveyed: a real corner may have none, or
+be an all-way stop the map doesn't mark. The yields are the Auburn Road roundabouts', and cars
+take a yield as a short stop for now. Street names are green blades on those posts, shortened as
+a sign has them ("E Auburn Rd"); 25 of the 795 names are too long for a blade and lose their last
+word. Blades and stop signs are drawn larger than life for the same reason as the signal heads.
+At the store this adds about 2.6% to the triangles on screen.

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { decodeZone, type Road, type Zone, type ZoneFile } from '../../lib/zone/format.ts';
-import { armFor, controlOf, lightFor } from './control.ts';
+import { armFor, bladeText, controlOf, lightFor } from './control.ts';
 
 const road = (
   kind: Road['kind'],
@@ -215,4 +215,18 @@ test('the real zone: signs stand where cars stop, and never at a signal', () => 
     'Hessel Avenue sign',
     'Hessel Avenue sign',
   ]);
+});
+
+test("a street's name is shortened the way its sign at the corner has it", () => {
+  assert.equal(bladeText('East Auburn Road'), 'E Auburn Rd');
+  assert.equal(bladeText('Dequindre Road'), 'Dequindre Rd');
+  assert.equal(bladeText('Hessel Avenue'), 'Hessel Ave');
+  assert.equal(bladeText('South Rochester Road'), 'S Rochester Rd');
+  // The compass point is the street's name here, not its side of town.
+  assert.equal(bladeText('South Boulevard'), 'South Blvd');
+  assert.equal(bladeText('East South Boulevard'), 'E South Blvd');
+  assert.equal(bladeText('23 Mile Road'), '23 Mile Rd');
+  assert.equal(bladeText('Barclay Circle'), 'Barclay Cir');
+  assert.equal(bladeText('Broadway'), 'Broadway');
+  assert.equal(bladeText('Court Street'), 'Court St');
 });

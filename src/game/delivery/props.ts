@@ -383,3 +383,38 @@ export function yieldSign(out: MeshBuilder, x: number, y: number, face: XY): voi
   tri(0.07, 1, SIGN_RED, -0.6);
   tri(0.09, 0.56, [1, 1, 1], -0.6);
 }
+
+const BLADE_GREEN: Tint = [0.05, 0.36, 0.2];
+/** Street-name blades: metres to a pixel of lettering, and how far apart two are stacked. */
+export const BLADE = { scale: 0.044, step: 0.46 } as const;
+
+/**
+ * Street names at a corner: a green blade for each street, running the way its street runs and
+ * read from both sides, stacked from `h0` up. Stands on its own post unless something else
+ * (a stop sign, a signal's pole) already holds it up.
+ */
+export function streetBlades(
+  out: MeshBuilder,
+  x: number,
+  y: number,
+  h0: number,
+  blades: ReadonlyArray<{ dir: XY; label: Label }>,
+  post: boolean,
+): void {
+  if (post) box(out, x, y, [1, 0], 0.05, 0.05, 0, h0 + BLADE.step * blades.length, POST);
+  blades.forEach(({ dir, label }, i) => {
+    const w = label.w * BLADE.scale;
+    const h = label.h * BLADE.scale;
+    const foot = h0 + i * BLADE.step;
+    const [dx, dy] = dir;
+    box(out, x, y, dir, w / 2 + 0.04, 0.03, foot, foot + h, BLADE_GREEN, -0.5);
+    for (const side of [1, -1]) {
+      // Each face reads left to right from its own side.
+      const ox = -dy * 0.05 * side;
+      const oy = dx * 0.05 * side;
+      const a: XY = [x + (dx * w * side) / 2 + ox, y + (dy * w * side) / 2 + oy];
+      const b: XY = [x - (dx * w * side) / 2 + ox, y - (dy * w * side) / 2 + oy];
+      panel(out, a, b, foot, foot + h, label, BLADE_GREEN, -1);
+    }
+  });
+}
