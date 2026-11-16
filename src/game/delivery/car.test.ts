@@ -46,14 +46,14 @@ test('at rest it stays put, in park, at idle', () => {
   assert.ok(finite(car));
 });
 
-test('it reaches 60 mph in seven to ten seconds, changing up through the gears', () => {
+test('it reaches 60 mph in about seven seconds, changing up through the gears', () => {
   const car = newCar(0, 0, 0);
   const gears: number[] = [];
   const t = drive(car, floored, 20, (c) => {
     if (gears.at(-1) !== c.gear) gears.push(c.gear);
     return speedMph(c) >= 60;
   });
-  assert.ok(t > 7 && t < 10, `0 to 60 took ${t.toFixed(1)} s`);
+  assert.ok(t > 6.6 && t < 7.4, `0 to 60 took ${t.toFixed(1)} s`);
   // Second runs to 77 mph, as the real four-speed's does.
   assert.deepEqual(gears, [1, 2]);
   // Straight north, with no wander.
