@@ -414,12 +414,23 @@ function step(car: CarState, input: CarInput, surface: Surface, dt: number): voi
 
 /**
  * Drive the car for `dt` seconds of real time, in fixed steps. Leftover time carries into the
- * next call, so the car behaves the same at any frame rate.
+ * next call, so the car behaves the same at any frame rate. `solid` runs after every step (the
+ * walls, `collide.ts`), so a hit is the same at any frame rate too; it returns how hard the car
+ * hit something, and this returns the hardest hit of the frame.
  */
-export function driveCar(car: CarState, input: CarInput, surface: Surface, dt: number): void {
+export function driveCar(
+  car: CarState,
+  input: CarInput,
+  surface: Surface,
+  dt: number,
+  solid?: (car: CarState) => number,
+): number {
+  let hardest = 0;
   car.carry += Math.min(dt, 0.1);
   while (car.carry >= STEP) {
     step(car, input, surface, STEP);
+    if (solid) hardest = Math.max(hardest, solid(car));
     car.carry -= STEP;
   }
+  return hardest;
 }

@@ -421,11 +421,11 @@ async function boot(): Promise<void> {
 
   let slow = 0;
   let surface = PAVEMENT;
+  const solids = [world.walls, world.things];
   startLoop((dt, now) => {
     if (playing) {
-      driveCar(car, input(), surface, dt);
-      collide(car, world.walls);
-      collide(car, world.things);
+      // Returns the hardest hit of the frame, in m/s: the pizza's damage will read it (step 6).
+      driveCar(car, input(), surface, dt, (c) => collide(c, solids));
       traffic.update(dt, car, car);
       bump(car, traffic.riders);
       fence(car, edge);

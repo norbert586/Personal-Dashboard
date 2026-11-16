@@ -623,3 +623,25 @@ that aren't on one run are quoted a time you can't make. ADR-027 still holds for
 Consequences: it's built after the rough loop, so delivering is shown to be fun before the room
 is made. What the room teaches (walking indoors at true scale, a screen you use in the world) is
 reused when M5 builds the town's hero interiors.
+
+## ADR-044: Collisions settle in one pass, inside the car's step, with no bounce
+
+**Accepted · 2026-11-16 · Norbert's call on the feel**
+Context: after his drive Norbert said hits bounce him badly off things. Tests showed it: a 40 mph
+hit on a wall or a parked car sprang the car back at almost 5 mph, a nose in a corner rattled
+round, and a hit came out differently at 10 frames a second than at 120. Each of the car's
+circles answered each wall on its own with 12% bounce, walls and parked cars were settled in two
+separate calls, the car's own turning into a wall was never stopped, and collisions ran once a
+frame after several steps of the car.
+Decision: still no physics engine (ADR-036). `collide.ts` takes every solid grid at once and runs
+after every fixed step of the car (`driveCar`'s `solid`). It pushes the car out until nothing
+overlaps, then takes away all the speed into each wall at the point that touches it, turning
+included, in a few rounds so a corner's two walls share the work. Nothing bounces: Norbert chose
+a dead stop over a small thud. A knock turns the car as if it were ten times harder to turn
+(`KNOCK`), and scraping costs speed in proportion to how hard the wall pushes. The hardest hit of
+each frame, in m/s, comes back from `driveCar` for the pizza's damage.
+Consequences: hits are the same at any frame rate and the tests in `collide.test.ts` hold them
+there. The outline is still three round circles, so clipping a corner with the nose pushes the
+car aside rather than stopping it; a boxier outline is the next thing to try if that feels wrong.
+People and bikes (`bump` in `traffic.ts`) still bounce a little: hitting people is its own open
+question.

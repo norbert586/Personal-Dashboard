@@ -61,13 +61,9 @@ waits for its own design session.
        tad quicker, and collisions bounce him badly off things.
    - [ ] Quicker: more `torque` and later shift points in `CAR` (`car.ts`); keep its test on 0 to
          60 and move the target with him.
-   - [ ] Collisions that don't bounce. `BOUNCE` in `collide.ts` is only 0.12, so the likely causes
-         are elsewhere: each of the car's three circles answers every wall it touches on its own,
-         so at a corner or a parked car the push-back and the loss of speed are applied several
-         times in one frame, and each contact also kicks the spin (`yawRate`). Settle all contacts
-         in one pass and soften the kick. Prove it first with a test that drives into a corner and
-         into a parked car and checks the car comes to rest rather than springing off. Report how
-         hard each hit was; the pizza's damage uses it (step 6).
+   - [x] Collisions that don't bounce (ADR-044). Proved first in `collide.test.ts`: a 40 mph hit
+         sprang back at 4.8 mph. Now every wall and parked car settles in one pass after each step
+         of the car, with no bounce, and `driveCar` reports the hardest hit for the pizza (step 6).
    - [ ] Frame rate on his laptop and phone. If it's short of 60: shadows first (`?shadows=0`),
          then the build distance (`BUILD` in `world.ts`), then the picture's 360 lines.
 3. [ ] **Addresses** (ADR-042). Every building gets a number on its real street, generated in the
