@@ -21,7 +21,7 @@ const { storeName, radiusMiles } = site.delivery;
       tabindex="0"
       role="application"
       aria-roledescription="driving game"
-      aria-label="The delivery zone. W or the up arrow is the gas, S or the down arrow brakes, and pressed again from a stop reverses, A and D or the left and right arrows steer, Space is the handbrake, C changes the camera, N changes the time of day, R goes back to the store, Escape opens the menu."
+      aria-label="The delivery zone. W or the up arrow is the gas, S or the down arrow brakes, and pressed again from a stop reverses, A and D or the left and right arrows steer, Space is the handbrake, C changes the camera, G turns the GPS on and off, N changes the time of day, R goes back to the store, Escape opens the menu."
     ></canvas>
   </main>
   <header class="hud badge">
@@ -43,6 +43,9 @@ const { storeName, radiusMiles } = site.delivery;
     <span id="time-tip" class="visually-hidden">
       Changes the time of day
     </span>
+    <button class="key" id="b-gps" type="button" aria-keyshortcuts="G" aria-pressed="false">
+      GPS: off
+    </button>
   </nav>
   <section class="hud street" aria-label="Where you are">
     <p id="street" aria-live="off">
@@ -56,12 +59,20 @@ const { storeName, radiusMiles } = site.delivery;
   <section class="hud place" id="place-box" aria-label="What you're beside" hidden>
     <p id="place" aria-live="off"></p>
   </section>
+  <section class="hud gps" id="gps-box" aria-label="GPS" hidden>
+    <p>
+      <span class="gps-tag">GPS</span>
+      <span id="gps-to" aria-live="polite"></span>
+      <span id="gps-left"></span>
+    </p>
+  </section>
   <section class="hud map" aria-label="Map">
     <canvas id="minimap" width="168" height="168" aria-hidden="true"></canvas>
     <p class="visually-hidden">
       A small map of the streets around you, turned so that the way you're heading is up, with a
       letter for each landmark: P for the store, H for the hospital, S for a school, C for a church,
-      G for a gas station and D for a car dealer.
+      G for a gas station and D for a car dealer. With the GPS on, the route is a thick line and a
+      ring marks where it ends.
     </p>
   </section>
   <section class="hud dash" aria-label="Dashboard">
@@ -105,7 +116,8 @@ const { storeName, radiusMiles } = site.delivery;
   </section>
   <footer id="help" class="hud hint">
     <p id="hint-text">
-      W/S gas and brake · A/D steer · Space handbrake · C camera · N time · R reset · Esc menu
+      W/S gas and brake · A/D steer · Space handbrake · C camera · G GPS · N time · R reset · Esc
+      menu
     </p>
   </footer>
   <dialog id="pause" class="win" aria-labelledby="pause-title">
@@ -120,7 +132,8 @@ const { storeName, radiusMiles } = site.delivery;
     <div class="win-body">
       <p>
         You're driving for {storeName}, on the real streets within {radiusMiles} miles of the store.
-        There are no orders yet: this is the drive. Deliveries come next.
+        There are no orders yet: this is the drive. Until there are, the GPS picks an address for
+        you to find, and shows the way on the road and on the map.
       </p>
       <dl>
         <dt>Gas</dt>
@@ -133,6 +146,8 @@ const { storeName, radiusMiles } = site.delivery;
         <dd>Space</dd>
         <dt>Camera</dt>
         <dd>C</dd>
+        <dt>GPS: a random address, or off</dt>
+        <dd>G</dd>
         <dt>Time of day</dt>
         <dd>N</dd>
         <dt>Back to the store</dt>
@@ -205,6 +220,7 @@ const { storeName, radiusMiles } = site.delivery;
   .badge,
   .street,
   .place,
+  .gps,
   .dash,
   .map {
     background: var(--panel);
@@ -276,6 +292,35 @@ const { storeName, radiusMiles } = site.delivery;
 
   .place[hidden] {
     display: none;
+  }
+
+  /* Where the GPS is taking you, and how far that is. */
+  .gps {
+    inset-block-start: calc(env(safe-area-inset-top, 0px) + var(--space-3) + 4.75rem);
+    inset-inline-start: 50%;
+    transform: translateX(-50%);
+    max-width: min(30rem, calc(100vw - 2rem));
+    padding: 0 var(--space-2);
+    color: var(--ink);
+    font: var(--size-14) / 1.5 var(--font-ui);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .gps[hidden] {
+    display: none;
+  }
+
+  .gps-tag {
+    margin-inline-end: var(--space-2);
+    color: var(--maize);
+    font-weight: 600;
+  }
+
+  #gps-left {
+    margin-inline-start: var(--space-1);
+    font-variant-numeric: tabular-nums;
   }
 
   .limit {
@@ -440,7 +485,14 @@ const { storeName, radiusMiles } = site.delivery;
   @media (hover: none) and (max-width: 40rem) {
     .map,
     .dash {
-      inset-block: calc(env(safe-area-inset-top, 0px) + 9rem) auto;
+      inset-block: calc(env(safe-area-inset-top, 0px) + 9.9rem) auto;
+    }
+
+    /* A fourth button would push the others under the street's name: it sits under the dashboard. */
+    #b-gps {
+      position: fixed;
+      inset-block-start: calc(env(safe-area-inset-top, 0px) + 15.2rem);
+      inset-inline-end: calc(env(safe-area-inset-right, 0px) + var(--space-3));
     }
   }
 
@@ -453,6 +505,12 @@ const { storeName, radiusMiles } = site.delivery;
 
     .place {
       inset-block-start: calc(env(safe-area-inset-top, 0px) + 6rem);
+      inset-inline-start: calc(env(safe-area-inset-left, 0px) + var(--space-3));
+      transform: none;
+    }
+
+    .gps {
+      inset-block-start: calc(env(safe-area-inset-top, 0px) + 7.85rem);
       inset-inline-start: calc(env(safe-area-inset-left, 0px) + var(--space-3));
       transform: none;
     }

@@ -71,6 +71,8 @@ export interface Route {
   metres: number;
   /** The way, as x, y, x, y… in metres, from the start to the end. */
   line: number[];
+  /** Which road each point of the line is on, as an index into the zone's roads. */
+  roads: number[];
   /** The named streets it takes, in order. */
   streets: string[];
 }
@@ -565,13 +567,16 @@ export function route(zone: Zone, from: Spot, to: Spot, options: RouteOptions = 
   for (let e = bestFrom; e >= 0; e = prev[e]!) chain.push(e);
   chain.reverse();
   const line: number[] = [from.x, from.y];
+  const roads: number[] = [from.road];
   const streets: string[] = [];
   let metres = 0;
   /** Add the road's points from `i0` to `i1` in the order driven (none when that's backwards). */
   const walk = (r: number, s0: number, s1: number, up: boolean, i0: number, i1: number) => {
     const pts = zone.roads[r]!.pts;
-    for (let i = i0; up ? i <= i1 : i >= i1; i += up ? 1 : -1)
+    for (let i = i0; up ? i <= i1 : i >= i1; i += up ? 1 : -1) {
       line.push(pts[i * 2]!, pts[i * 2 + 1]!);
+      roads.push(r);
+    }
     metres += Math.abs(s1 - s0);
     const name = zone.roads[r]!.name;
     if (name && streets.at(-1) !== name) streets.push(name);
@@ -593,7 +598,39 @@ export function route(zone: Zone, from: Spot, to: Spot, options: RouteOptions = 
     walk(to.road, toAlong[g.a[bestOn]!]!, to.s, up, first, up ? to.seg : to.seg + 1);
   }
   line.push(to.x, to.y);
-  return { seconds: best, metres, line, streets };
+  roads.push(to.road);
+  return { seconds: best, metres, line, roads, streets };
+}
+
+/**
+ * Where a point is against a route's line: how many metres along the line the nearest point of
+ * it is, and how far off the line the point is. The GPS reads it for what's left and for
+ * noticing you've left the route.
+ */
+export function alongLine(
+  line: readonly number[],
+  x: number,
+  y: number,
+): { along: number; off: number } {
+  let along = 0;
+  let off = Infinity;
+  let run = 0;
+  for (let i = 0; i + 3 < line.length; i += 2) {
+    const ax = line[i]!;
+    const ay = line[i + 1]!;
+    const ex = line[i + 2]! - ax;
+    const ey = line[i + 3]! - ay;
+    const len = Math.hypot(ex, ey);
+    const t = len > 0 ? Math.max(0, Math.min(1, ((x - ax) * ex + (y - ay) * ey) / (len * len))) : 0;
+    const d = Math.hypot(x - ax - ex * t, y - ay - ey * t);
+    if (d < off) {
+      off = d;
+      along = run + len * t;
+    }
+    run += len;
+  }
+  if (off === Infinity) off = Math.hypot(x - (line[0] ?? x), y - (line[1] ?? y));
+  return { along, off };
 }
 
 /** One drop of a run: which of the doors asked for, and when you pull up, in seconds. */

@@ -2,7 +2,16 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { decodeZone, type Road, type Zone, type ZoneFile } from '../../lib/zone/format.ts';
-import { PACE, doorSpot, planRun, route, spotNear, stretches, type Spot } from './route.ts';
+import {
+  PACE,
+  alongLine,
+  doorSpot,
+  planRun,
+  route,
+  spotNear,
+  stretches,
+  type Spot,
+} from './route.ts';
 import { dice } from './traffic.ts';
 
 const MPH = 0.44704;
@@ -96,6 +105,7 @@ test('along one road the route is the road, at its speed limit', () => {
   assert.ok(Math.abs(found.seconds - 300 / (45 * MPH)) < 0.01);
   assert.deepEqual(found.streets, ['Main Road']);
   assert.deepEqual(found.line, [-150, 0, 0, 0, 150, 0]);
+  assert.deepEqual(found.roads, [0, 0, 0]);
 });
 
 test('two places on one block are joined directly, either way', () => {
@@ -120,6 +130,16 @@ test('a one-way street is never driven backwards', () => {
   const foot = go(town, at(town, 0, 100), at(town, 0, -100));
   assert.ok(Math.abs(foot.metres - (100 + 300 + 200 + 500 + 100)) < 0.01);
   assert.deepEqual(foot.line.slice(-4), [0, -200, 0, -100]);
+});
+
+test('a point is placed against a route: how far along, and how far off', () => {
+  const { line, roads } = go(town, at(town, 0, 100), at(town, 150, 0));
+  assert.equal(roads.length, line.length / 2);
+  // Beside Back Lane's east leg, 12 m off it and 50 m down from its corner.
+  const here = alongLine(line, 312, 150);
+  assert.ok(Math.abs(here.along - (100 + 300 + 50)) < 0.01);
+  assert.ok(Math.abs(here.off - 12) < 0.01);
+  assert.deepEqual(alongLine(line, 0, 100), { along: 0, off: 0 });
 });
 
 test('a stop sign costs the stop, the look and pulling away', () => {
