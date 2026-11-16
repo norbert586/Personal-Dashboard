@@ -113,8 +113,8 @@ drive.
 - **Scoring:** one combined score from time against the quote, the tip, the pizza's condition, the
   right address and hand-over, and the no-GPS bonus. The customer's mood sets the tip, the rating
   and what they say at the door. Best runs are saved on the device.
-- **People:** customers with names, faces and lines, many of them people I know and love, grown a
-  lot over time. They're the heart of the game's humour.
+- **People:** customers with faces and lines, grown a lot over time. They're the heart of the
+  game's humour. Every name is generated at random.
 - **Addresses:** every building gets a number on its real street, generated from how far along the
   street its door is, even on one side and odd on the other (ADR-042). The numbers show on houses
   and shops. They aren't accurate, and no order is a real person's.
@@ -279,6 +279,3 @@ town as plain files, rebuilt about every half hour, with no aircraft and no edit
 13. **Real names on signs:** landmarks and shops wear their real names in plain lettering, as a
     map does, with no logos or brand colours (ADR-039). Say so if any should be left off or
     renamed.
-14. **The people in the game:** Norbert wants customers who are people he knows and loves. The
-    site is public, so before any is written: real names or nicknames, and does each person get
-    a say in how they're shown?

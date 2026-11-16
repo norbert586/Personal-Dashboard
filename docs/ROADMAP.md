@@ -99,9 +99,8 @@ waits for its own design session.
          GPS. The customer's mood sets the tip, the rating and their line at the door.
    - [ ] Rush (5, 10 or 20 orders) ranked by the combined score; best runs saved on the device.
    - [ ] Time trial: a set time, as many good deliveries as you can. Cheap once Rush exists.
-8. [ ] **People.** Customers with names, faces and lines, grown a lot over time: this is where the
-       game gets its jokes, with people Norbert knows and loves (SPEC open question 14). Walk him
-       through who and how before writing any.
+8. [ ] **People.** Customers with random generated names, faces painted by code, and lines,
+       grown a lot over time: this is where the game gets its jokes. Write them with Norbert.
 9. [ ] **Story mode.** Its own design session with Norbert first: the career, upgrades and
        getting better as a driver. Upgrades change values in `CAR`, so keep every car value there.
 10. [ ] **Polish, when playing says it matters.** Picked up in whatever order the modes show.
