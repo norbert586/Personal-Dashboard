@@ -67,6 +67,8 @@ npm run zone:import  # re-bake the delivery zone from OpenStreetMap (needs the n
   Drive times and routes are `route.ts`, with every value a quote depends on in `PACE` (ADR-047);
   the GPS, quotes and the bundle check all read it. A ticket is `ticket.ts` (ADR-048): the menu,
   the customers' notes and the clock's words, pure, the same for the same building and seed.
+  You on foot are `foot.ts` (ADR-049), a pure model like the car's with its tuning in `FOOT`;
+  walking reads `PACE.walk`, so change the pace there. The door you walk to is `world.frontDoor`.
   Landmarks the map doesn't name, and the pizzeria's shop front, are set in `site.config.ts`
   (`delivery.landmarks`, `delivery.storeFront`); re-run `npm run zone:import` after changing them.
 - The delivery mode's world is in real metres, east (+x) and north of the store; in three.js
@@ -126,6 +128,10 @@ npm run zone:import  # re-bake the delivery zone from OpenStreetMap (needs the n
   carries `data-ticket` (address | order | total | hand-over | quote), `data-ticket-clock`
   ("Quoted 9 min", "6:41 left", "Late 0:20"), `data-gps` ("40775 Mayapple Drive, 3.3 mi, 6 min"),
   `data-gps-metres` and `data-gps-marks` (chevrons painted on the road).
+  F gets you out at a stop and back in beside the car. The canvas carries `data-on-foot`, and on
+  foot `data-car` and `data-door` (metres to the car's side and to the ticket's door); `data-at`
+  follows you. Tests walk straight lines (W, or S to back up): timed turns aren't repeatable at
+  the sandbox's frame rate.
   The sandbox's software renderer manages about 23 frames a second there; that says nothing
   about a real graphics card.
 - `npm run zone:import` from a Claude cloud sandbox needs `NODE_USE_ENV_PROXY=1`. It keeps the

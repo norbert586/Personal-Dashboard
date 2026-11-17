@@ -148,9 +148,10 @@ export function makeBike(scene: Scene, frame: RGB): Bike {
 /**
  * You're always findable: where something stands between you and the camera, you show as a maize
  * silhouette. Each part gets a twin drawn only where it's behind something; the silhouette draws
- * first, so your own limbs never count as walls.
+ * first, so your own limbs never count as walls. `slack`, in depth-buffer steps, is how far
+ * behind something a part must be before it counts as hidden.
  */
-export function xray(root: Object3D): void {
+export function xray(root: Object3D, slack = 0): void {
   const sil = new MeshBasicMaterial({
     color: 0xf2c14e,
     transparent: true,
@@ -158,6 +159,8 @@ export function xray(root: Object3D): void {
     depthFunc: GreaterDepth,
     depthWrite: false,
     fog: false,
+    polygonOffset: slack > 0,
+    polygonOffsetUnits: -slack,
   });
   const meshes: Mesh[] = [];
   root.traverse((o) => {

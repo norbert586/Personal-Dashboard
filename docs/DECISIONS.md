@@ -783,3 +783,9 @@ is where you left it and nothing moves it, so a car left across a lane holds the
 Running is free: it doesn't shake the pizza, and whether it should is scoring's question
 (step 7). On a phone you can't back up on foot; you turn round. Tickets are handed out and
 clocks started by where the car is, not where you stand.
+Built 2026-11-17. Found on the way: the door painted on a house isn't at the middle of its front
+wall when the wall is two bays wide, so the door you walk to is the painted one
+(`paintedDoor` in `buildings.ts`); the quote's walk still measures to the wall's middle, a metre
+or two off. Road paint is drawn a touch nearer than it lies, which made silhouettes of your shoes
+on every street: the silhouette now needs a part to be well behind something (`xray`'s slack),
+and the GPS's paint no longer hides anything. You wear the store's red jacket; nobody chose that.

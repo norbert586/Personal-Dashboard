@@ -11,6 +11,14 @@ import { FOOT, type FootState } from './foot.ts';
 /** How tall you stand, in metres, and how tall the town's figure is in its own pixels. */
 const TALL = 1.75;
 const FIGURE_PX = 11.95;
+/**
+ * Road paint is drawn a touch nearer than it lies (`lift` in tiles.ts), which would make
+ * silhouettes of your shoes on every street. A part has to be this far behind something to count
+ * as hidden, in depth-buffer steps: about 40 cm at the on-foot camera's distance.
+ */
+const GROUND_SLACK = 200_000;
+/** How high the figure's own zero stands, in metres. */
+const SOLE = 0.06;
 
 export class WalkerBody {
   private readonly figure: Figure;
@@ -29,14 +37,15 @@ export class WalkerBody {
     });
     this.figure.g.scale.setScalar(TALL / (FIGURE_PX / ZPX));
     this.figure.g.visible = false;
-    xray(this.figure.g);
+    xray(this.figure.g, GROUND_SLACK);
   }
 
   /** Stand the figure where you are, or put it away with null while you're in the car. */
   sync(foot: FootState | null, dt: number): void {
     this.figure.g.visible = foot !== null;
     if (!foot) return;
-    this.figure.g.position.set(foot.x, 0.02, -foot.y);
+    // The town's figure has its soles a touch under its own zero; here they clear the road.
+    this.figure.g.position.set(foot.x, SOLE, -foot.y);
     // The figure's own forward is +X; heading 0 is north, which is -Z here.
     this.figure.g.rotation.y = Math.PI / 2 - foot.heading;
     const pace = Math.abs(foot.speed);
