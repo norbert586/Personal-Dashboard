@@ -759,3 +759,48 @@ way to the next one is back at the store, which the walk-in and the dispatch scr
 named in the address bar away from the store. The quote adds nothing for other cars or for a red
 light beyond the router's average wait. A ticket is a pure function of the building, the start
 and a seed (`ticket.ts`), so `?to=` always writes the same one.
+
+## ADR-049: On foot: F when stopped, anywhere; the quote's pace, and Shift to run
+
+**Accepted · 2026-11-16 · Norbert's picks**
+Context: step 5's second slice is parking, getting out and walking to the door. No doc said which
+key gets you out, when you may, where you have to park, what stops you on foot, how fast you
+walk, what the camera does at a wall, or what the dashboard shows when there's no speed or gear.
+Decision: F gets you out and back in: it's the town's key for doors. On a phone it's a button
+over the gas, shown only when it would work. You get out only at a stop, anywhere, with a ticket
+or without; Norbert chose that over having to be near the GPS's spot or on pavement, so a bad
+spot costs the walk on the clock and nothing else. You step out on the driver's side, or the
+other when that's blocked. Walking is `PACE.walk` itself, so the walk a customer is quoted is the
+walk you get; Shift runs, as in town, and is how you win time back. W and S walk and back up, A
+and D turn, as they steer the car; on a phone the pedals become Walk and Run. Everything that
+stops the car stops you (the same grids), and so do your own car and the zone's edge; other cars
+and people don't yet. The camera follows as it does the car and comes in close at a wall; you
+show through as the town's maize silhouette. The dashboard says "On foot" or "Running" and how
+far the car is, not how far the door is: finding the house stays yours (ADR-042). Within two
+metres of the ticket's door it says "At the door". The values are in `FOOT` (`foot.ts`).
+Consequences: the clock runs on foot and nothing ends it yet; the hand-over does, next. The car
+is where you left it and nothing moves it, so a car left across a lane holds the others up.
+Running is free: it doesn't shake the pizza, and whether it should is scoring's question
+(step 7). On a phone you can't back up on foot; you turn round. Tickets are handed out and
+clocks started by where the car is, not where you stand.
+Built 2026-11-17. Found on the way: the door painted on a house isn't at the middle of its front
+wall when the wall is two bays wide, so the door you walk to is the painted one
+(`paintedDoor` in `buildings.ts`); the quote's walk still measures to the wall's middle, a metre
+or two off. Road paint is drawn a touch nearer than it lies, which made silhouettes of your shoes
+on every street: the silhouette now needs a part to be well behind something (`xray`'s slack),
+and the GPS's paint no longer hides anything. You wear the store's red jacket; nobody chose that.
+
+## ADR-050: A phone's screen thins out while you drive
+
+**Accepted · 2026-11-17 · Norbert's call, Claude's layout**
+Context: Norbert drove it on his phone and couldn't see the road: the badge, the street, the
+place, the GPS line, the map, the dashboard, the buttons and the whole ticket filled the top half
+of the screen.
+Decision: on a phone held upright, from 3 mph the screen shows only the street and its limit, the
+GPS's line, the order as one line (its address and clock), a smaller map, the speed and the menu
+button. At a stop, and on foot, everything comes back: a red light or the curb is where you read
+the note. The camera, time and GPS buttons are among what goes, so you change those stopped.
+It's one attribute, `data-moving` on the page, and the rest is CSS.
+Consequences: you can't turn the GPS on or change the camera while rolling on a phone. With the
+GPS on, the address shows twice. Desktops and phones held sideways are unchanged. The layout
+stopped is as full as it was; if that's still too much, the ticket is the first thing to fold.

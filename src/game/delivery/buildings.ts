@@ -254,6 +254,34 @@ export interface Built {
  * Add one building. `seed` keeps its look steady from visit to visit; `front` is the unit
  * direction from the building toward its street, or null when there's none nearby.
  */
+/** How many bays a wall this long is cut into: about 4 m each, and none on a stub of wall. */
+const baysOf = (len: number): number => (len < 2.2 ? 0 : Math.max(1, Math.round(len / 4)));
+/** Which bay of the front wall wears the door. */
+const doorBay = (count: number): number => Math.floor(count / 2);
+
+/**
+ * Where the front door you can see is, at the foot of the wall: the middle of the bay that wears
+ * it. It's what you walk up to (ADR-049). A shop's front has a door every third bay, so it's the
+ * one nearest the middle. Null when the building has no front wall to put one on.
+ */
+export function paintedDoor(b: Building, front: XY | null): XY | null {
+  const ring = points(b.pts);
+  if (ring.length < 3 || STYLE[b.kind].roof === 'canopy') return null;
+  const { frontEdge, facing } = frontOfRing(ring, front);
+  if (frontEdge < 0) return null;
+  const a = ring[frontEdge]!;
+  const c = ring[(frontEdge + 1) % ring.length]!;
+  const count = baysOf(Math.hypot(c[0] - a[0], c[1] - a[1]));
+  if (count === 0) return null;
+  let bay = doorBay(count);
+  if (b.kind === 'retail' && facing[frontEdge]! > 0.35) {
+    const doors = Array.from({ length: count }, (_, k) => k).filter((k) => k % 3 === 1);
+    if (doors.length === 0) return lerp(a, c, 0.5);
+    bay = doors.reduce((best, k) => (Math.abs(k - bay) < Math.abs(best - bay) ? k : best));
+  }
+  return lerp(a, c, (bay + 0.5) / count);
+}
+
 export function addBuilding(
   out: MeshBuilder,
   b: Building,
@@ -285,7 +313,7 @@ export function addBuilding(
     const a = ring[i]!;
     const c = ring[(i + 1) % n]!;
     const len = Math.hypot(c[0] - a[0], c[1] - a[1]);
-    const count = len < 2.2 ? 0 : Math.max(1, Math.round(len / 4));
+    const count = baysOf(len);
     if (count === 0) {
       out.quad(
         up(a, 0),
@@ -303,7 +331,7 @@ export function addBuilding(
     }
     const isFront = i === frontEdge;
     const shopFront = b.kind === 'retail' && facing[i]! > 0.35;
-    const door = Math.floor(count / 2);
+    const door = doorBay(count);
     // A house with room for it has its garage at one end of the front.
     const garage =
       b.kind === 'garage'

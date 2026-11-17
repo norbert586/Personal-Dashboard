@@ -21,7 +21,7 @@ const { storeName, radiusMiles } = site.delivery;
       tabindex="0"
       role="application"
       aria-roledescription="driving game"
-      aria-label="The delivery zone. W or the up arrow is the gas, S or the down arrow brakes, and pressed again from a stop reverses, A and D or the left and right arrows steer, Space is the handbrake, C changes the camera, G turns the GPS to your order's door on and off, N changes the time of day, R goes back to the store, Escape opens the menu."
+      aria-label="The delivery zone. W or the up arrow is the gas, S or the down arrow brakes, and pressed again from a stop reverses, A and D or the left and right arrows steer, Space is the handbrake, C changes the camera, G turns the GPS to your order's door on and off, N changes the time of day, R goes back to the store, Escape opens the menu. Stopped, F gets you out of the car, and beside it F gets you back in; on foot W and S walk and back up, A and D turn, and holding Shift runs."
     ></canvas>
   </main>
   <header class="hud badge">
@@ -93,27 +93,40 @@ const { storeName, radiusMiles } = site.delivery;
     </p>
   </section>
   <section class="hud dash" aria-label="Dashboard">
-    <p class="speed">
-      <span id="mph">0</span>
-      <span class="unit">mph</span>
-    </p>
-    <p class="gear">
-      <span class="visually-hidden">Gear</span>
-      <span id="gear">P</span>
-    </p>
-    <svg
-      class="revs"
-      viewBox="0 0 100 8"
-      role="img"
-      aria-label="Engine revs"
-      preserveAspectRatio="none"
-    >
-      <rect class="revs-well" x="0" y="0" width="100" height="8"></rect>
-      <rect id="revs" class="revs-bar" x="0" y="0" width="0" height="8"></rect>
-      <rect class="revs-red" x="86" y="0" width="14" height="2"></rect>
-    </svg>
+    <div id="dash-car" class="dash-car">
+      <p class="speed">
+        <span id="mph">0</span>
+        <span class="unit">mph</span>
+      </p>
+      <p class="gear">
+        <span class="visually-hidden">Gear</span>
+        <span id="gear">P</span>
+      </p>
+      <svg
+        class="revs"
+        viewBox="0 0 100 8"
+        role="img"
+        aria-label="Engine revs"
+        preserveAspectRatio="none"
+      >
+        <rect class="revs-well" x="0" y="0" width="100" height="8"></rect>
+        <rect id="revs" class="revs-bar" x="0" y="0" width="0" height="8"></rect>
+        <rect class="revs-red" x="86" y="0" width="14" height="2"></rect>
+      </svg>
+    </div>
+    <div id="dash-foot" class="dash-foot" hidden>
+      <p id="foot-how" class="foot-how">
+        On foot
+      </p>
+      <p id="foot-car" class="foot-car"></p>
+    </div>
   </section>
-  <section class="hud pedals" aria-label="Driving controls">
+  <section class="hud prompt" id="prompt" aria-label="Getting out and in" hidden>
+    <p>
+      <kbd id="prompt-key">F</kbd> <span id="prompt-text"></span>
+    </p>
+  </section>
+  <section class="hud pedals" aria-label="Driving and walking controls">
     <div class="pad-group">
       <button class="pad" id="t-left" type="button" aria-label="Steer left">
         ◀
@@ -122,19 +135,24 @@ const { storeName, radiusMiles } = site.delivery;
         ▶
       </button>
     </div>
-    <div class="pad-group">
-      <button class="pad" id="t-brake" type="button" aria-label="Brake; from a stop, reverse">
-        Brake
+    <div class="pad-side">
+      <button class="pad door" id="t-door" type="button" aria-keyshortcuts="F" hidden>
+        Get out
       </button>
-      <button class="pad gas" id="t-gas" type="button" aria-label="Gas">
-        Gas
-      </button>
+      <div class="pad-group">
+        <button class="pad" id="t-brake" type="button" aria-label="Brake; from a stop, reverse">
+          Brake
+        </button>
+        <button class="pad gas" id="t-gas" type="button" aria-label="Gas">
+          Gas
+        </button>
+      </div>
     </div>
   </section>
   <footer id="help" class="hud hint">
     <p id="hint-text">
-      W/S gas and brake · A/D steer · Space handbrake · C camera · G GPS · N time · R reset · Esc
-      menu
+      W/S gas and brake · A/D steer · Space handbrake · F out and in · Shift run · C camera · G GPS
+      · N time · R reset · Esc menu
     </p>
   </footer>
   <dialog id="pause" class="win" aria-labelledby="pause-title">
@@ -151,8 +169,9 @@ const { storeName, radiusMiles } = site.delivery;
         You're driving for {storeName}, on the real streets within {radiusMiles} miles of the store.
         Stop in the delivery parking behind the store and you're handed an order: the address, what
         they ordered, how they want it handed over, and the time they were quoted, which starts
-        counting when you drive out. There's no door to walk to yet: this is the drive. The GPS is
-        off until you ask, and then shows the way on the road and on the map.
+        counting when you drive out. Pull up, get out and walk to the door: the clock keeps running
+        while you do. Nobody answers yet. The GPS is off until you ask, and then shows the way on
+        the road and on the map.
       </p>
       <dl>
         <dt>Gas</dt>
@@ -163,6 +182,10 @@ const { storeName, radiusMiles } = site.delivery;
         <dd>A and D, or ← and →</dd>
         <dt>Handbrake</dt>
         <dd>Space</dd>
+        <dt>Get out when stopped, and back in beside the car</dt>
+        <dd>F</dd>
+        <dt>On foot: walk and back up, turn, run</dt>
+        <dd>W and S, A and D, hold Shift</dd>
         <dt>Camera</dt>
         <dd>C</dd>
         <dt>GPS to your order's door, on or off</dt>
@@ -440,12 +463,65 @@ const { storeName, radiusMiles } = site.delivery;
   .dash {
     inset-block-end: calc(env(safe-area-inset-bottom, 0px) + var(--space-3));
     inset-inline-end: calc(env(safe-area-inset-right, 0px) + var(--space-3));
+    min-width: 11rem;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .dash-car {
     display: grid;
     grid-template-columns: 1fr auto;
     align-items: end;
     gap: var(--space-1) var(--space-3);
-    min-width: 11rem;
-    padding: var(--space-2) var(--space-3);
+  }
+
+  .dash [hidden] {
+    display: none;
+  }
+
+  /* On foot there's no speed to give: how you're moving, and how far the car is. */
+  .foot-how {
+    color: var(--maize);
+    font: var(--size-28) / 1.1 var(--font-display);
+    letter-spacing: 0.03em;
+  }
+
+  .foot-car {
+    color: var(--ink);
+    font: var(--size-16) / 1.3 var(--font-ui);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* What F does now, by name, like the town's door prompt. */
+  .prompt {
+    inset-block-end: calc(env(safe-area-inset-bottom, 0px) + 3.2rem);
+    inset-inline-start: 50%;
+    transform: translateX(-50%);
+    padding: var(--space-1) var(--space-3);
+    background: var(--panel);
+    border: 2px solid var(--outline);
+    box-shadow: var(--bevel-up);
+    color: var(--ink);
+    font: 600 var(--size-16) / 1.4 var(--font-ui);
+  }
+
+  .prompt p {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .prompt[hidden],
+  .prompt [hidden] {
+    display: none;
+  }
+
+  .prompt kbd {
+    min-width: 1.6rem;
+    padding: 0 var(--space-1);
+    background: var(--maize);
+    color: var(--night);
+    font: inherit;
+    text-align: center;
   }
 
   .speed {
@@ -508,6 +584,7 @@ const { storeName, radiusMiles } = site.delivery;
     inset-inline: 0;
     inset-block-end: calc(env(safe-area-inset-bottom, 0px) + var(--space-4));
     justify-content: space-between;
+    align-items: flex-end;
     padding-inline: calc(env(safe-area-inset-left, 0px) + var(--space-4));
     pointer-events: none;
   }
@@ -535,6 +612,29 @@ const { storeName, radiusMiles } = site.delivery;
   .pad.gas {
     min-height: 6rem;
     color: var(--maize);
+  }
+
+  /* Getting out and in sits over the gas, and only while it would work. */
+  .pad-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: var(--space-3);
+  }
+
+  .pad-side .pad-group {
+    align-items: flex-end;
+  }
+
+  .pad.door {
+    min-height: 3rem;
+    color: var(--maize);
+    pointer-events: auto;
+  }
+
+  .pad[hidden] {
+    display: none;
   }
 
   .pad[data-held] {
@@ -624,6 +724,74 @@ const { storeName, radiusMiles } = site.delivery;
 
     .tools {
       max-width: 62vw;
+    }
+  }
+
+  /* Driving on a phone held upright, the road gets the screen (ADR-050): the street, the GPS's
+     line, the order as one strip, a smaller map and the speed. Everything is back at a stop. */
+  @media (hover: none) and (max-width: 40rem) {
+    :global(html[data-moving='true']) .badge,
+    :global(html[data-moving='true']) .place,
+    :global(html[data-moving='true']) #b-camera,
+    :global(html[data-moving='true']) #b-time,
+    :global(html[data-moving='true']) #b-gps,
+    :global(html[data-moving='true']) .ticket-order,
+    :global(html[data-moving='true']) .ticket-note,
+    :global(html[data-moving='true']) .ticket-how,
+    :global(html[data-moving='true']) #ticket-none {
+      display: none;
+    }
+
+    :global(html[data-moving='true']) .street {
+      inset-block-start: calc(env(safe-area-inset-top, 0px) + var(--space-3));
+      max-width: calc(100vw - 7.5rem);
+    }
+
+    :global(html[data-moving='true']) .gps {
+      inset-block-start: calc(env(safe-area-inset-top, 0px) + 3.55rem);
+    }
+
+    :global(html[data-moving='true']) .ticket {
+      inset-block-start: calc(env(safe-area-inset-top, 0px) + 5.4rem);
+      inset-inline-end: auto;
+      max-width: calc(100vw - 1.5rem);
+      padding: 0 var(--space-2);
+    }
+
+    :global(html[data-moving='true']) .ticket:has(#ticket-body[hidden]) {
+      display: none;
+    }
+
+    :global(html[data-moving='true']) #ticket-body:not([hidden]) {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-3);
+    }
+
+    :global(html[data-moving='true']) .ticket-to {
+      min-width: 0;
+      overflow: hidden;
+      font: 600 var(--size-14) / 1.5 var(--font-ui);
+      letter-spacing: 0;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    :global(html[data-moving='true']) .ticket-foot {
+      flex: none;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    :global(html[data-moving='true']) .map,
+    :global(html[data-moving='true']) .dash {
+      inset-block: calc(env(safe-area-inset-top, 0px) + 7.5rem) auto;
+    }
+
+    :global(html[data-moving='true']) #minimap {
+      width: 5.5rem;
+      height: 5.5rem;
     }
   }
 

@@ -48,27 +48,31 @@ turns on a GPS that paints the way to its door. The order below
 builds the loop rough first, then the store, then the scoring, and leaves polish until playing
 shows what matters. Story mode waits for its own design session.
 
-**Next chat: step 5, second slice: park, get out and walk to the door.** Read SPEC (Delivery
-mode: a delivery, the ticket, GPS) and ADR-041, 047 and 048. The ticket is done (`ticket.ts`, and
-its wiring in `main.ts`); build the next slice and stop there:
+**Next chat: step 5, third slice: the hand-over at the door and the customer's answer.** Read SPEC
+(Delivery mode: a delivery, on foot, the ticket) and ADR-041, 048 and 049. Walking is done
+(`foot.ts`, and its wiring in `main.ts`); build the next slice and stop there:
 
-1. Park and get out: the town's figure (`src/game/bodies.ts`) in metres, a camera that follows on
-   foot (DESIGN: "on foot it follows you the same way"), and walking from the car to the door.
-   `doorAt` in `route.ts` is the door; the ticket's `spot` is where the GPS ends and `walk` is
-   how far the door is from it. Getting back in the car is part of it.
-2. Later slices, not this one: the hand-over at the door and the customer's answer in an HTML
-   dialog, which is what ends a ticket and stops its clock; then Rush, crudely.
+1. At the ticket's door (`world.frontDoor`, "At the door" on the dashboard), choose the hand-over:
+   leave it on the porch, call, text, knock or ring. Calling and texting belong to the phone in
+   the car, so they happen before you walk up.
+2. The customer answers in an RPG-style dialogue: an HTML dialog with a portrait painted by code
+   and their line. That ends the ticket and stops its clock.
+3. Later slices, not this one: walk back, drive back and park behind the store for the next
+   ticket; then Rush, crudely.
 
-Choices to walk Norbert through first, since no doc makes them: the key for getting out and back
-in, and its button on a phone (the pedals are where thumbs are); whether you can get out only
-when stopped, and whether parking has to be near the door or anywhere (the quote's walk assumes
-the GPS's spot); what stops you on foot (walls and trees as for the car, or nothing yet); how
-fast you walk, and whether you can run (`PACE.walk` is what the quote assumes); what the on-foot
-camera does at a wall; and what the dashboard shows on foot (speed and gear mean nothing there).
-Open from the ticket: nothing ends a ticket or happens when it's late; the only way to the next
-one is to stop in the delivery parking again; the notes are a first handful to rewrite with
-Norbert (step 8); the ticket takes a fair share of a phone's screen above the car. Still open
-from routing: the route can turn left where a real sign forbids it, and the GPS says nothing
+Choices to walk Norbert through first, since no doc makes them: how you choose a hand-over (a
+menu at the door, a key each, or the prompt cycling), and on a phone; where calling and texting
+happen (only in the car, or anywhere) and what they look like; what the wrong hand-over or the
+wrong door does now, before scoring exists (step 7); what leaving it on the porch shows (a box on
+the step?) and whether anyone answers; who the customer is for now (a name, a face and a line
+are step 8's, so a stand-in); what the dialog says about the time (on time, late by how much);
+and what happens to the ticket after: gone until you're back at the store, or the next one at
+once. Open from walking: running costs nothing and doesn't shake the pizza; other cars and people
+don't stop you or hit you; on a phone you can't back up on foot; the quote's walk is to the
+middle of the front wall, a metre or two from the painted door; the car's bottom edge is still
+clipped by road paint the way the figure's shoes were. Still open from the ticket: nothing
+happens when it's late, and the notes are a first handful to rewrite with Norbert (step 8). Still
+open from routing: the route can turn left where a real sign forbids it, and the GPS says nothing
 aloud or in words about the next turn.
 
 1. [x] **Drive the zone.** The sandbox, done 2026-11-15.
@@ -125,10 +129,13 @@ aloud or in words about the next turn.
          text first, knock, or ring), and a quote that counts down from when you leave the
          delivery parking. Stopping in the parking hands you one.
    - [x] GPS off by default; turned on, it draws the path on the ground to the ticket's door.
-   - [ ] Park, get out and walk to the door (the town's figure from `src/game/bodies.ts`, in
-         metres). At the door, choose the hand-over; the phone in the car calls or texts. The
-         customer answers in an RPG-style dialogue: an HTML dialog with a portrait painted by code
-         and their line.
+   - [x] Park, get out and walk to the door (ADR-049), done 2026-11-17: F at a stop, the town's
+         figure from `src/game/bodies.ts` in metres, a camera that follows on foot, walking at the
+         quote's pace and running on Shift, "At the door" at the ticket's own door, and back into
+         the car. The clock runs all the while.
+   - [ ] At the door, choose the hand-over; the phone in the car calls or texts. The customer
+         answers in an RPG-style dialogue: an HTML dialog with a portrait painted by code and
+         their line.
    - [ ] Walk back, drive back, park behind the store. Rush mode, crudely: a set of orders, a
          timer, a results screen.
 6. [ ] **The store** (ADR-043). Walk from the delivery parking through the back door into one

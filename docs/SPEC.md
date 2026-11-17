@@ -107,6 +107,11 @@ drive.
   porch, call first, text first, knock, or ring. Drive there, park, get out and walk to the door, every
   time: the walk is where the game's jokes live. Do the hand-over, and the customer answers in an
   RPG-style dialogue, a portrait and their line. Then back to the store.
+- **On foot** (ADR-049): stopped, F gets me out, anywhere, with a ticket or without; the car stays
+  where I left it, and F beside it gets me back in. I walk at the pace the quote assumes and run
+  when I hold Shift. Whatever stops the car stops me, and so does the car. The ticket's clock
+  keeps running, so a bad parking spot costs me the walk. At my ticket's door the dashboard says
+  so; standing still by any other building names its address, as it does from the car.
 - **The ticket** (ADR-048) is on the dashboard: the address, what they ordered from a small
   made-up menu and what it came to, the customer's note in their own words ("Bell is broken,
   please knock") with the plain instruction under it, and the time they were quoted. A quote is
