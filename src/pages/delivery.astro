@@ -727,6 +727,74 @@ const { storeName, radiusMiles } = site.delivery;
     }
   }
 
+  /* Driving on a phone held upright, the road gets the screen (ADR-050): the street, the GPS's
+     line, the order as one strip, a smaller map and the speed. Everything is back at a stop. */
+  @media (hover: none) and (max-width: 40rem) {
+    :global(html[data-moving='true']) .badge,
+    :global(html[data-moving='true']) .place,
+    :global(html[data-moving='true']) #b-camera,
+    :global(html[data-moving='true']) #b-time,
+    :global(html[data-moving='true']) #b-gps,
+    :global(html[data-moving='true']) .ticket-order,
+    :global(html[data-moving='true']) .ticket-note,
+    :global(html[data-moving='true']) .ticket-how,
+    :global(html[data-moving='true']) #ticket-none {
+      display: none;
+    }
+
+    :global(html[data-moving='true']) .street {
+      inset-block-start: calc(env(safe-area-inset-top, 0px) + var(--space-3));
+      max-width: calc(100vw - 7.5rem);
+    }
+
+    :global(html[data-moving='true']) .gps {
+      inset-block-start: calc(env(safe-area-inset-top, 0px) + 3.55rem);
+    }
+
+    :global(html[data-moving='true']) .ticket {
+      inset-block-start: calc(env(safe-area-inset-top, 0px) + 5.4rem);
+      inset-inline-end: auto;
+      max-width: calc(100vw - 1.5rem);
+      padding: 0 var(--space-2);
+    }
+
+    :global(html[data-moving='true']) .ticket:has(#ticket-body[hidden]) {
+      display: none;
+    }
+
+    :global(html[data-moving='true']) #ticket-body:not([hidden]) {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-3);
+    }
+
+    :global(html[data-moving='true']) .ticket-to {
+      min-width: 0;
+      overflow: hidden;
+      font: 600 var(--size-14) / 1.5 var(--font-ui);
+      letter-spacing: 0;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    :global(html[data-moving='true']) .ticket-foot {
+      flex: none;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    :global(html[data-moving='true']) .map,
+    :global(html[data-moving='true']) .dash {
+      inset-block: calc(env(safe-area-inset-top, 0px) + 7.5rem) auto;
+    }
+
+    :global(html[data-moving='true']) #minimap {
+      width: 5.5rem;
+      height: 5.5rem;
+    }
+  }
+
   .win {
     margin: auto;
     width: min(30rem, calc(100vw - 2rem));

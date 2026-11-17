@@ -112,6 +112,9 @@ const MAP_LETTER: Partial<Record<PlaceKind, string>> = {
   pizzeria: 'P',
 };
 
+/** From this speed a phone's screen shows only what you read at a glance; it's back at a stop. */
+const MOVING_MPH = 3;
+
 function cannot(title: string, why: string): void {
   $<HTMLElement>('#loading').hidden = true;
   $<HTMLElement>('#no-webgl-title').textContent = title;
@@ -717,6 +720,11 @@ async function boot(): Promise<void> {
     // The dashboard: the dials every frame, the slower things a few times a second.
     const speed = Math.round(speedMph(car));
     say(mph, String(speed));
+    // A phone's screen thins out while you drive and fills in again at a stop (ADR-050).
+    const root = document.documentElement.dataset;
+    if (foot || speed === 0) {
+      if (root.moving !== 'false') root.moving = 'false';
+    } else if (speed >= MOVING_MPH && root.moving !== 'true') root.moving = 'true';
     say(gear, gearLabel(car));
     revs.setAttribute('width', (Math.min(1, car.rpm / (CAR.redline + 200)) * 100).toFixed(1));
     slow -= dt;

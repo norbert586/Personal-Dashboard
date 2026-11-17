@@ -511,3 +511,41 @@ test('on a phone, a button over the gas gets you out and in, and the pedals walk
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations).toEqual([]);
 });
+
+test('driving on a phone, the screen thins to the street, the order in one line, the map and the speed; at a stop it is all back', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'a desktop has the room');
+  test.setTimeout(120_000);
+  await clockIn(page, `${TO_MAYAPPLE}&at=-89,-23&heading=77`);
+  const note = page.locator('#ticket-note');
+  const badge = page.getByRole('heading', { level: 1 });
+  await expect(page.locator('html')).toHaveAttribute('data-moving', 'false');
+  await expect(note).toBeVisible();
+  await expect(badge).toBeVisible();
+  await expect(page.getByRole('button', { name: /^GPS/ })).toBeVisible();
+
+  await page.keyboard.down('KeyW');
+  await expect.poll(mph(page), { timeout: 30_000 }).toBeGreaterThan(10);
+  await expect(page.locator('html')).toHaveAttribute('data-moving', 'true');
+  for (const gone of [note, badge, page.locator('#ticket-order'), page.locator('#place-box')])
+    await expect(gone).toBeHidden();
+  await expect(page.getByRole('button', { name: /^GPS/ })).toBeHidden();
+  // What's left: where you are, where you're going and how long you have, the map, the speed.
+  await expect(page.locator('#street')).toBeVisible();
+  await expect(page.locator('#ticket-to')).toHaveText('40775 Mayapple Drive');
+  await expect(page.locator('#ticket-clock')).toHaveText(/^\d+:\d\d left$/);
+  await expect(page.locator('#minimap')).toBeVisible();
+  await expect(page.locator('#mph')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Menu' })).toBeVisible();
+  // The strip ends well above the middle of the screen.
+  const strip = await page.getByRole('region', { name: 'Map' }).boundingBox();
+  expect(strip!.y + strip!.height).toBeLessThan(page.viewportSize()!.height * 0.32);
+  await page.keyboard.up('KeyW');
+
+  await page.keyboard.down('KeyS');
+  await expect(page.locator('html')).toHaveAttribute('data-moving', 'false', { timeout: 30_000 });
+  await page.keyboard.up('KeyS');
+  await expect(note).toBeVisible();
+});

@@ -126,6 +126,9 @@ drew a driving game: low-poly streets at true scale, from behind the car. Values
   pedals on the right. On foot the speed panel says "On foot" or "Running" and how far the car
   is, and the pedals say Walk and Run. A prompt names the key that gets you out or in; on a
   phone it's a button over the gas.
+- **A phone while driving** (ADR-050): held upright and moving, the screen keeps only what you
+  read at a glance: the street and its limit, the GPS's line, the order as one line (address and
+  clock), a smaller map, the speed and the menu. Stop, and everything is back to read.
 - **Reduced motion:** no camera roll or shake.
 
 ## Interface

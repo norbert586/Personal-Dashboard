@@ -132,6 +132,8 @@ npm run zone:import  # re-bake the delivery zone from OpenStreetMap (needs the n
   foot `data-car` and `data-door` (metres to the car's side and to the ticket's door); `data-at`
   follows you. Tests walk straight lines (W, or S to back up): timed turns aren't repeatable at
   the sandbox's frame rate.
+  The page carries `data-moving` (`true` from 3 mph, `false` at a stop and on foot): a phone
+  held upright hides most of the dashboard while it's `true` (ADR-050).
   The sandbox's software renderer manages about 23 frames a second there; that says nothing
   about a real graphics card.
 - `npm run zone:import` from a Claude cloud sandbox needs `NODE_USE_ENV_PROXY=1`. It keeps the

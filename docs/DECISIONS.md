@@ -789,3 +789,18 @@ wall when the wall is two bays wide, so the door you walk to is the painted one
 or two off. Road paint is drawn a touch nearer than it lies, which made silhouettes of your shoes
 on every street: the silhouette now needs a part to be well behind something (`xray`'s slack),
 and the GPS's paint no longer hides anything. You wear the store's red jacket; nobody chose that.
+
+## ADR-050: A phone's screen thins out while you drive
+
+**Accepted · 2026-11-17 · Norbert's call, Claude's layout**
+Context: Norbert drove it on his phone and couldn't see the road: the badge, the street, the
+place, the GPS line, the map, the dashboard, the buttons and the whole ticket filled the top half
+of the screen.
+Decision: on a phone held upright, from 3 mph the screen shows only the street and its limit, the
+GPS's line, the order as one line (its address and clock), a smaller map, the speed and the menu
+button. At a stop, and on foot, everything comes back: a red light or the curb is where you read
+the note. The camera, time and GPS buttons are among what goes, so you change those stopped.
+It's one attribute, `data-moving` on the page, and the rest is CSS.
+Consequences: you can't turn the GPS on or change the camera while rolling on a phone. With the
+GPS on, the address shows twice. Desktops and phones held sideways are unchanged. The layout
+stopped is as full as it was; if that's still too much, the ticket is the first thing to fold.
