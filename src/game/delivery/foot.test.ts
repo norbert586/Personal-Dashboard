@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { firstWall } from './chase.ts';
 import { RADIUS } from './collide.ts';
 import {
   FOOT,
@@ -154,4 +155,15 @@ test("the zone's edge turns you back", () => {
   go(foot, { ...walk, run: true }, 2);
   fenceFoot(foot, 100);
   assert.ok(Math.abs(Math.hypot(foot.x, foot.y) - 100) < 1e-9);
+});
+
+test('the camera finds the wall behind you, not the one you face', () => {
+  // A door wall 0.3 m north of you, and a fence 3 m south.
+  const walls = new SegGrid(24);
+  walls.add(-10, 0.3, 10, 0.3, 1);
+  walls.add(-10, -3, 10, -3, 2);
+  assert.ok(Math.abs(firstWall(walls, 0, 0, 0, -1, 8) - 3) < 1e-9, 'looking back south');
+  assert.ok(Math.abs(firstWall(walls, 0, 0, 0, 1, 8) - 0.3) < 1e-9, 'looking back north');
+  assert.equal(firstWall(walls, 0, 0, 1, 0, 8), 8, 'along the wall, nothing is crossed');
+  assert.equal(firstWall(walls, 20, 0, 0, -1, 8), 8, 'past its end');
 });

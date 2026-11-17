@@ -1,7 +1,7 @@
 /**
  * The delivery mode's entry point (ADR-035), bundled into /delivery only. It loads the zone,
  * builds the world around the car, and runs the drive: input, the car model, collisions, the
- * camera and the dashboard. Or it says plainly that this browser can't.
+ * camera and the dashboard, and the walk to the door once you get out (ADR-049). Or it says plainly that this browser can't.
  */
 import {
   BasicShadowMap,
@@ -38,6 +38,17 @@ import {
 import { CarBody } from './car-body.ts';
 import { Chase } from './chase.ts';
 import { collide, fence } from './collide.ts';
+import {
+  FOOT,
+  canGetIn,
+  carGap,
+  fenceFoot,
+  settleFoot,
+  stepFoot,
+  stepOut,
+  type FootInput,
+  type FootState,
+} from './foot.ts';
 import { GpsPath } from './gps.ts';
 import {
   HAND_OVER,
@@ -57,6 +68,7 @@ import { Sky } from './sky.ts';
 import { insideRing, points, type XY } from './space.ts';
 import { makeMaterials } from './tiles.ts';
 import { Traffic, bump } from './traffic.ts';
+import { WalkerBody } from './walker-body.ts';
 import { World, type LampHead } from './world.ts';
 
 // Colours are painted in display space, as in the town.
@@ -182,7 +194,7 @@ async function boot(): Promise<void> {
     return beam;
   });
   const lightLamps = (night: number) => {
-    const count = night > 0.02 ? world.lampsNear(car.x, car.y, heads) : 0;
+    const count = night > 0.02 ? world.lampsNear(you().x, you().y, heads) : 0;
     // Past the last beam's reach there's no light to give: the next lamp out sets the edge.
     const edge = Math.min(120, heads[beams.length]?.d ?? 120);
     beams.forEach((beam, i) => {
@@ -216,6 +228,10 @@ async function boot(): Promise<void> {
     return [near.x + dy * lane, near.y - dx * lane, Math.atan2(dx, dy)];
   };
   const car = newCar(...start());
+  /** You, once you're out of the car (ADR-049); null while you're driving. */
+  let foot: FootState | null = null;
+  /** Whoever the camera, the map and the dashboard follow: you on foot, or the car. */
+  const you = (): { x: number; y: number; heading: number } => foot ?? car;
   // A few other cars, cyclists and people on foot; fewer on a phone. ?traffic=0 empties the streets.
   const busy = asked.get('traffic') !== '0';
   const traffic = new Traffic(zone, world.streets, world.walks, {
@@ -227,6 +243,7 @@ async function boot(): Promise<void> {
   const life = new Life(scene, traffic, shadows, still);
   const signalHeads = new SignalHeads(scene, world.heads);
   const body = new CarBody(scene, still);
+  const walker = new WalkerBody(scene, still);
   const chase = new Chase(car.heading, still);
 
   /** Seconds until the dashboard's slower lines are next brought up to date. */
@@ -235,11 +252,15 @@ async function boot(): Promise<void> {
   const say = (el: HTMLElement, text: string) => {
     if (el.textContent !== text) el.textContent = text;
   };
+  /** A walk's distance in words: feet to the nearest ten. */
+  const feet = (metres: number) => `${Math.round((metres * 3.28084) / 10) * 10} ft`;
 
   // ---- The ticket (SPEC: Delivery mode, a delivery; ADR-048): stopping in the delivery parking
   // gets you one, and its clock runs from when you drive out. ----
   const stall = world.shop ? spotNear(zone, world.shop.park.x, world.shop.park.y, 90) : null;
   let ticket: Ticket | null = null;
+  /** The ticket's front door, as it's painted on the wall. */
+  let door: XY | null = null;
   /** Seconds since you left the parking with this ticket, or null while you're still there. */
   let gone: number | null = null;
 
@@ -316,6 +337,7 @@ async function boot(): Promise<void> {
   /** Take a ticket, or hand it back with null, and put it on the dashboard. */
   const take = (next: Ticket | null) => {
     ticket = next;
+    door = next ? world.frontDoor(next.building) : null;
     gone = null;
     ticketBody.hidden = !next;
     ticketNone.hidden = next !== null;
@@ -376,6 +398,8 @@ async function boot(): Promise<void> {
   };
   cameraButton.addEventListener('click', cycleCamera);
   const reset = () => {
+    foot = null;
+    showFoot();
     Object.assign(car, newCar(...start()));
     canvas.focus({ focusVisible: false });
   };
@@ -409,6 +433,7 @@ async function boot(): Promise<void> {
       openMenu();
     } else if (event.code === 'KeyC') cycleCamera();
     else if (event.code === 'KeyG') toggleGps();
+    else if (event.code === 'KeyF') useDoor();
     else if (event.code === 'KeyN') cycleTime();
     else if (event.code === 'KeyR') reset();
     else return false;
@@ -432,6 +457,61 @@ async function boot(): Promise<void> {
   }
   if (touch) cameraButton.textContent = 'Camera';
 
+  // ---- Out of the car and back in (ADR-049): F, or the button over the gas on a phone. ----
+  const solids = [world.walls, world.things];
+  const doorButton = $<HTMLButtonElement>('#t-door');
+  const prompt = $<HTMLElement>('#prompt');
+  const promptKey = $<HTMLElement>('#prompt-key');
+  const promptText = $<HTMLElement>('#prompt-text');
+  const gasPad = $<HTMLButtonElement>('#t-gas');
+  const brakePad = $<HTMLButtonElement>('#t-brake');
+  const dashCar = $<HTMLElement>('#dash-car');
+  const dashFoot = $<HTMLElement>('#dash-foot');
+  const footHow = $<HTMLElement>('#foot-how');
+  const footCar = $<HTMLElement>('#foot-car');
+  const stopped = () => Math.round(speedMph(car)) === 0;
+  /** What F would do now: the word for it, or why it can't, or nothing to say. */
+  const doorWord = (): { word: string; can: boolean } | null => {
+    if (foot) return canGetIn(foot, car) ? { word: 'Get in', can: true } : null;
+    if (!stopped()) return null;
+    return stepOut(car, solids)
+      ? { word: 'Get out', can: true }
+      : { word: 'No room to get out here', can: false };
+  };
+  /** Put the pedals, the dashboard and the prompt in step with where you are. */
+  function showFoot(): void {
+    const on = foot !== null;
+    dashCar.hidden = on;
+    dashFoot.hidden = !on;
+    say(gasPad, on ? 'Walk' : 'Gas');
+    say(brakePad, on ? 'Run' : 'Brake');
+    gasPad.setAttribute('aria-label', on ? 'Walk' : 'Gas');
+    brakePad.setAttribute('aria-label', on ? 'Run' : 'Brake; from a stop, reverse');
+    canvas.dataset.onFoot = String(on);
+    slow = 0;
+  }
+  function useDoor(): void {
+    if (!playing) return;
+    if (foot) {
+      if (!canGetIn(foot, car)) return;
+      foot = null;
+    } else {
+      if (!stopped()) return;
+      const out = stepOut(car, solids);
+      if (!out) return;
+      foot = out;
+      // Left in park: nothing rolls it away while you're at the door.
+      Object.assign(car, { vx: 0, vy: 0, yawRate: 0 });
+    }
+    keys.clear();
+    showFoot();
+  }
+  doorButton.addEventListener('click', () => {
+    useDoor();
+    canvas.focus({ focusVisible: false });
+  });
+  showFoot();
+
   const key = (...codes: string[]) => codes.some((code) => keys.has(code));
   const input = (): CarInput => {
     const out: CarInput = {
@@ -450,6 +530,28 @@ async function boot(): Promise<void> {
       out.gas = Math.max(out.gas, gamepad.buttons[7]?.value ?? 0);
       out.back = Math.max(out.back, gamepad.buttons[6]?.value ?? 0);
       out.handbrake ||= gamepad.buttons[0]?.pressed ?? false;
+    }
+    return out;
+  };
+  /** The same keys and pads on foot: W and S walk and back up, A and D turn, Shift runs. */
+  const stride = (): FootInput => {
+    const run = key('ShiftLeft', 'ShiftRight') || held.has('t-brake');
+    const out: FootInput = {
+      go:
+        (key('KeyW', 'ArrowUp') || held.has('t-gas') || held.has('t-brake') ? 1 : 0) -
+        (key('KeyS', 'ArrowDown') ? 1 : 0),
+      turn:
+        (key('KeyD', 'ArrowRight') || held.has('t-right') ? 1 : 0) -
+        (key('KeyA', 'ArrowLeft') || held.has('t-left') ? 1 : 0),
+      run,
+    };
+    // A controller: the left stick walks and turns, the right trigger runs.
+    const gamepad = navigator.getGamepads?.().find((g) => g?.connected);
+    if (gamepad) {
+      const [x = 0, y = 0] = gamepad.axes;
+      if (Math.abs(x) > 0.12) out.turn = x;
+      if (Math.abs(y) > 0.12) out.go = -y;
+      out.run ||= (gamepad.buttons[7]?.value ?? 0) > 0.5;
     }
     return out;
   };
@@ -486,16 +588,17 @@ async function boot(): Promise<void> {
   /** A small map of the streets around you, turned so that ahead is up. */
   const drawMap = () => {
     if (!pen) return;
+    const me = you();
     const size = map.width;
     const reach = 230;
     const scale = size / 2 / reach;
-    const sin = Math.sin(car.heading);
-    const cos = Math.cos(car.heading);
+    const sin = Math.sin(me.heading);
+    const cos = Math.cos(me.heading);
     pen.fillStyle = WELL;
     pen.fillRect(0, 0, size, size);
     const put = (x: number, y: number): [number, number] => {
-      const dx = x - car.x;
-      const dy = y - car.y;
+      const dx = x - me.x;
+      const dy = y - me.y;
       return [
         size / 2 + (dx * cos - dy * sin) * scale,
         size * 0.62 - (dx * sin + dy * cos) * scale,
@@ -503,7 +606,7 @@ async function boot(): Promise<void> {
     };
     for (const pass of [0, 1]) {
       pen.beginPath();
-      world.streets.each(car.x, car.y, reach * 1.3, (ax, ay, bx, by, id) => {
+      world.streets.each(me.x, me.y, reach * 1.3, (ax, ay, bx, by, id) => {
         const kind = zone.roads[id]!.kind;
         const minor = kind === 'driveway' || kind === 'aisle' || kind === 'service';
         if ((pass === 0) !== minor) return;
@@ -539,7 +642,7 @@ async function boot(): Promise<void> {
     pen.textBaseline = 'middle';
     for (const place of zone.places) {
       const letter = MAP_LETTER[place.kind];
-      if (!letter || Math.hypot(place.x - car.x, place.y - car.y) > reach * 1.25) continue;
+      if (!letter || Math.hypot(place.x - me.x, place.y - me.y) > reach * 1.25) continue;
       const [x, y] = put(place.x, place.y);
       pen.fillStyle = place.kind === 'pizzeria' ? MAIZE : INK;
       pen.fillRect(Math.round(x) - 5, Math.round(y) - 5, 11, 11);
@@ -555,11 +658,11 @@ async function boot(): Promise<void> {
     pen.fill();
   };
 
-  /** What's under the car: pavement on a road or in a lot, grass anywhere else. */
+  /** What's under you: pavement on a road or in a lot, grass anywhere else. */
   let under: { road: Road; d: number } | null = null;
-  const paved = () => {
+  const paved = (x: number, y: number) => {
     if (under && under.d < roadWidth(under.road) / 2 + 0.9) return true;
-    return lots.some((ring: XY[]) => insideRing(ring, car.x, car.y));
+    return lots.some((ring: XY[]) => insideRing(ring, x, y));
   };
 
   // ---- Go ----
@@ -571,19 +674,33 @@ async function boot(): Promise<void> {
   canvas.focus({ focusVisible: false });
 
   let surface = PAVEMENT;
-  const solids = [world.walls, world.things];
   startLoop((dt, now) => {
     if (playing) {
-      // Returns the hardest hit of the frame, in m/s: the pizza's damage will read it (step 6).
-      driveCar(car, input(), surface, dt, (c) => collide(c, solids));
-      traffic.update(dt, car, car);
+      if (foot) {
+        stepFoot(foot, stride(), dt);
+        settleFoot(foot, solids, car);
+        fenceFoot(foot, edge);
+      } else {
+        // Returns the hardest hit of the frame, in m/s: the pizza's damage will read it (step 6).
+        driveCar(car, input(), surface, dt, (c) => collide(c, solids));
+      }
+      // The others see the car where you left it, and wait behind it.
+      traffic.update(dt, you(), car);
       bump(car, traffic.riders);
+      if (foot) Object.assign(car, { vx: 0, vy: 0, yawRate: 0 });
       fence(car, edge);
       // The order's clock is game time: it holds still behind the menu (ADR-041).
       if (gone !== null) gone += dt;
     }
-    world.update(car.x, car.y, 5);
-    chase.update(car, world.walls, dt);
+    const me = you();
+    world.update(me.x, me.y, 5);
+    chase.update(
+      me,
+      foot ? Math.abs(foot.speed) : Math.hypot(car.vx, car.vy),
+      !!foot,
+      world.walls,
+      dt,
+    );
     const L = lighting(simDate(time));
     const eye = chase.camera.position;
     sky.update(L, eye.x, eye.y, eye.z, still ? 0 : now);
@@ -591,8 +708,9 @@ async function boot(): Promise<void> {
     glow.intensity = sky.night * 60;
     lightLamps(sky.night);
     body.sync(car, sky.night, dt);
+    walker.sync(foot, dt);
     life.sync(sky.night, now);
-    signalHeads.sync(traffic.time, car.x, car.y);
+    signalHeads.sync(traffic.time, me.x, me.y);
     ground.sync(gpsAlong, now);
     renderer.render(scene, chase.camera);
 
@@ -604,11 +722,15 @@ async function boot(): Promise<void> {
     slow -= dt;
     if (slow > 0) return;
     slow = 0.15;
-    under = world.streetAt(car.x, car.y, 26);
-    surface = paved() ? PAVEMENT : GRASS;
-    const on = surface === PAVEMENT ? under : null;
-    const past = Math.hypot(car.x, car.y) > zone.radius;
-    const home = world.shop && insideRing(world.shop.apron, car.x, car.y);
+    under = world.streetAt(me.x, me.y, 26);
+    const hard = paved(me.x, me.y);
+    if (!foot) surface = hard ? PAVEMENT : GRASS;
+    const on = hard ? under : null;
+    const past = Math.hypot(me.x, me.y) > zone.radius;
+    const apron = world.shop?.apron;
+    const home = !!apron && insideRing(apron, me.x, me.y);
+    /** Tickets and their clocks go by where the car is, not where you stand (ADR-049). */
+    const carHome = !!apron && insideRing(apron, car.x, car.y);
     const name = past
       ? 'Past the delivery area'
       : home
@@ -616,29 +738,55 @@ async function boot(): Promise<void> {
         : on
           ? on.road.name || on.road.ref || UNNAMED[on.road.kind] || 'Street'
           : under
-            ? 'Off the road'
+            ? // On a lawn you're still on that street, as far as anyone walking would say.
+              (foot && (under.road.name || under.road.ref)) || 'Off the road'
             : 'Out in the grass';
     say(street, name);
-    // Lots, lanes and driveways have no posted limit.
+    // Lots, lanes and driveways have no posted limit, and nor does anyone on foot.
     const posted =
-      on && !home && !['service', 'aisle', 'driveway'].includes(on.road.kind) ? on.road.mph : 0;
+      on && !foot && !home && !['service', 'aisle', 'driveway'].includes(on.road.kind)
+        ? on.road.mph
+        : 0;
     limit.hidden = !posted;
     if (posted) say(limitMph, String(posted));
-    const place = past ? null : world.placeNear(car.x, car.y);
+    const place = past ? null : world.placeNear(me.x, me.y);
     const here = place ? `${PLACE_WORD[place.kind]} · ${place.name}` : '';
     // Stopped beside a building, the line names its address instead: finding the house is
     // reading the mailboxes while you drive (ADR-042).
-    const address = past ? null : world.addressAt(car.x, car.y);
+    const address = past ? null : world.addressAt(me.x, me.y);
+    const halted = foot ? foot.speed === 0 : speed === 0;
+    // On foot, how far the ticket's door is; at it, the line says so.
+    const toDoor = foot && door ? Math.hypot(door[0] - foot.x, door[1] - foot.y) : null;
+    const atDoor = toDoor !== null && toDoor <= FOOT.atDoor;
     // Back at the store, it stays the store.
-    const shown = address && speed === 0 && !home ? address : here;
+    const shown = atDoor
+      ? `At the door · ${ticket!.address}`
+      : address && halted && !home
+        ? address
+        : here;
     placeBox.hidden = !shown;
     if (shown) say(placeLine, shown);
+    // On foot the dashboard has no speed to give: it says how you're moving and where the car is.
+    const toCar = foot ? carGap(foot, car) : null;
+    if (foot) {
+      say(footHow, Math.abs(foot.speed) > FOOT.walk ? 'Running' : 'On foot');
+      say(footCar, `Car ${feet(toCar!)}`);
+    }
+    // What F does now, by name: a line on a desktop, the button over the gas on a phone.
+    const offer = doorWord();
+    prompt.hidden = touch || !offer;
+    doorButton.hidden = !offer?.can;
+    if (offer) {
+      promptKey.hidden = !offer.can;
+      say(promptText, offer.word);
+      if (offer.can) say(doorButton, offer.word);
+    }
     say(clock, clockFormat.format(new Date()));
     // The ticket: stopped in the delivery parking you're handed one, unless the one you hold
     // hasn't left yet. Its clock starts as you drive out.
-    if (home && speed === 0 && stall && (!ticket || gone !== null))
+    if (!foot && carHome && speed === 0 && stall && (!ticket || gone !== null))
       take(drawTicket(zone, stall, Math.random));
-    else if (ticket && gone === null && !home) gone = 0;
+    else if (ticket && gone === null && !carHome) gone = 0;
     const due = ticket ? clockText(ticket.quote, gone) : '';
     if (ticket) say(ticketClock, due);
     ticketClock.classList.toggle('late', ticket !== null && gone !== null && gone > ticket.quote);
@@ -685,11 +833,15 @@ async function boot(): Promise<void> {
     drawMap();
     // For tests and tools: what the drive is showing, written only when it changes.
     const data = canvas.dataset;
-    const at = `${car.x.toFixed(1)},${car.y.toFixed(1)}`;
+    const at = `${me.x.toFixed(1)},${me.y.toFixed(1)}`;
     if (data.at !== at) data.at = at;
     if (data.street !== name) data.street = name;
     if (data.place !== here) data.place = here;
     if (data.address !== (address ?? '')) data.address = address ?? '';
+    const doorMetres = toDoor === null ? '' : toDoor.toFixed(1);
+    if (data.door !== doorMetres) data.door = doorMetres;
+    const carMetres = toCar === null ? '' : toCar.toFixed(1);
+    if (data.car !== carMetres) data.car = carMetres;
     // The signal ahead that faces you, as you'd read it through the windscreen.
     const head = world.signalAhead(car.x, car.y, car.heading);
     const light = head ? lightAt(head.axis, head.signal, traffic.time) : '';

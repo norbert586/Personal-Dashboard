@@ -9,7 +9,7 @@ import { doorOf, nearestOnRoad } from '../../lib/zone/addresses.ts';
 import type { Building, Place, PlaceKind, Road, Zone } from '../../lib/zone/format.ts';
 import type { Season } from '../world/materials.ts';
 import { bladeText, controlOf } from './control.ts';
-import { addBuilding, fill, up, wallHeight, type Built } from './buildings.ts';
+import { addBuilding, fill, paintedDoor, up, wallHeight, type Built } from './buildings.ts';
 import { SegGrid } from './grid.ts';
 import { Labels } from './labels.ts';
 import { dress, mainWall, wallOf } from './landmarks.ts';
@@ -819,6 +819,13 @@ export class World {
     const x = w.a[0] + w.dir[0] * s + w.out[0] * 0.06;
     const y = w.a[1] + w.dir[1] * s + w.out[1] * 0.06;
     houseNumber(out, x, y, w.out, h0, height, text, (d) => this.labels.digit(d));
+  }
+
+  /** The front door you walk up to: the one painted on the wall, else the front wall's middle. */
+  frontDoor(building: number): XY {
+    const b = this.zone.buildings[building]!;
+    const front = this.frontOf(b, points(b.pts));
+    return paintedDoor(b, front) ?? doorOf(points(b.pts), front);
   }
 
   /** Which way a building faces: toward the road the importer chose for it (`addresses.ts`). */

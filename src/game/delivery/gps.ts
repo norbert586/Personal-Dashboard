@@ -45,6 +45,9 @@ export class GpsPath {
       polygonOffset: true,
       polygonOffsetFactor: -2,
       polygonOffsetUnits: -2,
+      // Paint, not a thing: it's drawn over the finished ground and hides nothing, so a foot on
+      // it stays a foot and not a silhouette.
+      depthWrite: false,
     });
     this.path = new Mesh(new BufferGeometry(), paint);
     this.path.frustumCulled = false;
@@ -53,6 +56,8 @@ export class GpsPath {
       new BoxGeometry(0.5, 36, 0.5),
       new MeshBasicMaterial({ color: colour, transparent: true, opacity: 0.5, depthWrite: false }),
     );
+    this.path.renderOrder = 1;
+    this.ring.renderOrder = 1;
     for (const mesh of [this.path, this.ring, this.beam]) {
       mesh.visible = false;
       scene.add(mesh);

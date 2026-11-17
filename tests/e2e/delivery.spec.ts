@@ -351,3 +351,163 @@ test('a ticket named in the address bar is the same every time, and already on t
   );
   await expect(page.locator('#ticket-clock')).toHaveText(/^8:\d\d left$/);
 });
+
+/**
+ * Pulled up across Mayapple Drive with the nose toward 40775, holding its ticket: the front door
+ * is straight ahead of where you step out, 18 m off.
+ */
+const AT_MAYAPPLE = `${TO_MAYAPPLE}&at=-1126,-3396.4&heading=270`;
+const metres = (page: Page, name: string) => async () =>
+  Number(await page.locator('#world').getAttribute(name));
+
+test("stopped, F gets you out; you walk to your order's door, a wall stops you, and the clock runs on", async ({
+  page,
+  isMobile,
+}) => {
+  test.setTimeout(180_000);
+  await clockIn(page, AT_MAYAPPLE);
+  const world = page.locator('#world');
+  await expect(world).toHaveAttribute('data-on-foot', 'false');
+  await expect(world).toHaveAttribute('data-mph', '0');
+  // What F would do is named: on a line with its key, or on the button over the gas on a phone.
+  if (isMobile) await expect(page.getByRole('button', { name: 'Get out' })).toBeVisible();
+  else await expect(page.locator('#prompt')).toHaveText(/^\s*F\s*Get out\s*$/);
+  const clock = page.locator('#ticket-clock');
+  const left = async () => {
+    const [m, s] = ((await clock.textContent()) ?? '').split(' ')[0]!.split(':').map(Number);
+    return m! * 60 + s!;
+  };
+  const before = await left();
+
+  await page.keyboard.press('KeyF');
+  await expect(world).toHaveAttribute('data-on-foot', 'true');
+  // The dashboard has no speed to give: it says you're on foot and how far the car is.
+  await expect(page.locator('#foot-how')).toHaveText('On foot');
+  await expect(page.locator('#foot-car')).toHaveText(/^Car \d+ ft$/);
+  await expect(page.locator('#mph')).toBeHidden();
+  await expect.poll(metres(page, 'data-door')).toBeGreaterThan(15);
+  const results = await new AxeBuilder({ page }).analyze();
+  expect(results.violations).toEqual([]);
+
+  // Walk, then run, straight to the door.
+  await page.keyboard.down('KeyW');
+  await expect.poll(metres(page, 'data-car'), { timeout: 30_000 }).toBeGreaterThan(1);
+  await expect(page.locator('#foot-how')).toHaveText('On foot');
+  await page.keyboard.down('ShiftLeft');
+  await expect(page.locator('#foot-how')).toHaveText('Running');
+  await expect.poll(metres(page, 'data-door'), { timeout: 90_000 }).toBeLessThan(2);
+  await expect(page.locator('#place')).toHaveText('At the door · 40775 Mayapple Drive');
+  // Still running at it: the wall holds, a body's width from the door.
+  await page.waitForTimeout(2500);
+  await page.keyboard.up('ShiftLeft');
+  await page.keyboard.up('KeyW');
+  const door = await metres(page, 'data-door')();
+  expect(door).toBeGreaterThan(0.2);
+  expect(door).toBeLessThan(1);
+  const [east] = ((await world.getAttribute('data-at')) ?? '').split(',').map(Number);
+  expect(east).toBeGreaterThan(-1143.9);
+  await expect(page.locator('#place')).toHaveText('At the door · 40775 Mayapple Drive');
+
+  // The order's clock kept running all the way, and the car is where you left it: too far for F.
+  expect(await left()).toBeLessThan(before);
+  await expect(clock).toHaveText(/^\d+:\d\d left$/);
+  await page.keyboard.press('KeyF');
+  await expect(page.locator('#foot-car')).toHaveText(/^Car [45]0 ft$/);
+  await expect(world).toHaveAttribute('data-on-foot', 'true');
+  await expect(page.locator('#prompt')).toBeHidden();
+});
+
+test('back beside the car, F gets you in and it drives again', async ({ page, isMobile }) => {
+  test.setTimeout(180_000);
+  await clockIn(page, AT_MAYAPPLE);
+  const world = page.locator('#world');
+  await page.keyboard.press('KeyF');
+  await expect(world).toHaveAttribute('data-on-foot', 'true');
+  await page.keyboard.down('KeyW');
+  await expect.poll(metres(page, 'data-car'), { timeout: 60_000 }).toBeGreaterThan(3);
+  await page.keyboard.up('KeyW');
+  // Out of reach, F does nothing and nothing offers it.
+  await page.keyboard.press('KeyF');
+  await expect(page.locator('#prompt')).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Get in' })).toBeHidden();
+  await expect(world).toHaveAttribute('data-on-foot', 'true');
+  // Back up to the car.
+  await page.keyboard.down('KeyS');
+  await expect.poll(metres(page, 'data-car'), { timeout: 60_000 }).toBeLessThan(1.2);
+  await page.keyboard.up('KeyS');
+  if (isMobile) await expect(page.getByRole('button', { name: 'Get in' })).toBeVisible();
+  else await expect(page.locator('#prompt')).toHaveText(/^\s*F\s*Get in\s*$/);
+  await page.keyboard.press('KeyF');
+  await expect(world).toHaveAttribute('data-on-foot', 'false');
+  await expect(world).toHaveAttribute('data-door', '');
+  await expect(page.locator('#mph')).toBeVisible();
+  await expect(page.locator('#foot-how')).toBeHidden();
+  await page.keyboard.down('KeyW');
+  await expect.poll(mph(page), { timeout: 30_000 }).toBeGreaterThan(3);
+  await page.keyboard.up('KeyW');
+});
+
+test('F does nothing while the car is moving', async ({ page }) => {
+  await clockIn(page, ON_AUBURN);
+  const world = page.locator('#world');
+  await page.keyboard.down('KeyW');
+  await expect.poll(mph(page), { timeout: 30_000 }).toBeGreaterThan(8);
+  await expect(page.locator('#prompt')).toBeHidden();
+  await expect(page.locator('#t-door')).toBeHidden();
+  await page.keyboard.press('KeyF');
+  await page.waitForTimeout(400);
+  await expect(world).toHaveAttribute('data-on-foot', 'false');
+  expect(await mph(page)()).toBeGreaterThan(8);
+  await page.keyboard.up('KeyW');
+});
+
+test('on foot in the delivery parking, your ticket stays yours and its clock waits for the car', async ({
+  page,
+}) => {
+  test.setTimeout(120_000);
+  await clockIn(page, '?traffic=0');
+  const world = page.locator('#world');
+  const clock = page.locator('#ticket-clock');
+  await expect(clock).toHaveText(/^Quoted \d+ min$/);
+  const ticket = (await world.getAttribute('data-ticket')) ?? '';
+  expect(ticket).not.toBe('');
+  await page.keyboard.press('KeyF');
+  await expect(world).toHaveAttribute('data-on-foot', 'true');
+  await page.keyboard.down('KeyS');
+  await expect.poll(metres(page, 'data-car'), { timeout: 60_000 }).toBeGreaterThan(4);
+  await page.keyboard.up('KeyS');
+  await expect(world).toHaveAttribute('data-ticket', ticket);
+  await expect(clock).toHaveText(/^Quoted \d+ min$/);
+  // R puts you back in the car, in the stall.
+  await page.keyboard.press('KeyR');
+  await expect(world).toHaveAttribute('data-on-foot', 'false');
+});
+
+test('on a phone, a button over the gas gets you out and in, and the pedals walk and run', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'the button and the pedals only show on touch screens');
+  test.setTimeout(120_000);
+  await clockIn(page, AT_MAYAPPLE);
+  const world = page.locator('#world');
+  await expect(page.getByRole('button', { name: 'Gas' })).toBeVisible();
+  await page.getByRole('button', { name: 'Get out' }).click();
+  await expect(world).toHaveAttribute('data-on-foot', 'true');
+  await expect(page.getByRole('button', { name: 'Gas' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Walk' })).toHaveText('Walk');
+  await page.getByRole('button', { name: 'Get in' }).click();
+  await expect(world).toHaveAttribute('data-on-foot', 'false');
+  await expect(page.getByRole('button', { name: /^Brake/ })).toHaveText('Brake');
+
+  await page.getByRole('button', { name: 'Get out' }).click();
+  const run = page.getByRole('button', { name: 'Run' });
+  await run.dispatchEvent('pointerdown');
+  await expect(page.locator('#foot-how')).toHaveText('Running');
+  await expect.poll(metres(page, 'data-car'), { timeout: 60_000 }).toBeGreaterThan(3);
+  await run.dispatchEvent('pointerup');
+  await expect(page.locator('#foot-how')).toHaveText('On foot');
+  await expect(page.getByRole('button', { name: 'Get in' })).toBeHidden();
+  const results = await new AxeBuilder({ page }).analyze();
+  expect(results.violations).toEqual([]);
+});
