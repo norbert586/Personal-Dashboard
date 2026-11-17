@@ -126,6 +126,14 @@ drew a driving game: low-poly streets at true scale, from behind the car. Values
   pedals on the right. On foot the speed panel says "On foot" or "Running" and how far the car
   is, and the pedals say Walk and Run. A prompt names the key that gets you out or in; on a
   phone it's a button over the gas.
+- **At the door** (ADR-051): the prompt says "F Hand it over"; F opens a small bevelled menu of
+  the ways you can, picked with arrows or 1 to 4 and Enter, or as big buttons on a phone. The
+  phone is a button by the GPS's and the P key: Call or Text, and a line on the ticket says it's
+  done ("Texted 0:42 ago").
+- **The customer's answer:** an HTML dialog like an old RPG's: their portrait on the left in a
+  bevelled frame, painted by code in the game's pixels, their name over their line, and under a
+  dashed rule the result in words. A text back is the same dialog shaped as a phone's message.
+  Enter or a tap closes it.
 - **A phone while driving** (ADR-050): held upright and moving, the screen keeps only what you
   read at a glance: the street and its limit, the GPS's line, the order as one line (address and
   clock), a smaller map, the speed and the menu. Stop, and everything is back to read.

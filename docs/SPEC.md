@@ -112,6 +112,17 @@ drive.
   when I hold Shift. Whatever stops the car stops me, and so does the car. The ticket's clock
   keeps running, so a bad parking spot costs me the walk. At my ticket's door the dashboard says
   so; standing still by any other building names its address, as it does from the car.
+- **At the door** (ADR-051): at my ticket's door, F opens a short menu: knock, ring the bell, or
+  leave it on the porch (homes only), plus "wait for them" once I've called or texted. Calling
+  and texting are on my phone, a button and a key, in the car or on foot. Whoever answers says
+  something about how it went: on time or late, the hand-over they asked for or not. At the wrong
+  door a stranger says it isn't theirs and the ticket stays open. Left on the porch, a box sits on
+  the step and the customer texts back. The dialog says the result plainly too ("On time, 2:14 to
+  spare", "Late by 1:30"). Then the ticket says it's delivered, and the GPS points back to the
+  store, where the next one is handed out. Mistakes cost nothing yet; scoring prices them (step 7).
+- **Customers, for now:** a generated stand-in for each order, the same every time for the same
+  ticket: a first name, a face painted by code from a few shapes and colours, and one line for the
+  situation. Step 8 grows the faces and writes the lines with me.
 - **The ticket** (ADR-048) is on the dashboard: the address, what they ordered from a small
   made-up menu and what it came to, the customer's note in their own words ("Bell is broken,
   please knock") with the plain instruction under it, and the time they were quoted. A quote is

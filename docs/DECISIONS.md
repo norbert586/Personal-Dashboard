@@ -804,3 +804,23 @@ It's one attribute, `data-moving` on the page, and the rest is CSS.
 Consequences: you can't turn the GPS on or change the camera while rolling on a phone. With the
 GPS on, the address shows twice. Desktops and phones held sideways are unchanged. The layout
 stopped is as full as it was; if that's still too much, the ticket is the first thing to fold.
+
+## ADR-051: The hand-over: F at the door, the phone anywhere, and mistakes said aloud
+
+**Accepted · 2026-11-17 · Norbert's picks**
+Context: the third slice of step 5 ends a ticket at the door. No doc said how you pick a
+hand-over, where the phone's call and text happen, what a mistake does before scoring exists,
+what the porch looks like, who answers, what the answer says about time, or what comes next.
+Decision: at the ticket's door F opens a short menu (knock, ring, leave it on the porch at homes,
+and wait for them once you've called or texted), chosen over a key each or F cycling, so nothing
+is chosen by accident. Calling and texting are a phone button and the P key, anywhere, in the car
+or on foot, over keeping the phone in the car. A wrong hand-over still delivers, and the
+customer's line is about it; at the wrong door a stranger says so and the ticket stays open; both
+are priced by scoring (step 7), not refused now. Leaving it on the porch puts a box on the step
+and the customer texts back. Customers are generated stand-ins, the same for the same ticket: a
+name, a face painted by code and a line for the situation, until step 8. The dialog says the
+result in words under the line. After it the ticket reads "Delivered" and the GPS points to the
+delivery parking, where the next ticket is handed out, as now.
+Consequences: until scoring, playing it wrong costs only a sharp word. The phone is a fourth
+button on a phone's screen: it goes with the GPS's under the dashboard and hides while driving
+(ADR-050). The note "knock on the side door" still means the front door.

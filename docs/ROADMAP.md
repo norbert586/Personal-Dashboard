@@ -48,32 +48,34 @@ turns on a GPS that paints the way to its door. The order below
 builds the loop rough first, then the store, then the scoring, and leaves polish until playing
 shows what matters. Story mode waits for its own design session.
 
-**Next chat: step 5, third slice: the hand-over at the door and the customer's answer.** Read SPEC
-(Delivery mode: a delivery, on foot, the ticket) and ADR-041, 048 and 049. Walking is done
-(`foot.ts`, and its wiring in `main.ts`); build the next slice and stop there:
+**Next chat: step 5, third slice: the hand-over at the door and the customer's answer.** Read
+SPEC (Delivery mode: a delivery, on foot, at the door, customers for now), DESIGN (Delivery mode:
+at the door, the customer's answer) and ADR-041, 048, 049 and 051. Norbert has made this slice's
+choices (ADR-051); build it in this order and stop there:
 
-1. At the ticket's door (`world.frontDoor`, "At the door" on the dashboard), choose the hand-over:
-   leave it on the porch, call, text, knock or ring. Calling and texting belong to the phone in
-   the car, so they happen before you walk up.
-2. The customer answers in an RPG-style dialogue: an HTML dialog with a portrait painted by code
-   and their line. That ends the ticket and stops its clock.
-3. Later slices, not this one: walk back, drive back and park behind the store for the next
-   ticket; then Rush, crudely.
+1. The phone: a Call and Text button by the GPS's, and the P key, in the car or on foot. The
+   ticket remembers which and when ("Texted 0:42 ago").
+2. At a door, "F Hand it over" opens the menu: knock, ring, porch (homes only), and wait for them
+   after a call or a text. Pure first: a `handOver.ts` that takes the ticket, the door you're at,
+   what you chose and what you texted or called, and gives what happened (right door or not, right
+   hand-over or not, on time or late by how much). Unit-test it.
+3. The customer: a stand-in from the ticket's seed (a first name, a face from a few painted
+   shapes and colours, a line for the situation). The same ticket, the same person.
+4. The answer: an HTML `<dialog>` with the portrait, name, line and the result in words; a text
+   back for the porch, with a box left on the step. The wrong door leaves the ticket open.
+5. After: the ticket reads "Delivered", the clock stops, and the GPS points to the delivery
+   parking, where the next ticket is handed out.
 
-Choices to walk Norbert through first, since no doc makes them: how you choose a hand-over (a
-menu at the door, a key each, or the prompt cycling), and on a phone; where calling and texting
-happen (only in the car, or anywhere) and what they look like; what the wrong hand-over or the
-wrong door does now, before scoring exists (step 7); what leaving it on the porch shows (a box on
-the step?) and whether anyone answers; who the customer is for now (a name, a face and a line
-are step 8's, so a stand-in); what the dialog says about the time (on time, late by how much);
-and what happens to the ticket after: gone until you're back at the store, or the next one at
-once. Open from walking: running costs nothing and doesn't shake the pizza; other cars and people
-don't stop you or hit you; on a phone you can't back up on foot; the quote's walk is to the
-middle of the front wall, a metre or two from the painted door; the car's bottom edge is still
-clipped by road paint the way the figure's shoes were. Still open from the ticket: nothing
-happens when it's late, and the notes are a first handful to rewrite with Norbert (step 8). Still
-open from routing: the route can turn left where a real sign forbids it, and the GPS says nothing
-aloud or in words about the next turn.
+Prove it with unit tests for the pure parts and e2e for the menu, the dialog (axe too), the wrong
+door and the porch, with `?to=5000` at Mayapple Drive as in the walking tests. Send 390 px
+screenshots. Later slices, not this one: Rush, crudely. Open from walking: running costs nothing
+and doesn't shake the pizza; other cars and people don't stop you or hit you; on a phone you
+can't back up on foot; the quote's walk is to the middle of the front wall, a metre or two from
+the painted door; the car's bottom edge is still clipped by road paint the way the figure's shoes
+were. Open from the phone screen (ADR-050): the address shows twice with the GPS on, and the
+stopped layout is as full as before. Still open from the ticket: the notes are a first handful to
+rewrite with Norbert (step 8). Still open from routing: the route can turn left where a real
+sign forbids it, and the GPS says nothing aloud or in words about the next turn.
 
 1. [x] **Drive the zone.** The sandbox, done 2026-11-15.
    - [x] Map import: `npm run zone:import` bakes the 2.5 miles around Auburn and Dequindre from
